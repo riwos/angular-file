@@ -24,16 +24,6 @@ if(!browserArg){
   setup.plugins.push( require('karma-coverage-istanbul-reporter') )
 }
 
-setup.files = [
-  {pattern: 'src/*.spec.ts'}
-]
-/*setup.files = [
-  {pattern: './scripts/test.ts', watched: false}
-]
-setup.preprocessors = {
-  './scripts/test.ts': ['@angular/cli']
-}*/
-
 setup.plugins.push( require('@angular/cli/plugins/karma') )
 
 module.exports = function (config) {
