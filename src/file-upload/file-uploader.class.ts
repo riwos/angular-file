@@ -35,7 +35,6 @@ export interface FileUploaderOptions {
 }
 
 export class FileUploader {
-
   public authToken:string;
   public isUploading:boolean = false;
   public queue:Array<FileItem> = [];
@@ -288,6 +287,16 @@ export class FileUploader {
       }
       return parsedHeaders;
     };
+  }
+
+  public getFormData(){
+    const formData = new FormData()
+    
+    for(let x=0; x < this.queue.length; ++x){
+      formData.append(this.queue[x].alias, this.queue[x]._file, this.queue[x].file.name);
+    }
+
+    return formData
   }
 
   protected _xhrTransport(item:FileItem):any {

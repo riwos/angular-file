@@ -29,6 +29,8 @@ npm-debug.log
 .DS_Store
 Thumbs.db
 
+#Acker Apple common folder for double-click script executions
+/updaters
 
 /demo/e2e/*.js
 /demo/e2e/*.map

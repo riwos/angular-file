@@ -14,11 +14,8 @@
     "stripInternal": true,
     "noUnusedLocals": false,
     "noUnusedParameters": false,
-    "lib": ["dom", "es6"],
-    "types": [
-      "jasmine",
-      "webpack"
-    ],
+    "lib": ["dom", "es2015"],
+    "types": [],
     "typeRoots": [
       "../node_modules/@types"
     ]
@@ -27,7 +24,6 @@
     "node_modules"
   ],
   "files": [
-    "../scripts/typings.d.ts",
     "./ng2-file-upload.ts",
     "./index.ts"
   ],

@@ -4,26 +4,14 @@
   },
   "apps": [
     {
-      "root": "demo/src",
-      "outDir": "demo/dist",
-      "assets": [
-        "assets"
-      ],
+      "root": "test",
+      "outDir": "test",
       "index": "index.html",
       "main": "main.ts",
-      "test": "../../scripts/test.ts",
+      "test": "test.ts",
       "tsconfig": "tsconfig.json",
       "prefix": "",
-      "mobile": false,
-      "styles": [
-      ],
-      "scripts": [
-      ],
-      "environmentSource": "environments/environment.ts",
-      "environments": {
-        "dev": "environments/environment.ts",
-        "prod": "environments/environment.prod.ts"
-      }
+      "mobile": false
     }
   ],
   "addons": [],
