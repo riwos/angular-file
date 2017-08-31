@@ -8,8 +8,8 @@ export class FileDropDirective {
   @Output() public fileOver:EventEmitter<any> = new EventEmitter();
   @Output() public onFileDrop:EventEmitter<File[]> = new EventEmitter<File[]>();
   
-  @Input() public ref:any
-  @Input() public refChange = new EventEmitter()
+  @Input('ng2FileDrop') public ref:any
+  @Input('ng2FileDropChange') public refChange = new EventEmitter()
 
   protected element:ElementRef;
 
