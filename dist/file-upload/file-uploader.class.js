@@ -221,7 +221,8 @@ var FileUploader = /** @class */ (function () {
     FileUploader.prototype.getFormData = function () {
         var formData = new FormData();
         for (var x = 0; x < this.queue.length; ++x) {
-            formData.append(this.queue[x].alias, this.queue[x]._file, this.queue[x].file.name);
+            var filename = this.options.filename || this.queue[x].file.name;
+            formData.append(this.queue[x].alias, this.queue[x]._file, filename);
         }
         return formData;
     };

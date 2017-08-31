@@ -12,6 +12,7 @@ export declare type FilterFunction = {
     fn: (item?: FileLikeObject, options?: FileUploaderOptions) => boolean;
 };
 export interface FileUploaderOptions {
+    filename?: string;
     allowedMimeType?: Array<string>;
     allowedFileType?: Array<string>;
     autoUpload?: boolean;

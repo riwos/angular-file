@@ -11,7 +11,9 @@ var FileDropDirective = /** @class */ (function () {
         this.element = element;
     }
     FileDropDirective.prototype.ngOnInit = function () {
-        this.refChange.emit(this); //create reference to this class
+        var _this = this;
+        //create reference to this class with one cycle delay to avoid ExpressionChangedAfterItHasBeenCheckedError
+        setTimeout(function () { return _this.refChange.emit(_this); }, 0);
     };
     FileDropDirective.prototype.getOptions = function () {
         return this.uploader.options;
@@ -24,10 +26,8 @@ var FileDropDirective = /** @class */ (function () {
         if (!transfer) {
             return;
         }
-        var options = this.getOptions();
-        var filters = this.getFilters();
         this._preventAndStop(event);
-        this.uploader.addToQueue(transfer.files, options, filters);
+        this.uploader.addToQueue(transfer.files);
         this.fileOver.emit(false);
         this.onFileDrop.emit(transfer.files);
     };
@@ -90,7 +90,7 @@ var FileDropDirective = /** @class */ (function () {
         'fileOver': [{ type: core_1.Output },],
         'onFileDrop': [{ type: core_1.Output },],
         'ref': [{ type: core_1.Input, args: ['ng2FileDrop',] },],
-        'refChange': [{ type: core_1.Input, args: ['ng2FileDropChange',] },],
+        'refChange': [{ type: core_1.Output, args: ['ng2FileDropChange',] },],
         'onDrop': [{ type: core_1.HostListener, args: ['drop', ['$event'],] },],
         'onDragOver': [{ type: core_1.HostListener, args: ['dragover', ['$event'],] },],
         'onDragLeave': [{ type: core_1.HostListener, args: ['dragleave', ['$event'],] },],

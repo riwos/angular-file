@@ -16,6 +16,7 @@ export type ParsedResponseHeaders = {[headerFieldName:string]:string};
 export type FilterFunction = {name:string, fn:(item?:FileLikeObject, options?:FileUploaderOptions)=>boolean};
 
 export interface FileUploaderOptions {
+  filename?:string;
   allowedMimeType?:Array<string>;
   allowedFileType?:Array<string>;
   autoUpload?:boolean;
@@ -293,7 +294,8 @@ export class FileUploader {
     const formData = new FormData()
     
     for(let x=0; x < this.queue.length; ++x){
-      formData.append(this.queue[x].alias, this.queue[x]._file, this.queue[x].file.name);
+      let filename = this.options.filename || this.queue[x].file.name
+      formData.append(this.queue[x].alias, this.queue[x]._file, filename);
     }
 
     return formData

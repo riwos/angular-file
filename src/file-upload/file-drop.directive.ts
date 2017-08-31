@@ -9,7 +9,7 @@ export class FileDropDirective {
   @Output() public onFileDrop:EventEmitter<File[]> = new EventEmitter<File[]>();
   
   @Input('ng2FileDrop') public ref:any
-  @Input('ng2FileDropChange') public refChange = new EventEmitter()
+  @Output('ng2FileDropChange') public refChange:EventEmitter<FileDropDirective> = new EventEmitter()
 
   protected element:ElementRef;
 
@@ -18,7 +18,8 @@ export class FileDropDirective {
   }
 
   public ngOnInit(){
-    this.refChange.emit(this)//create reference to this class
+    //create reference to this class with one cycle delay to avoid ExpressionChangedAfterItHasBeenCheckedError
+    setTimeout(()=>this.refChange.emit(this), 0)
   }
 
   public getOptions():any {
@@ -36,10 +37,8 @@ export class FileDropDirective {
       return;
     }
 
-    let options = this.getOptions();
-    let filters = this.getFilters();
     this._preventAndStop(event);
-    this.uploader.addToQueue(transfer.files, options, filters);
+    this.uploader.addToQueue(transfer.files);
     this.fileOver.emit(false);
     this.onFileDrop.emit(transfer.files);
   }

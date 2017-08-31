@@ -5,7 +5,7 @@ export declare class FileDropDirective {
     fileOver: EventEmitter<any>;
     onFileDrop: EventEmitter<File[]>;
     ref: any;
-    refChange: EventEmitter<{}>;
+    refChange: EventEmitter<FileDropDirective>;
     protected element: ElementRef;
     constructor(element: ElementRef);
     ngOnInit(): void;
