@@ -4,8 +4,11 @@ export declare class FileDropDirective {
     uploader: FileUploader;
     fileOver: EventEmitter<any>;
     onFileDrop: EventEmitter<File[]>;
+    ref: any;
+    refChange: EventEmitter<{}>;
     protected element: ElementRef;
     constructor(element: ElementRef);
+    ngOnInit(): void;
     getOptions(): any;
     getFilters(): any;
     onDrop(event: any): void;

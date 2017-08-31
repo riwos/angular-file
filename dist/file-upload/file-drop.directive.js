@@ -7,8 +7,12 @@ var FileDropDirective = /** @class */ (function () {
         this.uploader = new file_uploader_class_1.FileUploader({});
         this.fileOver = new core_1.EventEmitter();
         this.onFileDrop = new core_1.EventEmitter();
+        this.refChange = new core_1.EventEmitter();
         this.element = element;
     }
+    FileDropDirective.prototype.ngOnInit = function () {
+        this.refChange.emit(this); //create reference to this class
+    };
     FileDropDirective.prototype.getOptions = function () {
         return this.uploader.options;
     };
@@ -85,6 +89,8 @@ var FileDropDirective = /** @class */ (function () {
         'uploader': [{ type: core_1.Input },],
         'fileOver': [{ type: core_1.Output },],
         'onFileDrop': [{ type: core_1.Output },],
+        'ref': [{ type: core_1.Input },],
+        'refChange': [{ type: core_1.Input },],
         'onDrop': [{ type: core_1.HostListener, args: ['drop', ['$event'],] },],
         'onDragOver': [{ type: core_1.HostListener, args: ['dragover', ['$event'],] },],
         'onDragLeave': [{ type: core_1.HostListener, args: ['dragleave', ['$event'],] },],

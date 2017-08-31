@@ -7,11 +7,18 @@ export class FileDropDirective {
   @Input() public uploader:FileUploader = new FileUploader({});
   @Output() public fileOver:EventEmitter<any> = new EventEmitter();
   @Output() public onFileDrop:EventEmitter<File[]> = new EventEmitter<File[]>();
+  
+  @Input() public ref:any
+  @Input() public refChange = new EventEmitter()
 
   protected element:ElementRef;
 
   public constructor(element:ElementRef) {
     this.element = element;
+  }
+
+  public ngOnInit(){
+    this.refChange.emit(this)//create reference to this class
   }
 
   public getOptions():any {
