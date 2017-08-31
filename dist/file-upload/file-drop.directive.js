@@ -1,8 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@angular/core");
+var file_uploader_class_1 = require("./file-uploader.class");
 var FileDropDirective = /** @class */ (function () {
     function FileDropDirective(element) {
+        this.uploader = new file_uploader_class_1.FileUploader({});
         this.fileOver = new core_1.EventEmitter();
         this.onFileDrop = new core_1.EventEmitter();
         this.element = element;
