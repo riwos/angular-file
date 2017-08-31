@@ -1,0 +1,9 @@
+*.css.map
+*.js.map
+aot/
+updaters/
+example/
+test/
+.gitignore
+tsconfig.json
+.npmignore
