@@ -10,8 +10,8 @@ var ngf = /** @class */ (function () {
         this.selectable = false;
         this.refChange = new core_1.EventEmitter();
         this.uploader = new FileUploader_class_1.FileUploader({});
-        this.lastTryInvalid = false;
-        this.lastTryInvalidChange = new core_1.EventEmitter();
+        this.lastInvalids = [];
+        this.lastInvalidsChange = new core_1.EventEmitter();
         this.fileUrlChange = new core_1.EventEmitter();
         this.fileChange = new core_1.EventEmitter();
         this.filesChange = new core_1.EventEmitter();
@@ -63,15 +63,21 @@ var ngf = /** @class */ (function () {
     };
     ngf.prototype.handleFiles = function (files) {
         var _this = this;
-        this.lastTryInvalid = files.length && !this.uploader.isFilesValid(files);
-        this.lastTryInvalidChange.emit(this.lastTryInvalid);
-        if (!this.lastTryInvalid) {
-            this.uploader.addToQueue(files);
-            this.filesChange.emit(this.files = files);
-            if (files.length) {
-                this.fileChange.emit(this.file = files[0]);
+        var valids = this.uploader.getValidFiles(files);
+        if (files.length != valids.length) {
+            this.lastInvalids = this.uploader.getInvalidFiles(files);
+            this.lastInvalidsChange.emit(this.lastInvalids);
+        }
+        else {
+            this.lastInvalids = null;
+        }
+        if (valids.length) {
+            this.uploader.addToQueue(valids);
+            this.filesChange.emit(this.files = valids);
+            if (valids.length) {
+                this.fileChange.emit(this.file = valids[0]);
                 if (this.fileUrlChange.observers.length) {
-                    this.uploader.dataUrl(files[0])
+                    this.uploader.dataUrl(valids[0])
                         .then(function (url) { return _this.fileUrlChange.emit(url); });
                 }
             }
@@ -146,8 +152,8 @@ var ngf = /** @class */ (function () {
         'ref': [{ type: core_1.Input, args: ['ngf',] },],
         'refChange': [{ type: core_1.Output, args: ['ngfChange',] },],
         'uploader': [{ type: core_1.Input },],
-        'lastTryInvalid': [{ type: core_1.Input },],
-        'lastTryInvalidChange': [{ type: core_1.Output },],
+        'lastInvalids': [{ type: core_1.Input },],
+        'lastInvalidsChange': [{ type: core_1.Output },],
         'fileUrl': [{ type: core_1.Input },],
         'fileUrlChange': [{ type: core_1.Output },],
         'file': [{ type: core_1.Input },],

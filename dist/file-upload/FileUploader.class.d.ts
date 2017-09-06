@@ -42,11 +42,15 @@ export declare class FileUploader {
     autoUpload: any;
     authTokenHeader: string;
     options: FileUploaderOptions;
-    protected _failFilterIndex: number;
     constructor(options?: FileUploaderOptions);
     setOptions(options: FileUploaderOptions): void;
     isFileValid(file: File): boolean;
     isFilesValid(files: File[]): boolean;
+    getValidFiles(files: File[]): File[];
+    getInvalidFiles(files: File[]): {
+        file: File;
+        type: string;
+    }[];
     addToQueue(files: File[], options?: FileUploaderOptions, filters?: FilterFunction[] | string): void;
     removeFromQueue(value: FileItem): void;
     clearQueue(): void;
@@ -85,8 +89,9 @@ export declare class FileUploader {
     protected _getFilters(filters?: FilterFunction[] | string): FilterFunction[];
     protected _render(): any;
     protected _queueLimitFilter(): boolean;
-    protected _isValidFile(file: FileLikeObject, filters: FilterFunction[], options: FileUploaderOptions): boolean;
-    protected _isSuccessCode(status: number): boolean;
+    getFileFilterFailName(file: File | FileLikeObject): string;
+    _isValidFile(file: FileLikeObject, filters: FilterFunction[], options: FileUploaderOptions): boolean;
+    _isSuccessCode(status: number): boolean;
     protected _transformResponse(response: string, headers: ParsedResponseHeaders): string;
     protected _parseHeaders(headers: string): ParsedResponseHeaders;
     protected _onWhenAddingFileFailed(item: FileLikeObject, filter: any, options: any): void;

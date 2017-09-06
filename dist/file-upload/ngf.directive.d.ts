@@ -8,11 +8,17 @@ export declare class ngf {
     forceFilename: string;
     fileDropDisabled: boolean;
     selectable: boolean;
-    ref: any;
+    ref: ngf;
     refChange: EventEmitter<ngf>;
     uploader: FileUploader;
-    lastTryInvalid: boolean;
-    lastTryInvalidChange: EventEmitter<boolean>;
+    lastInvalids: {
+        file: File;
+        type: string;
+    }[];
+    lastInvalidsChange: EventEmitter<{
+        file: File;
+        type: string;
+    }[]>;
     fileUrl: string;
     fileUrlChange: EventEmitter<string>;
     file: File;

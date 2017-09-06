@@ -60,8 +60,6 @@ export class FileUploader {
     disableMultipart: false
   };
 
-  protected _failFilterIndex:number;
-
   constructor(options:FileUploaderOptions={}) {
     this.setOptions(options);
   }
@@ -107,6 +105,27 @@ export class FileUploader {
     return true
   }
 
+  getValidFiles(files:File[]):File[]{
+    const rtn = []
+    for(let x=files.length-1; x >= 0; --x){
+      if( this.isFileValid(files[x]) ){
+        rtn.push(files[x])
+      }
+    }
+    return rtn
+  }
+
+  getInvalidFiles(files:File[]):{file:File,type:string}[]{
+    const rtn = []
+    for(let x=files.length-1; x >= 0; --x){
+      let failReason = this.getFileFilterFailName(files[x])
+      if( failReason ){
+        rtn.push({file:files[x], type:failReason})
+      }
+    }
+    return rtn
+  }
+
   addToQueue(
     files:File[],
     options?:FileUploaderOptions,
@@ -119,7 +138,7 @@ export class FileUploader {
     let arrayOfFilters = this._getFilters(filters);
     let count = this.queue.length;
     let addedFileItems:FileItem[] = [];
-    list.map((some:File) => {
+    list.map((some:File,index:number) => {
       if (!options) {
         options = this.options;
       }
@@ -132,7 +151,7 @@ export class FileUploader {
         this.queue.push(fileItem);
         this._onAfterAddingFile(fileItem);
       } else {
-        let filter = arrayOfFilters[this._failFilterIndex];
+        let filter = arrayOfFilters[index];
         this._onWhenAddingFileFailed(temp, filter, options);
       }
     });
@@ -443,19 +462,25 @@ export class FileUploader {
     return this.options.queueLimit === undefined || this.queue.length < this.options.queueLimit;
   }
 
-  protected _isValidFile(file:FileLikeObject, filters:FilterFunction[], options:FileUploaderOptions):boolean {
-    this._failFilterIndex = -1;
-    if(!filters.length)return true
-
-    for(let x=filters.length-1; x >= 0; --x){
-      if( !filters[x].fn.call(this, file, options) ){
-        return false
+  getFileFilterFailName(file:File|FileLikeObject):string{
+    for(let x=this.options.filters.length-1; x >= 0; --x){
+      if( !this.options.filters[x].fn.call(this, file, this.options) ){
+        return this.options.filters[x].name
       }
     }
-    return true
+    return
   }
 
-  protected _isSuccessCode(status:number):boolean {
+  _isValidFile(
+    file:FileLikeObject,
+    filters:FilterFunction[],
+    options:FileUploaderOptions
+  ):boolean {
+    if(!filters.length)return true
+    return this.getFileFilterFailName(file) ? false : true
+  }
+
+  _isSuccessCode(status:number):boolean {
     return (status >= 200 && status < 300) || status === 304;
   }
 

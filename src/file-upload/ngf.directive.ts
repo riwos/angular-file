@@ -12,12 +12,12 @@ export class ngf {
 
   @Input() fileDropDisabled=false
   @Input() selectable = false
-  @Input('ngf') ref:any
+  @Input('ngf') ref:ngf
   @Output('ngfChange') refChange:EventEmitter<ngf> = new EventEmitter()
   @Input() uploader:FileUploader = new FileUploader({});
 
-  @Input() lastTryInvalid:boolean = false
-  @Output() lastTryInvalidChange:EventEmitter<boolean> = new EventEmitter()
+  @Input() lastInvalids:{file:File,type:string}[] = []
+  @Output() lastInvalidsChange:EventEmitter<{file:File,type:string}[]> = new EventEmitter()
 
   @Input() fileUrl:string//last file uploaded url
   @Output() fileUrlChange:EventEmitter<string> = new EventEmitter()
@@ -84,18 +84,24 @@ export class ngf {
   }
 
   handleFiles(files:File[]){
-    this.lastTryInvalid = files.length && !this.uploader.isFilesValid(files)
-    this.lastTryInvalidChange.emit(this.lastTryInvalid)
+    const valids = this.uploader.getValidFiles(files)
+    
+    if(files.length!=valids.length){
+      this.lastInvalids = this.uploader.getInvalidFiles(files)
+      this.lastInvalidsChange.emit(this.lastInvalids)
+    }else{
+      this.lastInvalids = null
+    }
 
-    if( !this.lastTryInvalid ){
-      this.uploader.addToQueue(files);
-      this.filesChange.emit( this.files=files );
+    if( valids.length ){
+      this.uploader.addToQueue(valids);
+      this.filesChange.emit( this.files=valids );
       
-      if(files.length){
-        this.fileChange.emit( this.file=files[0] )
+      if(valids.length){
+        this.fileChange.emit( this.file=valids[0] )
 
         if(this.fileUrlChange.observers.length){
-          this.uploader.dataUrl( files[0] )
+          this.uploader.dataUrl( valids[0] )
           .then( (url:any)=>this.fileUrlChange.emit(url) )
         }
       }
