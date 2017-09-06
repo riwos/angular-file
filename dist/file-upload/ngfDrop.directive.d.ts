@@ -4,8 +4,13 @@ export declare class ngfDrop extends ngf {
     ref: ngfDrop;
     refChange: EventEmitter<ngfDrop>;
     fileOver: EventEmitter<any>;
-    onDrop(event: any): void;
+    validDrag: boolean;
+    validDragChange: EventEmitter<boolean>;
+    invalidDrag: boolean;
+    invalidDragChange: EventEmitter<boolean>;
+    onDrop(event: Event): void;
     handleFiles(files: File[]): void;
-    onDragOver(event: any): void;
-    onDragLeave(event: any): any;
+    onDragOver(event: Event): void;
+    closeDrags(): void;
+    onDragLeave(event: Event): any;
 }

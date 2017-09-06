@@ -12,7 +12,8 @@ export declare type FilterFunction = {
     fn: (item?: FileLikeObject, options?: FileUploaderOptions) => boolean;
 };
 export interface FileUploaderOptions {
-    filename?: string;
+    forceFilename?: string;
+    accept?: string;
     allowedMimeType?: Array<string>;
     allowedFileType?: Array<string>;
     autoUpload?: boolean;
@@ -44,6 +45,8 @@ export declare class FileUploader {
     protected _failFilterIndex: number;
     constructor(options?: FileUploaderOptions);
     setOptions(options: FileUploaderOptions): void;
+    isFileValid(file: File): boolean;
+    isFilesValid(files: File[]): boolean;
     addToQueue(files: File[], options?: FileUploaderOptions, filters?: FilterFunction[] | string): void;
     removeFromQueue(value: FileItem): void;
     clearQueue(): void;
@@ -69,6 +72,7 @@ export declare class FileUploader {
     onCancelItem(item: FileItem, response: string, status: number, headers: ParsedResponseHeaders): any;
     onCompleteItem(item: FileItem, response: string, status: number, headers: ParsedResponseHeaders): any;
     onCompleteAll(): any;
+    _acceptFilter(item: FileLikeObject): boolean;
     _mimeTypeFilter(item: FileLikeObject): boolean;
     _fileSizeFilter(item: FileLikeObject): boolean;
     _fileTypeFilter(item: FileLikeObject): boolean;
@@ -78,7 +82,7 @@ export declare class FileUploader {
     getFormData(): FormData;
     protected _xhrTransport(item: FileItem): any;
     protected _getTotalProgress(value?: number): number;
-    protected _getFilters(filters: FilterFunction[] | string): FilterFunction[];
+    protected _getFilters(filters?: FilterFunction[] | string): FilterFunction[];
     protected _render(): any;
     protected _queueLimitFilter(): boolean;
     protected _isValidFile(file: FileLikeObject, filters: FilterFunction[], options: FileUploaderOptions): boolean;

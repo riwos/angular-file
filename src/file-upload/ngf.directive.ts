@@ -5,12 +5,20 @@ import { FileUploader } from './FileUploader.class';
 @Directive({selector: '[ngf]'})
 export class ngf {
   fileElm:any
+
+  @Input() accept:string
+  @Input() maxSize:number
+  @Input() forceFilename:string
+
   @Input() fileDropDisabled=false
   @Input() selectable = false
   @Input('ngf') ref:any
-  @Output('ngfChange') refChange:EventEmitter<ngf> = new EventEmitter()  
+  @Output('ngfChange') refChange:EventEmitter<ngf> = new EventEmitter()
   @Input() uploader:FileUploader = new FileUploader({});
-  
+
+  @Input() lastTryInvalid:boolean = false
+  @Output() lastTryInvalidChange:EventEmitter<boolean> = new EventEmitter()
+
   @Input() fileUrl:string//last file uploaded url
   @Output() fileUrlChange:EventEmitter<string> = new EventEmitter()
   
@@ -23,22 +31,44 @@ export class ngf {
   constructor(public element:ElementRef){}
 
   ngOnInit(){
-    if(this.selectable)this.enableSelecting()
+    if( this.selectable ){
+      this.enableSelecting()
+    }
+
+    if( this.accept ){
+      this.uploader.options.accept = this.accept
+      this.paramFileElm().setAttribute('accept', this.accept)
+    }
+
+    if( this.maxSize ){
+      this.uploader.options.maxFileSize = this.maxSize
+    }
+
+    if( this.forceFilename ){
+      this.uploader.options.forceFilename = this.forceFilename
+    }
+
     //create reference to this class with one cycle delay to avoid ExpressionChangedAfterItHasBeenCheckedError
     setTimeout(()=>this.refChange.emit(this), 0)
   }
 
+  paramFileElm(){
+    if( this.fileElm )return this.fileElm//already defined
+    
+    //elm is a file input
+    const isFile = isFileInput( this.element.nativeElement )
+    if(isFile)return this.fileElm = this.element.nativeElement
+    
+    //create foo file input
+    const label = createInvisibleFileInputWrap()
+    this.fileElm = label.getElementsByTagName('input')[0]
+    this.fileElm.addEventListener('change', this.changeFn.bind(this));
+    this.element.nativeElement.appendChild( label )
+    return this.fileElm
+  }
+
   enableSelecting(){
     let elm = this.element.nativeElement
-    const isFile = isFileInput(elm)
-    let fileElm = isFile ? elm : createInvisibleFileInputWrap()
-
-    fileElm.addEventListener('change', this.changeFn.bind(this));
-
-    if(!isFile){
-      this.fileElm = fileElm
-      this.element.nativeElement.appendChild( fileElm )
-    }
     const bindedHandler = this.clickHandler.bind(this)
     elm.addEventListener('click', bindedHandler)
     elm.addEventListener('touchstart', bindedHandler)
@@ -54,15 +84,20 @@ export class ngf {
   }
 
   handleFiles(files:File[]){
-    this.uploader.addToQueue(files);
-    this.filesChange.emit( this.files=files );
-    
-    if(files.length){
-      this.fileChange.emit( this.file=files[0] )
+    this.lastTryInvalid = files.length && !this.uploader.isFilesValid(files)
+    this.lastTryInvalidChange.emit(this.lastTryInvalid)
 
-      if(this.fileUrlChange.observers.length){
-        this.uploader.dataUrl( files[0] )
-        .then( (url:any)=>this.fileUrlChange.emit(url) )
+    if( !this.lastTryInvalid ){
+      this.uploader.addToQueue(files);
+      this.filesChange.emit( this.files=files );
+      
+      if(files.length){
+        this.fileChange.emit( this.file=files[0] )
+
+        if(this.fileUrlChange.observers.length){
+          this.uploader.dataUrl( files[0] )
+          .then( (url:any)=>this.fileUrlChange.emit(url) )
+        }
       }
     }
 
@@ -76,7 +111,7 @@ export class ngf {
 
     if (!fileList) return;
 
-    this._preventAndStop(event);
+    this.stopEvent(event);
     this.handleFiles(fileList)
   }
 
@@ -97,26 +132,33 @@ export class ngf {
     return !!this.element.nativeElement.attributes.multiple;
   }
 
-  protected _getTransfer(event:any):any {
-    return event.dataTransfer ? event.dataTransfer : event.originalEvent.dataTransfer; // jQuery fix;
+  eventToTransfer(event:any):any {
+    return event.dataTransfer ? event.dataTransfer : event.originalEvent.dataTransfer;
   }
 
-  protected _preventAndStop(event:any):any {
+  stopEvent(event:any):any {
     event.preventDefault();
     event.stopPropagation();
   }
 
-  protected _haveFiles(types:any):any {
-    if (!types) {
+  transferHasFiles(transfer:any):any {
+    if (!transfer.types) {
       return false;
     }
 
-    if (types.indexOf) {
-      return types.indexOf('Files') !== -1;
-    } else if (types.contains) {
-      return types.contains('Files');
+    if (transfer.types.indexOf) {
+      return transfer.types.indexOf('Files') !== -1;
+    } else if (transfer.types.contains) {
+      return transfer.types.contains('Files');
     } else {
       return false;
     }
+  }
+
+  eventToFiles(event:Event){
+    let transfer = this.eventToTransfer(event);
+    if(transfer.files && transfer.files.length)return transfer.files
+    if(transfer.items && transfer.items.length)return transfer.items
+    return []
   }
 }

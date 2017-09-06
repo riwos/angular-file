@@ -10,26 +10,46 @@ var ngf = /** @class */ (function () {
         this.selectable = false;
         this.refChange = new core_1.EventEmitter();
         this.uploader = new FileUploader_class_1.FileUploader({});
+        this.lastTryInvalid = false;
+        this.lastTryInvalidChange = new core_1.EventEmitter();
         this.fileUrlChange = new core_1.EventEmitter();
         this.fileChange = new core_1.EventEmitter();
         this.filesChange = new core_1.EventEmitter();
     }
     ngf.prototype.ngOnInit = function () {
         var _this = this;
-        if (this.selectable)
+        if (this.selectable) {
             this.enableSelecting();
+        }
+        if (this.accept) {
+            this.uploader.options.accept = this.accept;
+            this.paramFileElm().setAttribute('accept', this.accept);
+        }
+        if (this.maxSize) {
+            this.uploader.options.maxFileSize = this.maxSize;
+        }
+        if (this.forceFilename) {
+            this.uploader.options.forceFilename = this.forceFilename;
+        }
         //create reference to this class with one cycle delay to avoid ExpressionChangedAfterItHasBeenCheckedError
         setTimeout(function () { return _this.refChange.emit(_this); }, 0);
     };
+    ngf.prototype.paramFileElm = function () {
+        if (this.fileElm)
+            return this.fileElm; //already defined
+        //elm is a file input
+        var isFile = doc_event_help_functions_1.isFileInput(this.element.nativeElement);
+        if (isFile)
+            return this.fileElm = this.element.nativeElement;
+        //create foo file input
+        var label = doc_event_help_functions_1.createInvisibleFileInputWrap();
+        this.fileElm = label.getElementsByTagName('input')[0];
+        this.fileElm.addEventListener('change', this.changeFn.bind(this));
+        this.element.nativeElement.appendChild(label);
+        return this.fileElm;
+    };
     ngf.prototype.enableSelecting = function () {
         var elm = this.element.nativeElement;
-        var isFile = doc_event_help_functions_1.isFileInput(elm);
-        var fileElm = isFile ? elm : doc_event_help_functions_1.createInvisibleFileInputWrap();
-        fileElm.addEventListener('change', this.changeFn.bind(this));
-        if (!isFile) {
-            this.fileElm = fileElm;
-            this.element.nativeElement.appendChild(fileElm);
-        }
         var bindedHandler = this.clickHandler.bind(this);
         elm.addEventListener('click', bindedHandler);
         elm.addEventListener('touchstart', bindedHandler);
@@ -43,13 +63,17 @@ var ngf = /** @class */ (function () {
     };
     ngf.prototype.handleFiles = function (files) {
         var _this = this;
-        this.uploader.addToQueue(files);
-        this.filesChange.emit(this.files = files);
-        if (files.length) {
-            this.fileChange.emit(this.file = files[0]);
-            if (this.fileUrlChange.observers.length) {
-                this.uploader.dataUrl(files[0])
-                    .then(function (url) { return _this.fileUrlChange.emit(url); });
+        this.lastTryInvalid = files.length && !this.uploader.isFilesValid(files);
+        this.lastTryInvalidChange.emit(this.lastTryInvalid);
+        if (!this.lastTryInvalid) {
+            this.uploader.addToQueue(files);
+            this.filesChange.emit(this.files = files);
+            if (files.length) {
+                this.fileChange.emit(this.file = files[0]);
+                if (this.fileUrlChange.observers.length) {
+                    this.uploader.dataUrl(files[0])
+                        .then(function (url) { return _this.fileUrlChange.emit(url); });
+                }
             }
         }
         if (this.isEmptyAfterSelection()) {
@@ -60,7 +84,7 @@ var ngf = /** @class */ (function () {
         var fileList = event.__files_ || (event.target && event.target.files), files = [];
         if (!fileList)
             return;
-        this._preventAndStop(event);
+        this.stopEvent(event);
         this.handleFiles(fileList);
     };
     ngf.prototype.clickHandler = function (evt) {
@@ -77,40 +101,53 @@ var ngf = /** @class */ (function () {
     ngf.prototype.isEmptyAfterSelection = function () {
         return !!this.element.nativeElement.attributes.multiple;
     };
-    ngf.prototype._getTransfer = function (event) {
-        return event.dataTransfer ? event.dataTransfer : event.originalEvent.dataTransfer; // jQuery fix;
+    ngf.prototype.eventToTransfer = function (event) {
+        return event.dataTransfer ? event.dataTransfer : event.originalEvent.dataTransfer;
     };
-    ngf.prototype._preventAndStop = function (event) {
+    ngf.prototype.stopEvent = function (event) {
         event.preventDefault();
         event.stopPropagation();
     };
-    ngf.prototype._haveFiles = function (types) {
-        if (!types) {
+    ngf.prototype.transferHasFiles = function (transfer) {
+        if (!transfer.types) {
             return false;
         }
-        if (types.indexOf) {
-            return types.indexOf('Files') !== -1;
+        if (transfer.types.indexOf) {
+            return transfer.types.indexOf('Files') !== -1;
         }
-        else if (types.contains) {
-            return types.contains('Files');
+        else if (transfer.types.contains) {
+            return transfer.types.contains('Files');
         }
         else {
             return false;
         }
     };
+    ngf.prototype.eventToFiles = function (event) {
+        var transfer = this.eventToTransfer(event);
+        if (transfer.files && transfer.files.length)
+            return transfer.files;
+        if (transfer.items && transfer.items.length)
+            return transfer.items;
+        return [];
+    };
     ngf.decorators = [
-        { type: core_1.Directive, args: [{ selector: '[fngf]' },] },
+        { type: core_1.Directive, args: [{ selector: '[ngf]' },] },
     ];
     /** @nocollapse */
     ngf.ctorParameters = function () { return [
         { type: core_1.ElementRef, },
     ]; };
     ngf.propDecorators = {
+        'accept': [{ type: core_1.Input },],
+        'maxSize': [{ type: core_1.Input },],
+        'forceFilename': [{ type: core_1.Input },],
         'fileDropDisabled': [{ type: core_1.Input },],
         'selectable': [{ type: core_1.Input },],
-        'ref': [{ type: core_1.Input },],
-        'refChange': [{ type: core_1.Output },],
+        'ref': [{ type: core_1.Input, args: ['ngf',] },],
+        'refChange': [{ type: core_1.Output, args: ['ngfChange',] },],
         'uploader': [{ type: core_1.Input },],
+        'lastTryInvalid': [{ type: core_1.Input },],
+        'lastTryInvalidChange': [{ type: core_1.Output },],
         'fileUrl': [{ type: core_1.Input },],
         'fileUrlChange': [{ type: core_1.Output },],
         'file': [{ type: core_1.Input },],

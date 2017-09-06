@@ -28,20 +28,31 @@ var FileUploader = /** @class */ (function () {
         this.authToken = options.authToken;
         this.authTokenHeader = options.authTokenHeader || 'Authorization';
         this.autoUpload = options.autoUpload;
+        //options.queueLimit
         this.options.filters.unshift({ name: 'queueLimit', fn: this._queueLimitFilter });
-        if (this.options.maxFileSize) {
-            this.options.filters.unshift({ name: 'fileSize', fn: this._fileSizeFilter });
-        }
-        if (this.options.allowedFileType) {
-            this.options.filters.unshift({ name: 'fileType', fn: this._fileTypeFilter });
-        }
-        if (this.options.allowedMimeType) {
-            this.options.filters.unshift({ name: 'mimeType', fn: this._mimeTypeFilter });
-        }
+        //options.maxFileSize
+        this.options.filters.unshift({ name: 'fileSize', fn: this._fileSizeFilter });
+        //options.allowedFileType
+        this.options.filters.unshift({ name: 'fileType', fn: this._fileTypeFilter });
+        //options.allowedMimeType
+        this.options.filters.unshift({ name: 'mimeType', fn: this._mimeTypeFilter });
+        //options.accept
+        this.options.filters.unshift({ name: 'accept', fn: this._acceptFilter });
         for (var i = 0; i < this.queue.length; i++) {
             this.queue[i].url = this.options.url;
         }
-        // this.options.filters.unshift({name: 'folder', fn: this._folderFilter});
+    };
+    FileUploader.prototype.isFileValid = function (file) {
+        var temp = new FileLikeObject_class_1.FileLikeObject(file);
+        return this._isValidFile(temp, this.options.filters, this.options);
+    };
+    FileUploader.prototype.isFilesValid = function (files) {
+        for (var x = files.length - 1; x >= 0; --x) {
+            if (!this.isFileValid(files[x])) {
+                return false;
+            }
+        }
+        return true;
     };
     FileUploader.prototype.addToQueue = function (files, options, filters) {
         var _this = this;
@@ -58,7 +69,8 @@ var FileUploader = /** @class */ (function () {
                 options = _this.options;
             }
             var temp = new FileLikeObject_class_1.FileLikeObject(some);
-            if (_this._isValidFile(temp, arrayOfFilters, options)) {
+            _this._isValidFile(temp, arrayOfFilters, options);
+            if (_this.isFileValid(some)) {
                 var fileItem = new FileItem_class_1.FileItem(_this, some, options);
                 addedFileItems.push(fileItem);
                 _this.queue.push(fileItem);
@@ -185,6 +197,12 @@ var FileUploader = /** @class */ (function () {
     FileUploader.prototype.onCompleteAll = function () {
         return void 0;
     };
+    FileUploader.prototype._acceptFilter = function (item) {
+        var acceptReg = '^((' + this.options.accept.replace(/\*/g, '.*');
+        acceptReg = acceptReg.replace(/,/g, ')|(') + '))$';
+        var regx = new RegExp(acceptReg, 'gi');
+        return !(this.options.accept && item.type.search(regx) === -1);
+    };
     FileUploader.prototype._mimeTypeFilter = function (item) {
         return !(this.options.allowedMimeType && this.options.allowedMimeType.indexOf(item.type) === -1);
     };
@@ -223,7 +241,7 @@ var FileUploader = /** @class */ (function () {
     FileUploader.prototype.getFormData = function () {
         var formData = new FormData();
         for (var x = 0; x < this.queue.length; ++x) {
-            var filename = this.options.filename || this.queue[x].file.name;
+            var filename = this.options.forceFilename || this.queue[x].file.name;
             formData.append(this.queue[x].alias, this.queue[x]._file, filename);
         }
         return formData;
@@ -328,19 +346,19 @@ var FileUploader = /** @class */ (function () {
         return void 0;
         // todo: ?
     };
-    // protected _folderFilter(item:FileItem):boolean {
-    //   return !!(item.size || item.type);
-    // }
     FileUploader.prototype._queueLimitFilter = function () {
         return this.options.queueLimit === undefined || this.queue.length < this.options.queueLimit;
     };
     FileUploader.prototype._isValidFile = function (file, filters, options) {
-        var _this = this;
         this._failFilterIndex = -1;
-        return !filters.length ? true : filters.every(function (filter) {
-            _this._failFilterIndex++;
-            return filter.fn.call(_this, file, options);
-        });
+        if (!filters.length)
+            return true;
+        for (var x = filters.length - 1; x >= 0; --x) {
+            if (!filters[x].fn.call(this, file, options)) {
+                return false;
+            }
+        }
+        return true;
     };
     FileUploader.prototype._isSuccessCode = function (status) {
         return (status >= 200 && status < 300) || status === 304;

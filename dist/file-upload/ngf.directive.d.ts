@@ -3,11 +3,16 @@ import { FileUploader } from './FileUploader.class';
 export declare class ngf {
     element: ElementRef;
     fileElm: any;
+    accept: string;
+    maxSize: number;
+    forceFilename: string;
     fileDropDisabled: boolean;
     selectable: boolean;
     ref: any;
     refChange: EventEmitter<ngf>;
     uploader: FileUploader;
+    lastTryInvalid: boolean;
+    lastTryInvalidChange: EventEmitter<boolean>;
     fileUrl: string;
     fileUrlChange: EventEmitter<string>;
     file: File;
@@ -16,6 +21,7 @@ export declare class ngf {
     filesChange: EventEmitter<File[]>;
     constructor(element: ElementRef);
     ngOnInit(): void;
+    paramFileElm(): any;
     enableSelecting(): void;
     getOptions(): any;
     getFilters(): any;
@@ -23,7 +29,8 @@ export declare class ngf {
     changeFn(event: any): void;
     clickHandler(evt: any): boolean;
     isEmptyAfterSelection(): boolean;
-    protected _getTransfer(event: any): any;
-    protected _preventAndStop(event: any): any;
-    protected _haveFiles(types: any): any;
+    eventToTransfer(event: any): any;
+    stopEvent(event: any): any;
+    transferHasFiles(transfer: any): any;
+    eventToFiles(event: Event): any;
 }

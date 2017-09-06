@@ -18,36 +18,50 @@ var ngfDrop = /** @class */ (function (_super) {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.refChange = new core_1.EventEmitter();
         _this.fileOver = new core_1.EventEmitter();
+        _this.validDrag = false;
+        _this.validDragChange = new core_1.EventEmitter();
+        _this.invalidDrag = false;
+        _this.invalidDragChange = new core_1.EventEmitter();
         return _this;
     }
     ngfDrop.prototype.onDrop = function (event) {
-        var transfer = this._getTransfer(event);
-        if (!transfer) {
+        this.closeDrags();
+        var files = this.eventToFiles(event);
+        if (!files.length)
             return;
-        }
-        this._preventAndStop(event);
-        this.handleFiles(transfer.files);
+        this.stopEvent(event);
+        this.handleFiles(files);
     };
     ngfDrop.prototype.handleFiles = function (files) {
-        this.fileOver.emit(false);
+        this.fileOver.emit(false); //turn-off dragover
         _super.prototype.handleFiles.call(this, files);
     };
     ngfDrop.prototype.onDragOver = function (event) {
-        var transfer = this._getTransfer(event);
-        if (!this._haveFiles(transfer.types)) {
+        var files = this.eventToFiles(event);
+        if (!files.length)
             return;
-        }
-        transfer.dropEffect = 'copy';
-        this._preventAndStop(event);
+        this.validDrag = this.uploader.isFilesValid(files);
+        this.validDragChange.emit(this.validDrag);
+        this.invalidDrag = !this.validDrag;
+        this.invalidDragChange.emit(this.invalidDrag);
+        this.eventToTransfer(event).dropEffect = 'copy';
+        this.stopEvent(event);
         this.fileOver.emit(true);
     };
+    ngfDrop.prototype.closeDrags = function () {
+        this.validDrag = false;
+        this.validDragChange.emit(this.validDrag);
+        this.invalidDrag = false;
+        this.invalidDragChange.emit(this.invalidDrag);
+    };
     ngfDrop.prototype.onDragLeave = function (event) {
+        this.closeDrags();
         if (this.element) {
             if (event.currentTarget === this.element[0]) {
                 return;
             }
         }
-        this._preventAndStop(event);
+        this.stopEvent(event);
         this.fileOver.emit(false);
     };
     ngfDrop.decorators = [
@@ -59,6 +73,10 @@ var ngfDrop = /** @class */ (function (_super) {
         'ref': [{ type: core_1.Input, args: ['ngfDrop',] },],
         'refChange': [{ type: core_1.Output, args: ['ngfDropChange',] },],
         'fileOver': [{ type: core_1.Output },],
+        'validDrag': [{ type: core_1.Input },],
+        'validDragChange': [{ type: core_1.Output },],
+        'invalidDrag': [{ type: core_1.Input },],
+        'invalidDragChange': [{ type: core_1.Output },],
         'onDrop': [{ type: core_1.HostListener, args: ['drop', ['$event'],] },],
         'onDragOver': [{ type: core_1.HostListener, args: ['dragover', ['$event'],] },],
         'onDragLeave': [{ type: core_1.HostListener, args: ['dragleave', ['$event'],] },],
