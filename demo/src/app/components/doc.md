@@ -1,24 +1,24 @@
 ### Usage
 ```typescript
-import { FileSelectDirective, FileDropDirective, FileUploader } from 'ng2-file-upload/ng2-file-upload';
+import { ngfSelect, ngfDrop, FileUploader } from "angular-file";
 ```
 
 ### Annotations
 ```typescript
 // class FileSelectDirective
-@Directive({ selector: '[ng2FileSelect]' })
+@Directive({ selector: '[ngfSelect]' })
 ```
 
 ```typescript
 // class FileDropDirective
-@Directive({ selector: '[ng2FileDrop]' })
+@Directive({ selector: '[ngfDrop]' })
 ```
 
 ## FileSelect API
 
 ### Properties
 
-  - `uploader` - (`FileUploader`) - uploader object. See using in [demo](https://github.com/valor-software/ng2-file-upload/blob/master/demo/components/file-upload/simple-demo.ts)
+  - `uploader` - (`FileUploader`) - uploader object. See using in [demo](https://github.com/valor-software/angular-file/blob/master/demo/components/file-upload/simple-demo.ts)
 
   Parameters supported by this object:
 
@@ -30,10 +30,10 @@ import { FileSelectDirective, FileDropDirective, FileUploader } from 'ng2-file-u
 
 ### Properties
 
-  - `uploader` - (`FileUploader`) - uploader object. See using in [demo](https://github.com/valor-software/ng2-file-upload/blob/master/demo/components/file-upload/simple-demo.ts)
+  - `uploader` - (`FileUploader`) - uploader object. See using in [demo](https://github.com/valor-software/angular-file/blob/master/demo/components/file-upload/simple-demo.ts)
 
 ### Events
 
   - `fileOver` - it fires during 'over' and 'out' events for Drop Area; returns `boolean`: `true` if file is over Drop Area, `false` in case of out.
-  See using in [ts demo](https://github.com/valor-software/ng2-file-upload/blob/master/demo/components/file-upload/simple-demo.ts) and
-  [html demo](https://github.com/valor-software/ng2-file-upload/blob/master/demo/components/file-upload/simple-demo.html)
+  See using in [ts demo](https://github.com/valor-software/angular-file/blob/master/demo/components/file-upload/simple-demo.ts) and
+  [html demo](https://github.com/valor-software/angular-file/blob/master/demo/components/file-upload/simple-demo.html)

@@ -1,6 +1,6 @@
 {
-  "name": "ng2-file-upload",
-  "version": "1.3.0",
+  "name": "angular-file",
+  "version": "0.0.0",
   "private": true,
   "description": "Angular file upload directives",
   "scripts": {
@@ -40,12 +40,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/valor-software/ng2-file-upload.git"
+    "url": "git+ssh://git@github.com/valor-software/angular-file.git"
   },
   "bugs": {
-    "url": "https://github.com/valor-software/ng2-file-upload/issues"
+    "url": "https://github.com/valor-software/angular-file/issues"
   },
-  "homepage": "https://github.com/valor-software/ng2-file-upload#readme",
+  "homepage": "https://github.com/valor-software/angular-file#readme",
   "peerDependencies": {
     "@angular/common": "^2.3.1 || >=4.0.0",
     "@angular/core": "^2.3.1 || >=4.0.0"

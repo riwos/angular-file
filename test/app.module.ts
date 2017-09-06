@@ -1,6 +1,6 @@
 import { NgModule, Component } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { FileUploadModule } from '../src';
+import { ngfModule } from '../src';
 
 @Component({ selector: 'app', template: 'nothing here'})
 export class AppComponent {}
@@ -8,7 +8,7 @@ export class AppComponent {}
 @NgModule({
   imports: [
     BrowserModule,
-    FileUploadModule
+    ngfModule
   ],
   declarations: [
     AppComponent

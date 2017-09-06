@@ -1,5 +1,5 @@
-import { FileLikeObject } from './file-like-object.class';
-import { FileItem } from './file-item.class';
+import { FileLikeObject } from './FileLikeObject.class';
+import { FileItem } from './FileItem.class';
 export interface Headers {
     name: string;
     value: string;
@@ -42,7 +42,7 @@ export declare class FileUploader {
     authTokenHeader: string;
     options: FileUploaderOptions;
     protected _failFilterIndex: number;
-    constructor(options: FileUploaderOptions);
+    constructor(options?: FileUploaderOptions);
     setOptions(options: FileUploaderOptions): void;
     addToQueue(files: File[], options?: FileUploaderOptions, filters?: FilterFunction[] | string): void;
     removeFromQueue(value: FileItem): void;
@@ -93,4 +93,6 @@ export declare class FileUploader {
     protected _onProgressItem(item: FileItem, progress: any): void;
     protected _onSuccessItem(item: FileItem, response: string, status: number, headers: ParsedResponseHeaders): void;
     protected _onCancelItem(item: FileItem, response: string, status: number, headers: ParsedResponseHeaders): void;
+    /** converts file-input file into base64 dataUri */
+    dataUrl(file: any, disallowObjectUrl?: any): any;
 }

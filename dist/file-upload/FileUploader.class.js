@@ -1,13 +1,15 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var file_like_object_class_1 = require("./file-like-object.class");
-var file_item_class_1 = require("./file-item.class");
-var file_type_class_1 = require("./file-type.class");
+var FileLikeObject_class_1 = require("./FileLikeObject.class");
+var FileItem_class_1 = require("./FileItem.class");
+var FileType_class_1 = require("./FileType.class");
+function getWindow() { return window; }
 function isFile(value) {
     return (File && value instanceof File);
 }
 var FileUploader = /** @class */ (function () {
     function FileUploader(options) {
+        if (options === void 0) { options = {}; }
         this.isUploading = false;
         this.queue = [];
         this.progress = 0;
@@ -55,9 +57,9 @@ var FileUploader = /** @class */ (function () {
             if (!options) {
                 options = _this.options;
             }
-            var temp = new file_like_object_class_1.FileLikeObject(some);
+            var temp = new FileLikeObject_class_1.FileLikeObject(some);
             if (_this._isValidFile(temp, arrayOfFilters, options)) {
-                var fileItem = new file_item_class_1.FileItem(_this, some, options);
+                var fileItem = new FileItem_class_1.FileItem(_this, some, options);
                 addedFileItems.push(fileItem);
                 _this.queue.push(fileItem);
                 _this._onAfterAddingFile(fileItem);
@@ -126,7 +128,7 @@ var FileUploader = /** @class */ (function () {
         return isFile(value);
     };
     FileUploader.prototype.isFileLikeObject = function (value) {
-        return value instanceof file_like_object_class_1.FileLikeObject;
+        return value instanceof FileLikeObject_class_1.FileLikeObject;
     };
     FileUploader.prototype.getIndexOfItem = function (value) {
         return typeof value === 'number' ? value : this.queue.indexOf(value);
@@ -191,7 +193,7 @@ var FileUploader = /** @class */ (function () {
     };
     FileUploader.prototype._fileTypeFilter = function (item) {
         return !(this.options.allowedFileType &&
-            this.options.allowedFileType.indexOf(file_type_class_1.FileType.getMimeClass(item)) === -1);
+            this.options.allowedFileType.indexOf(FileType_class_1.FileType.getMimeClass(item)) === -1);
     };
     FileUploader.prototype._onErrorItem = function (item, response, status, headers) {
         item._onError(response, status, headers);
@@ -408,6 +410,67 @@ var FileUploader = /** @class */ (function () {
     FileUploader.prototype._onCancelItem = function (item, response, status, headers) {
         item._onCancel(response, status, headers);
         this.onCancelItem(item, response, status, headers);
+    };
+    /** converts file-input file into base64 dataUri */
+    FileUploader.prototype.dataUrl = function (file, disallowObjectUrl) {
+        if (!file)
+            return Promise.resolve(file);
+        if ((disallowObjectUrl && file.$ngfDataUrl != null) || (!disallowObjectUrl && file.$ngfBlobUrl != null)) {
+            return Promise.resolve(disallowObjectUrl ? file.$ngfDataUrl : file.$ngfBlobUrl);
+        }
+        var p = disallowObjectUrl ? file.$$ngfDataUrlPromise : file.$$ngfBlobUrlPromise;
+        if (p)
+            return p;
+        var win = getWindow();
+        var deferred = Promise.resolve();
+        if (win.FileReader && file &&
+            (!win.FileAPI || navigator.userAgent.indexOf('MSIE 8') === -1 || file.size < 20000) &&
+            (!win.FileAPI || navigator.userAgent.indexOf('MSIE 9') === -1 || file.size < 4000000)) {
+            //prefer URL.createObjectURL for handling refrences to files of all sizes
+            //since it doesn´t build a large string in memory
+            var URL = win.URL || win.webkitURL;
+            if (FileReader) {
+                deferred = new Promise(function (res, rej) {
+                    var fileReader = new FileReader();
+                    fileReader.onload = function (event) {
+                        file.$ngfDataUrl = event.target.result;
+                        delete file.$ngfDataUrl;
+                        res(event.target.result);
+                    };
+                    fileReader.onerror = function (e) {
+                        file.$ngfDataUrl = '';
+                        rej(e);
+                    };
+                    fileReader.readAsDataURL(file);
+                });
+            }
+            else {
+                var url;
+                try {
+                    url = URL.createObjectURL(file);
+                }
+                catch (e) {
+                    return Promise.reject(e);
+                }
+                deferred = deferred.then(function () { return url; });
+                file.$ngfBlobUrl = url;
+            }
+        }
+        else {
+            file[disallowObjectUrl ? '$ngfDataUrl' : '$ngfBlobUrl'] = '';
+            return Promise.reject(new Error('Browser does not support window.FileReader, window.FileReader, or window.FileAPI')); //deferred.reject();
+        }
+        if (disallowObjectUrl) {
+            p = file.$$ngfDataUrlPromise = deferred;
+        }
+        else {
+            p = file.$$ngfBlobUrlPromise = deferred;
+        }
+        p = p.then(function (x) {
+            delete file[disallowObjectUrl ? '$$ngfDataUrlPromise' : '$$ngfBlobUrlPromise'];
+            return x;
+        });
+        return p;
     };
     return FileUploader;
 }());

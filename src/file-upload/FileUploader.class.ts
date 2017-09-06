@@ -1,6 +1,10 @@
-import { FileLikeObject } from './file-like-object.class';
-import { FileItem } from './file-item.class';
-import { FileType } from './file-type.class';
+import { FileLikeObject } from './FileLikeObject.class';
+import { FileItem } from './FileItem.class';
+import { FileType } from './FileType.class';
+
+import { Injectable } from '@angular/core';
+
+function getWindow():any{return window}
 
 function isFile(value:any):boolean {
   return (File && value instanceof File);
@@ -54,7 +58,7 @@ export class FileUploader {
 
   protected _failFilterIndex:number;
 
-  public constructor(options:FileUploaderOptions) {
+  public constructor(options:FileUploaderOptions={}) {
     this.setOptions(options);
   }
 
@@ -84,7 +88,11 @@ export class FileUploader {
     // this.options.filters.unshift({name: 'folder', fn: this._folderFilter});
   }
 
-  public addToQueue(files:File[], options?:FileUploaderOptions, filters?:FilterFunction[]|string):void {
+  public addToQueue(
+    files:File[],
+    options?:FileUploaderOptions,
+    filters?:FilterFunction[]|string
+  ):void {
     let list:File[] = [];
     for (let file of files) {
       list.push(file);
@@ -498,5 +506,68 @@ export class FileUploader {
   protected _onCancelItem(item:FileItem, response:string, status:number, headers:ParsedResponseHeaders):void {
     item._onCancel(response, status, headers);
     this.onCancelItem(item, response, status, headers);
+  }
+
+  /** converts file-input file into base64 dataUri */
+  dataUrl(file:any, disallowObjectUrl?:any) {
+    if (!file) return Promise.resolve(file)
+    
+    if ((disallowObjectUrl && file.$ngfDataUrl != null) || (!disallowObjectUrl && file.$ngfBlobUrl != null)) {
+      return Promise.resolve( disallowObjectUrl ? file.$ngfDataUrl : file.$ngfBlobUrl )
+    }
+
+    var p = disallowObjectUrl ? file.$$ngfDataUrlPromise : file.$$ngfBlobUrlPromise;
+    if (p) return p;
+
+    const win = getWindow()
+    let deferred:Promise<any> = Promise.resolve()
+    if (win.FileReader && file &&
+      (!win.FileAPI || navigator.userAgent.indexOf('MSIE 8') === -1 || file.size < 20000) &&
+      (!win.FileAPI || navigator.userAgent.indexOf('MSIE 9') === -1 || file.size < 4000000)) {
+      //prefer URL.createObjectURL for handling refrences to files of all sizes
+      //since it doesn´t build a large string in memory
+      var URL = win.URL || win.webkitURL;
+      if (FileReader) {
+        deferred = new Promise((res,rej)=>{
+          var fileReader = new FileReader();
+          fileReader.onload = function (event:any) {
+            file.$ngfDataUrl = event.target.result;
+            delete file.$ngfDataUrl;
+            res( event.target.result )
+          };
+          fileReader.onerror = function (e) {
+            file.$ngfDataUrl = '';
+            rej(e)
+          };
+          fileReader.readAsDataURL(file);
+        })
+      } else {
+        var url:any;
+        try {
+          url = URL.createObjectURL(file);
+        } catch (e) {
+          return Promise.reject(e);
+        }
+        
+        deferred = deferred.then( ()=>url );
+        file.$ngfBlobUrl = url;
+      }
+    } else {
+      file[disallowObjectUrl ? '$ngfDataUrl' : '$ngfBlobUrl'] = '';
+      return Promise.reject( new Error('Browser does not support window.FileReader, window.FileReader, or window.FileAPI') )//deferred.reject();
+    }
+
+    if (disallowObjectUrl) {
+      p = file.$$ngfDataUrlPromise = deferred;
+    } else {
+      p = file.$$ngfBlobUrlPromise = deferred;
+    }
+
+    p = p.then((x:any)=>{
+      delete file[disallowObjectUrl ? '$$ngfDataUrlPromise' : '$$ngfBlobUrlPromise'];
+      return x
+    })
+
+    return p;
   }
 }

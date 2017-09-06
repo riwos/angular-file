@@ -1,5 +1,5 @@
-import { FileLikeObject } from './file-like-object.class';
-import { FileUploader, ParsedResponseHeaders, FileUploaderOptions } from './file-uploader.class';
+import { FileLikeObject } from './FileLikeObject.class';
+import { FileUploader, ParsedResponseHeaders, FileUploaderOptions } from './FileUploader.class';
 
 export class FileItem {
   public file:FileLikeObject;

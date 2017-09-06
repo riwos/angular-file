@@ -1,25 +1,25 @@
 import { Component, NgModule } from '@angular/core';
 import { inject, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { FileUploader } from './file-uploader.class';
-import { FileUploadModule } from './file-upload.module';
+import { FileUploader } from './FileUploader.class';
+import { ngfModule } from './ngf.module';
 
 @Component({
   selector: 'container',
-  template: `<input type="file" ng2FileSelect [uploader]="uploader" />`
+  template: `<input type="file" ngfSelect [uploader]="uploader" />`
 })
 export class ContainerComponent {
   public uploader:FileUploader = new FileUploader({url: 'localhost:3000'});
 }
 
 @NgModule({
-  imports: [ FileUploadModule ],
+  imports: [ ngfModule ],
   declarations: [ ContainerComponent ],
   providers: []
   //,bootstrap: [ AppComponent ]
 }) export class AppModule {}
 
-describe('file-uploader.class', () => {
+describe('FileUploader.class', () => {
   let fixture: ComponentFixture<ContainerComponent>;
   
   beforeEach(() => {

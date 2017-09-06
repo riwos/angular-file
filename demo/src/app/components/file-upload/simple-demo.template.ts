@@ -20,7 +20,7 @@ export const string = "<style>"+
 "\n"+
 "\n            <h3>Select files</h3>"+
 "\n"+
-"\n            <div ng2FileDrop"+
+"\n            <div ngfDrop"+
 "\n                 [ngClass]=\"{'nv-file-over': hasBaseDropZoneOver}\""+
 "\n                 (fileOver)=\"fileOverBase($event)\""+
 "\n                 [uploader]=\"uploader\""+
@@ -28,7 +28,7 @@ export const string = "<style>"+
 "\n                Base drop zone"+
 "\n            </div>"+
 "\n"+
-"\n            <div ng2FileDrop"+
+"\n            <div ngfDrop"+
 "\n                 [ngClass]=\"{'another-file-over-class': hasAnotherDropZoneOver}\""+
 "\n                 (fileOver)=\"fileOverAnother($event)\""+
 "\n                 [uploader]=\"uploader\""+
@@ -37,10 +37,10 @@ export const string = "<style>"+
 "\n            </div>"+
 "\n"+
 "\n            Multiple"+
-"\n            <input type=\"file\" ng2FileSelect [uploader]=\"uploader\" multiple  />"+
+"\n            <input type=\"file\" ngfSelect [uploader]=\"uploader\" multiple  />"+
 "\n            <br/>"+
 "\n            Single"+
-"\n            <input type=\"file\" ng2FileSelect [uploader]=\"uploader\" />"+
+"\n            <input type=\"file\" ngfSelect [uploader]=\"uploader\" />"+
 "\n        </div>"+
 "\n"+
 "\n        <div class=\"col-md-9\" style=\"margin-bottom: 40px\">"+
