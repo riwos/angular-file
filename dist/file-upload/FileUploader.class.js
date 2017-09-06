@@ -257,11 +257,20 @@ var FileUploader = /** @class */ (function () {
             return parsedHeaders;
         };
     };
-    FileUploader.prototype.getFormData = function () {
-        var formData = new FormData();
+    FileUploader.prototype.getQuedFiles = function () {
+        var rtn = [];
         for (var x = 0; x < this.queue.length; ++x) {
-            var filename = this.options.forceFilename || this.queue[x].file.name;
-            formData.append(this.queue[x].alias, this.queue[x]._file, filename);
+            rtn.push(this.queue[x]._file);
+        }
+        return rtn;
+    };
+    FileUploader.prototype.getFormData = function (files) {
+        files = files || this.getQuedFiles();
+        var formData = new FormData();
+        for (var x = 0; x < files.length; ++x) {
+            var filename = this.options.forceFilename || files[x].name;
+            var alias = this.options.forcePostname || 'file';
+            formData.append(alias, files[x], filename);
         }
         return formData;
     };

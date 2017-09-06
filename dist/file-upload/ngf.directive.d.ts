@@ -6,6 +6,7 @@ export declare class ngf {
     accept: string;
     maxSize: number;
     forceFilename: string;
+    forcePostname: string;
     fileDropDisabled: boolean;
     selectable: boolean;
     ref: ngf;
@@ -26,6 +27,7 @@ export declare class ngf {
     files: File[];
     filesChange: EventEmitter<File[]>;
     constructor(element: ElementRef);
+    ngOnDestroy(): void;
     ngOnInit(): void;
     paramFileElm(): any;
     enableSelecting(): void;

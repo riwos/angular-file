@@ -24,6 +24,7 @@ export type FilterFunction = {
 
 export interface FileUploaderOptions {
   forceFilename?:string;//override that all files will have defined name
+  forcePostname?:string//override all FormData post names
   accept?:string;//acts like file input accept
   allowedMimeType?:Array<string>;
   allowedFileType?:Array<string>;
@@ -345,12 +346,22 @@ export class FileUploader {
     };
   }
 
-  getFormData(){
+  getQuedFiles():File[]{
+    const rtn = []
+    for(let x=0; x < this.queue.length; ++x){
+      rtn.push( this.queue[x]._file )
+    }
+    return rtn
+  }
+
+  getFormData(files?:File[]){
+    files = files || this.getQuedFiles()
     const formData = new FormData()
     
-    for(let x=0; x < this.queue.length; ++x){
-      let filename = this.options.forceFilename || this.queue[x].file.name
-      formData.append(this.queue[x].alias, this.queue[x]._file, filename);
+    for(let x=0; x < files.length; ++x){
+      let filename = this.options.forceFilename || files[x].name
+      let alias = this.options.forcePostname || 'file'
+      formData.append(alias, files[x], filename);
     }
 
     return formData
@@ -562,7 +573,7 @@ export class FileUploader {
   }
 
   /** converts file-input file into base64 dataUri */
-  dataUrl(file:any, disallowObjectUrl?:any) {
+  dataUrl(file:any, disallowObjectUrl?:any):Promise<string>{
     if (!file) return Promise.resolve(file)
     
     if ((disallowObjectUrl && file.$ngfDataUrl != null) || (!disallowObjectUrl && file.$ngfBlobUrl != null)) {

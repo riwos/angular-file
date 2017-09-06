@@ -9,6 +9,7 @@ export class ngf {
   @Input() accept:string
   @Input() maxSize:number
   @Input() forceFilename:string
+  @Input() forcePostname:string
 
   @Input() fileDropDisabled=false
   @Input() selectable = false
@@ -30,6 +31,10 @@ export class ngf {
 
   constructor(public element:ElementRef){}
 
+  ngOnDestroy(){
+    delete this.fileElm//faster memory release of dom element
+  }
+
   ngOnInit(){
     if( this.selectable ){
       this.enableSelecting()
@@ -46,6 +51,10 @@ export class ngf {
 
     if( this.forceFilename ){
       this.uploader.options.forceFilename = this.forceFilename
+    }
+
+    if( this.forcePostname ){
+      this.uploader.options.forcePostname = this.forcePostname
     }
 
     //create reference to this class with one cycle delay to avoid ExpressionChangedAfterItHasBeenCheckedError
@@ -88,10 +97,11 @@ export class ngf {
     
     if(files.length!=valids.length){
       this.lastInvalids = this.uploader.getInvalidFiles(files)
-      this.lastInvalidsChange.emit(this.lastInvalids)
     }else{
       this.lastInvalids = null
     }
+    
+    this.lastInvalidsChange.emit(this.lastInvalids)
 
     if( valids.length ){
       this.uploader.addToQueue(valids);
@@ -102,7 +112,7 @@ export class ngf {
 
         if(this.fileUrlChange.observers.length){
           this.uploader.dataUrl( valids[0] )
-          .then( (url:any)=>this.fileUrlChange.emit(url) )
+          .then( url=>this.fileUrlChange.emit(url) )
         }
       }
     }

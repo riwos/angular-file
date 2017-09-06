@@ -23,7 +23,6 @@ export class ngfDrop extends ngf {
     if(!files.length)return
 
     this.stopEvent(event);
-    
     this.handleFiles(files)
   }
 

@@ -16,6 +16,9 @@ var ngf = /** @class */ (function () {
         this.fileChange = new core_1.EventEmitter();
         this.filesChange = new core_1.EventEmitter();
     }
+    ngf.prototype.ngOnDestroy = function () {
+        delete this.fileElm; //faster memory release of dom element
+    };
     ngf.prototype.ngOnInit = function () {
         var _this = this;
         if (this.selectable) {
@@ -30,6 +33,9 @@ var ngf = /** @class */ (function () {
         }
         if (this.forceFilename) {
             this.uploader.options.forceFilename = this.forceFilename;
+        }
+        if (this.forcePostname) {
+            this.uploader.options.forcePostname = this.forcePostname;
         }
         //create reference to this class with one cycle delay to avoid ExpressionChangedAfterItHasBeenCheckedError
         setTimeout(function () { return _this.refChange.emit(_this); }, 0);
@@ -66,11 +72,11 @@ var ngf = /** @class */ (function () {
         var valids = this.uploader.getValidFiles(files);
         if (files.length != valids.length) {
             this.lastInvalids = this.uploader.getInvalidFiles(files);
-            this.lastInvalidsChange.emit(this.lastInvalids);
         }
         else {
             this.lastInvalids = null;
         }
+        this.lastInvalidsChange.emit(this.lastInvalids);
         if (valids.length) {
             this.uploader.addToQueue(valids);
             this.filesChange.emit(this.files = valids);
@@ -147,6 +153,7 @@ var ngf = /** @class */ (function () {
         'accept': [{ type: core_1.Input },],
         'maxSize': [{ type: core_1.Input },],
         'forceFilename': [{ type: core_1.Input },],
+        'forcePostname': [{ type: core_1.Input },],
         'fileDropDisabled': [{ type: core_1.Input },],
         'selectable': [{ type: core_1.Input },],
         'ref': [{ type: core_1.Input, args: ['ngf',] },],

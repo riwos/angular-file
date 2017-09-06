@@ -13,6 +13,7 @@ export declare type FilterFunction = {
 };
 export interface FileUploaderOptions {
     forceFilename?: string;
+    forcePostname?: string;
     accept?: string;
     allowedMimeType?: Array<string>;
     allowedFileType?: Array<string>;
@@ -83,7 +84,8 @@ export declare class FileUploader {
     _onErrorItem(item: FileItem, response: string, status: number, headers: ParsedResponseHeaders): void;
     _onCompleteItem(item: FileItem, response: string, status: number, headers: ParsedResponseHeaders): void;
     protected _headersGetter(parsedHeaders: ParsedResponseHeaders): any;
-    getFormData(): FormData;
+    getQuedFiles(): File[];
+    getFormData(files?: File[]): FormData;
     protected _xhrTransport(item: FileItem): any;
     protected _getTotalProgress(value?: number): number;
     protected _getFilters(filters?: FilterFunction[] | string): FilterFunction[];
@@ -103,5 +105,5 @@ export declare class FileUploader {
     protected _onSuccessItem(item: FileItem, response: string, status: number, headers: ParsedResponseHeaders): void;
     protected _onCancelItem(item: FileItem, response: string, status: number, headers: ParsedResponseHeaders): void;
     /** converts file-input file into base64 dataUri */
-    dataUrl(file: any, disallowObjectUrl?: any): any;
+    dataUrl(file: any, disallowObjectUrl?: any): Promise<string>;
 }
