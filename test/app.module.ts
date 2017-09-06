@@ -10,8 +10,6 @@ export class AppComponent {}
     BrowserModule,
     ngfModule
   ],
-  declarations: [
-    AppComponent
-  ],
+  declarations: [ AppComponent ],
   bootstrap: [AppComponent]
 }) export class AppModule {}

@@ -7,10 +7,10 @@ import { ngf } from './ngf.directive';
 import { ngfSelect } from './ngfSelect.directive';
 
 const declarations = [
-  ngf,
   ngfDrop,
   ngfSelect,
-  ngfBackground
+  ngfBackground,
+  ngf
 ]
 
 @NgModule({

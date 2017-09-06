@@ -1,4 +1,4 @@
-import { Directive, EventEmitter, ElementRef, HostListener, Input, Output } from '@angular/core';
+import { Directive, EventEmitter, ElementRef, Input, Output } from '@angular/core';
 import { createInvisibleFileInputWrap, isFileInput, detectSwipe } from "./doc-event-help.functions"
 import { FileUploader } from './FileUploader.class';
 
@@ -7,8 +7,8 @@ export class ngf {
   fileElm:any
   @Input() fileDropDisabled=false
   @Input() selectable = false
-  @Input() ref:any
-  @Output() refChange:EventEmitter<ngf> = new EventEmitter()  
+  @Input('ngf') ref:any
+  @Output('ngfChange') refChange:EventEmitter<ngf> = new EventEmitter()  
   @Input() uploader:FileUploader = new FileUploader({});
   
   @Input() fileUrl:string//last file uploaded url

@@ -7,10 +7,10 @@ var ngfDrop_directive_1 = require("./ngfDrop.directive");
 var ngf_directive_1 = require("./ngf.directive");
 var ngfSelect_directive_1 = require("./ngfSelect.directive");
 var declarations = [
-    ngf_directive_1.ngf,
     ngfDrop_directive_1.ngfDrop,
     ngfSelect_directive_1.ngfSelect,
-    ngfBackground_directive_1.ngfBackground
+    ngfBackground_directive_1.ngfBackground,
+    ngf_directive_1.ngf
 ];
 var ngfModule = /** @class */ (function () {
     function ngfModule() {

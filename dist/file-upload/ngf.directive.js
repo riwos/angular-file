@@ -99,7 +99,7 @@ var ngf = /** @class */ (function () {
         }
     };
     ngf.decorators = [
-        { type: core_1.Directive, args: [{ selector: '[ngf]' },] },
+        { type: core_1.Directive, args: [{ selector: '[fngf]' },] },
     ];
     /** @nocollapse */
     ngf.ctorParameters = function () { return [
