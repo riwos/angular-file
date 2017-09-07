@@ -4,6 +4,11 @@ export const string = "<style>"+
 "\n    .nv-file-over { border: dotted 3px red; }"+
 "\n    .another-file-over-class { border: dotted 3px green; }"+
 "\n    html, body { height: 100%; }"+
+"\n    .previewIcon{"+
+"\n      width:100px;height:100px;"+
+"\n      background-size:cover;"+
+"\n      background-repeat:no-repeat;"+
+"\n    }"+
 "\n</style>"+
 "\n"+
 "\n<div class=\"container\">"+
@@ -50,23 +55,30 @@ export const string = "<style>"+
 "\n"+
 "\n            <table class=\"table\">"+
 "\n                <thead>"+
-"\n                <tr>"+
-"\n                    <th width=\"50%\">Name</th>"+
-"\n                    <th>Size</th>"+
-"\n                    <th>Progress</th>"+
-"\n                    <th>Status</th>"+
-"\n                    <th>Actions</th>"+
-"\n                </tr>"+
+"\n                  <tr>"+
+"\n                      <th>Name</th>"+
+"\n                      <th>Type</th>"+
+"\n                      <th>Size</th>"+
+"\n                      <th>Progress</th>"+
+"\n                      <th>Status</th>"+
+"\n                      <th>Actions</th>"+
+"\n                  </tr>"+
 "\n                </thead>"+
 "\n                <tbody>"+
-"\n                <tr *ngFor=\"let item of uploader.queue\">"+
+"\n                  <tr *ngFor=\"let item of uploader.queue\">"+
 "\n                    <td>"+
+"\n                      <div *ngIf=\"['image/png','image/jpeg'].indexOf(item._file.type)>=0\">"+
+"\n                        <div class=\"previewIcon\" [ngfBackground]=\"item._file\"></div>"+
+"\n                      </div>"+
 "\n                      <strong>{{ item?.file?.name }}</strong>"+
 "\n                    </td>"+
-"\n                    <td *ngIf=\"uploader.isHTML5\" nowrap>"+
-"\n                      {{ item?.file?.size/1024/1024 | number:'.2' }} MB"+
+"\n                    <td nowrap>"+
+"\n                      {{ item._file.type }}"+
 "\n                    </td>"+
-"\n                    <td *ngIf=\"uploader.isHTML5\">"+
+"\n                    <td nowrap>"+
+"\n                      {{ item._file?.size/1024/1024 | number:'.2' }} MB"+
+"\n                    </td>"+
+"\n                    <td>"+
 "\n                        <div class=\"progress\" style=\"margin-bottom: 0;\">"+
 "\n                            <div class=\"progress-bar\""+
 "\n                              role=\"progressbar\""+
@@ -107,10 +119,9 @@ export const string = "<style>"+
 "\n                          (click)=\"item.remove()\""+
 "\n                        >"+
 "\n                            <span class=\"glyphicon glyphicon-trash\"></span>"+
-"\n                            &nbsp;Remove"+
 "\n                        </button>"+
 "\n                    </td>"+
-"\n                </tr>"+
+"\n                  </tr>"+
 "\n                </tbody>"+
 "\n            </table>"+
 "\n"+

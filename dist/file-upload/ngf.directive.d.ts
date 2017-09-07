@@ -41,4 +41,5 @@ export declare class ngf {
     stopEvent(event: any): any;
     transferHasFiles(transfer: any): any;
     eventToFiles(event: Event): any;
+    applyExifRotations(files: File[]): Promise<File[]>;
 }

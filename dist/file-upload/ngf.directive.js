@@ -78,6 +78,11 @@ var ngf = /** @class */ (function () {
         }
         this.lastInvalidsChange.emit(this.lastInvalids);
         if (valids.length) {
+            /*
+            if(){
+              this.applyExifRotations(valids)
+            }
+            */
             this.uploader.addToQueue(valids);
             this.filesChange.emit(this.files = valids);
             if (valids.length) {
@@ -141,6 +146,18 @@ var ngf = /** @class */ (function () {
         if (transfer.items && transfer.items.length)
             return transfer.items;
         return [];
+    };
+    ngf.prototype.applyExifRotations = function (files) {
+        var _this = this;
+        var mapper = function (file, index) {
+            return _this.uploader.applyExifRotation(file)
+                .then(function (fixedFile) { return files[index] = fixedFile; });
+        };
+        var proms = [];
+        for (var x = files.length - 1; x >= 0; --x) {
+            proms[x] = mapper(files[x], x);
+        }
+        return Promise.all(proms);
     };
     ngf.decorators = [
         { type: core_1.Directive, args: [{ selector: '[ngf]' },] },

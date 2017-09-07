@@ -1,4 +1,4 @@
-import { Directive, EventEmitter, ElementRef, Input, Output } from '@angular/core';
+import { Directive, EventEmitter, ElementRef, Input, Output, HostListener } from '@angular/core';
 import { createInvisibleFileInputWrap, isFileInput, detectSwipe } from "./doc-event-help.functions"
 import { FileUploader } from './FileUploader.class';
 
@@ -78,6 +78,9 @@ export class ngf {
 
   enableSelecting(){
     let elm = this.element.nativeElement
+
+    if( isFileInput(elm) )return
+
     const bindedHandler = this.clickHandler.bind(this)
     elm.addEventListener('click', bindedHandler)
     elm.addEventListener('touchstart', bindedHandler)
@@ -104,6 +107,12 @@ export class ngf {
     this.lastInvalidsChange.emit(this.lastInvalids)
 
     if( valids.length ){
+      /*
+      if(){
+        this.applyExifRotations(valids)
+      }
+      */
+
       this.uploader.addToQueue(valids);
       this.filesChange.emit( this.files=valids );
       
@@ -133,13 +142,16 @@ export class ngf {
 
   clickHandler(evt:any){
     const elm = this.element.nativeElement
-    if (elm.getAttribute('disabled') || this.fileDropDisabled) return false;
+    if (elm.getAttribute('disabled') || this.fileDropDisabled){
+      return false;
+    }
     
     var r = detectSwipe(evt);
     // prevent the click if it is a swipe
     if (r != null) return r;
 
-    this.fileElm.click();
+    this.paramFileElm().dispatchEvent( new Event('click') );
+
 
     return false;
   }
@@ -149,7 +161,8 @@ export class ngf {
   }
 
   eventToTransfer(event:any):any {
-    return event.dataTransfer ? event.dataTransfer : event.originalEvent.dataTransfer;
+    if(event.dataTransfer)return event.dataTransfer
+    return  event.originalEvent ? event.originalEvent.dataTransfer : null
   }
 
   stopEvent(event:any):any {
@@ -176,5 +189,27 @@ export class ngf {
     if(transfer.files && transfer.files.length)return transfer.files
     if(transfer.items && transfer.items.length)return transfer.items
     return []
+  }
+
+  applyExifRotations(files:File[]):Promise<File[]>{
+    const mapper = (file:File,index:number):Promise<any>=>{
+      return this.uploader.applyExifRotation(file)
+      .then( fixedFile=>files[index]=fixedFile)
+    }
+    const proms = []
+    for(let x=files.length-1; x >= 0; --x){
+      proms[x] = mapper( files[x], x )
+    }
+    return Promise.all( proms )
+  }
+
+  @HostListener('change', ['$event'])
+  onChange(event:Event):void {
+    let files = this.element.nativeElement.files || this.eventToFiles(event)
+
+    if(!files.length)return
+
+    this.stopEvent(event);
+    this.handleFiles(files)
   }
 }

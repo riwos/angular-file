@@ -106,4 +106,5 @@ export declare class FileUploader {
     protected _onCancelItem(item: FileItem, response: string, status: number, headers: ParsedResponseHeaders): void;
     /** converts file-input file into base64 dataUri */
     dataUrl(file: any, disallowObjectUrl?: any): Promise<string>;
+    applyExifRotation(file: File): Promise<any>;
 }

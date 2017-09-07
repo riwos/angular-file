@@ -4,6 +4,11 @@
     .nv-file-over { border: dotted 3px red; }
     .another-file-over-class { border: dotted 3px green; }
     html, body { height: 100%; }
+    .previewIcon{
+      width:100px;height:100px;
+      background-size:cover;
+      background-repeat:no-repeat;
+    }
 </style>
 
 <div class="container">
@@ -50,23 +55,30 @@
 
             <table class="table">
                 <thead>
-                <tr>
-                    <th width="50%">Name</th>
-                    <th>Size</th>
-                    <th>Progress</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                </tr>
+                  <tr>
+                      <th>Name</th>
+                      <th>Type</th>
+                      <th>Size</th>
+                      <th>Progress</th>
+                      <th>Status</th>
+                      <th>Actions</th>
+                  </tr>
                 </thead>
                 <tbody>
-                <tr *ngFor="let item of uploader.queue">
+                  <tr *ngFor="let item of uploader.queue">
                     <td>
+                      <div *ngIf="['image/png','image/jpeg'].indexOf(item._file.type)>=0">
+                        <div class="previewIcon" [ngfBackground]="item._file"></div>
+                      </div>
                       <strong>{{ item?.file?.name }}</strong>
                     </td>
-                    <td *ngIf="uploader.isHTML5" nowrap>
-                      {{ item?.file?.size/1024/1024 | number:'.2' }} MB
+                    <td nowrap>
+                      {{ item._file.type }}
                     </td>
-                    <td *ngIf="uploader.isHTML5">
+                    <td nowrap>
+                      {{ item._file?.size/1024/1024 | number:'.2' }} MB
+                    </td>
+                    <td>
                         <div class="progress" style="margin-bottom: 0;">
                             <div class="progress-bar"
                               role="progressbar"
@@ -107,10 +119,9 @@
                           (click)="item.remove()"
                         >
                             <span class="glyphicon glyphicon-trash"></span>
-                            &nbsp;Remove
                         </button>
                     </td>
-                </tr>
+                  </tr>
                 </tbody>
             </table>
 
