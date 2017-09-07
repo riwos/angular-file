@@ -43,7 +43,7 @@ export class ngf {
     }
 
     if( this.multiple ){
-      this.uploader.options.multiple = this.multiple
+      //this.uploader.options.multiple = this.multiple
       this.paramFileElm().setAttribute('multiple', this.multiple)
     }
 

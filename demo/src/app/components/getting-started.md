@@ -6,5 +6,5 @@
 
 Install the components
 ```
-npm install angular-file --save
+npm install angular-file --save-dev
 ```

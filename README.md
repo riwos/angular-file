@@ -1,5 +1,10 @@
 # angular-file [![npm version](https://badge.fury.io/js/angular-file.svg)](http://badge.fury.io/js/angular-file)[![npm downloads](https://img.shields.io/npm/dm/angular-file.svg)](https://npmjs.org/angular-file)[![slack](https://ngx-slack.herokuapp.com/badge.svg)](https://ngx-slack.herokuapp.com)
-Easy to use Angular2 directives for files upload ([demo](http://ackerapple.github.io/angular-file/))
+
+> ! UNDER CONSTRUCTION !
+>> Forked from outdated package: [ng2-file-upload](https://www.npmjs.com/package/ng2-file-upload)
+>> This package works. Just needs more documentation, bells, and whistles
+
+Easy to use Angular directives for files upload ([demo](http://ackerapple.github.io/angular-file/))
 
 [![Build Status](https://travis-ci.org/ackerapple/angular-file.svg?branch=development)](https://travis-ci.org/ackerapple/angular-file)
 [![Dependency Status](https://david-dm.org/ackerapple/angular-file.svg)](https://david-dm.org/ackerapple/angular-file)
@@ -8,8 +13,10 @@ Easy to use Angular2 directives for files upload ([demo](http://ackerapple.githu
   <summary>Table of Contents</summary>
 
 - [Quick Start](#quick-start)
+- [Examples](#examples)
 - [API](#api)
 - [Troubleshooting](#troubleshooting)
+- [License](#license)
 
 </details>
 
@@ -17,7 +24,7 @@ Easy to use Angular2 directives for files upload ([demo](http://ackerapple.githu
 
 1. A recommended way to install ***angular-file*** is through [npm](https://www.npmjs.com/search?q=angular-file) package manager using the following command:
 
-  `npm i angular-file --save`
+  `npm i angular-file --save-dev`
 
   Alternatively, you can [download it in a ZIP file](https://github.com/ackerapple/angular-file/archive/master.zip).
 
@@ -27,9 +34,10 @@ Easy to use Angular2 directives for files upload ([demo](http://ackerapple.githu
 3. More information regarding using of ***angular-file*** is located in
   [demo](http://ackerapple.github.io/angular-file/) and [demo sources](https://github.com/ackerapple/angular-file/tree/master/demo).
 
-# Examples
+## Examples
 
-## Select Files
+### Select Files
+Examples of how to allow file selection
 
 Multiple
 ```html
@@ -50,12 +58,16 @@ Element
 
 Images Only
 ```html
-<button ngfSelect accept="image/*" multiple="1">
+<button ngfSelect [(file)]="userFile" accept="image/*" multiple="1">
   Tap to Select
 </button>
+<div [ngfBackground]="userFile"
+  style="background-size:cover;background-repeat:no-repeat;width:50px;height:50px"
+></div>
 ```
 
-## Drop Files
+### Drop Files
+Examples of how to allow file drag/drop
 
 Basic
 ```html
@@ -81,9 +93,9 @@ Combo Drop Select
 </div>
 ```
 
-# API
+## API
 
-## ngf Directive
+### ngf Directive
 ```javascript
 [multiple]:string
 [accept]:string
@@ -101,7 +113,7 @@ Combo Drop Select
 [(files)]:File[]
 ```
 
-## ngfDrop Directive
+### ngfDrop Directive
 This directive **extends** `ngf`
 ```javascript
 (fileOver):EventEmitter<any> = new EventEmitter()
@@ -109,25 +121,29 @@ This directive **extends** `ngf`
 [(invalidDrag)] = false
 ```
 
-## ngfSelect Directive
+### ngfSelect Directive
 This directive **extends** `ngf`
 ```javascript
 [selectable] = true
 ```
 
-## FileUploader
+### ngfBackground Directive
+```javascript
+[ngfBackground]:File
+```
+
+### FileUploader
 ```typescript
 import { FileUploader } from "angular-file";
 ```
 
-### Properties
+#### Properties
 - `url` - URL of File Uploader's route
 - `authToken` - Auth token that will be applied as 'Authorization' header during file send.
 - `disableMultipart` - If 'true', disable using a multipart form for file upload and instead stream the file. Some APIs (e.g. Amazon S3) may expect the file to be streamed rather than sent via a form. Defaults to false.
 - `itemAlias` - item alias (form name redefenition)
 
-# Troubleshooting
-
+## Troubleshooting
 Please follow this guidelines when reporting bugs and feature requests:
 
 1. Use [GitHub Issues](https://github.com/ackerapple/angular-file/issues) board to report bugs and feature requests (not our email address)
@@ -135,6 +151,5 @@ Please follow this guidelines when reporting bugs and feature requests:
 
 Thanks for understanding!
 
-### License
-
+## License
 The MIT License (see the [LICENSE](https://github.com/ackerapple/angular-file/blob/master/LICENSE) file for the full text)

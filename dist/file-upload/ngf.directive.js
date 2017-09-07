@@ -25,6 +25,10 @@ var ngf = /** @class */ (function () {
         if (this.selectable) {
             this.enableSelecting();
         }
+        if (this.multiple) {
+            //this.uploader.options.multiple = this.multiple
+            this.paramFileElm().setAttribute('multiple', this.multiple);
+        }
         if (this.accept) {
             this.uploader.options.accept = this.accept;
             this.paramFileElm().setAttribute('accept', this.accept);
@@ -121,7 +125,9 @@ var ngf = /** @class */ (function () {
         // prevent the click if it is a swipe
         if (r != null)
             return r;
-        this.paramFileElm().dispatchEvent(new Event('click'));
+        var fileElm = this.paramFileElm();
+        fileElm.click();
+        //fileElm.dispatchEvent( new Event('click') );
         return false;
     };
     ngf.prototype.isEmptyAfterSelection = function () {
@@ -185,6 +191,7 @@ var ngf = /** @class */ (function () {
         { type: core_1.ElementRef, },
     ]; };
     ngf.propDecorators = {
+        'multiple': [{ type: core_1.Input },],
         'accept': [{ type: core_1.Input },],
         'maxSize': [{ type: core_1.Input },],
         'forceFilename': [{ type: core_1.Input },],

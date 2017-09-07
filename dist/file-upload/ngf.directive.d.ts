@@ -3,6 +3,7 @@ import { FileUploader } from './FileUploader.class';
 export declare class ngf {
     element: ElementRef;
     fileElm: any;
+    multiple: string;
     accept: string;
     maxSize: number;
     forceFilename: string;
