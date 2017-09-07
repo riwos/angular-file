@@ -1,0 +1,26 @@
+{
+  "main": "index.js",
+  "version": "0.0.0",
+  "description": "Angular file upload directives",
+  "module": "index.js",
+  "typings": "index.d.ts",
+  "keywords": [
+    "angular2",
+    "bootstrap",
+    "angularjs",
+    "twitter-bootstrap",
+    "file-upload",
+    "angular-file-upload"
+  ],
+  "author": "Acker Apple",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/ackerapple/angular-file.git"
+  },
+  "name": "angular-file",
+  "peerDependencies": {
+    "@angular/common": "^2.3.1 || >=4.0.0",
+    "@angular/core": "^2.3.1 || >=4.0.0"
+  }
+}
