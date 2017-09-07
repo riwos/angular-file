@@ -6,10 +6,12 @@ import { FileUploader } from './FileUploader.class';
 export class ngf {
   fileElm:any
 
+  @Input() multiple:string
   @Input() accept:string
   @Input() maxSize:number
   @Input() forceFilename:string
   @Input() forcePostname:string
+  @Input() ngfFixOrientation:boolean = true
 
   @Input() fileDropDisabled=false
   @Input() selectable = false
@@ -38,6 +40,11 @@ export class ngf {
   ngOnInit(){
     if( this.selectable ){
       this.enableSelecting()
+    }
+
+    if( this.multiple ){
+      this.uploader.options.multiple = this.multiple
+      this.paramFileElm().setAttribute('multiple', this.multiple)
     }
 
     if( this.accept ){
@@ -107,27 +114,30 @@ export class ngf {
     this.lastInvalidsChange.emit(this.lastInvalids)
 
     if( valids.length ){
-      /*
-      if(){
+      if( this.ngfFixOrientation ){
         this.applyExifRotations(valids)
-      }
-      */
-
-      this.uploader.addToQueue(valids);
-      this.filesChange.emit( this.files=valids );
-      
-      if(valids.length){
-        this.fileChange.emit( this.file=valids[0] )
-
-        if(this.fileUrlChange.observers.length){
-          this.uploader.dataUrl( valids[0] )
-          .then( url=>this.fileUrlChange.emit(url) )
-        }
+        .then( fixedFiles=>this.que(fixedFiles) )
+      }else{
+        this.que(valids)
       }
     }
 
     if (this.isEmptyAfterSelection()) {
       this.element.nativeElement.value = '';
+    }
+  }
+
+  que(files:File[]){
+    this.uploader.addToQueue(files);
+    this.filesChange.emit( this.files=files );
+    
+    if(files.length){
+      this.fileChange.emit( this.file=files[0] )
+
+      if(this.fileUrlChange.observers.length){
+        this.uploader.dataUrl( files[0] )
+        .then( url=>this.fileUrlChange.emit(url) )
+      }
     }
   }
 
@@ -150,7 +160,9 @@ export class ngf {
     // prevent the click if it is a swipe
     if (r != null) return r;
 
-    this.paramFileElm().dispatchEvent( new Event('click') );
+    const fileElm = this.paramFileElm()
+    fileElm.click()
+    //fileElm.dispatchEvent( new Event('click') );
 
 
     return false;
@@ -194,13 +206,14 @@ export class ngf {
   applyExifRotations(files:File[]):Promise<File[]>{
     const mapper = (file:File,index:number):Promise<any>=>{
       return this.uploader.applyExifRotation(file)
-      .then( fixedFile=>files[index]=fixedFile)
+      .then( fixedFile=>files.splice(index, 1, fixedFile) )
     }
+
     const proms = []
     for(let x=files.length-1; x >= 0; --x){
       proms[x] = mapper( files[x], x )
     }
-    return Promise.all( proms )
+    return Promise.all( proms ).then( ()=>files )
   }
 
   @HostListener('change', ['$event'])

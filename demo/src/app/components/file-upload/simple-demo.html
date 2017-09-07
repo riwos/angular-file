@@ -20,37 +20,56 @@
     </div>
 
     <div class="row">
-
         <div class="col-md-3">
-
-            <h3>Select files</h3>
-
-            <div ngfDrop
-                 [ngClass]="{'nv-file-over': hasBaseDropZoneOver}"
-                 (fileOver)="fileOverBase($event)"
-                 [uploader]="uploader"
-                 class="well my-drop-zone">
-                Base drop zone
-            </div>
-
-            <div ngfDrop
-                 [ngClass]="{'another-file-over-class': hasAnotherDropZoneOver}"
-                 (fileOver)="fileOverAnother($event)"
-                 [uploader]="uploader"
-                 class="well my-drop-zone">
-                Another drop zone
-            </div>
+            <h3>Select Files</h3>
 
             Multiple
             <input type="file" ngfSelect [uploader]="uploader" multiple  />
             <br/>
             Single
             <input type="file" ngfSelect [uploader]="uploader" />
+            <br/>
+            Element
+            <div ngfSelect multiple="1"
+              [uploader]="uploader"
+              class="well my-drop-zone"
+              style="border-style:groove;padding:0.5em;text-align:center;"
+            >
+              Tap to Select
+            </div>
+            Images Only
+            <div ngfSelect accept="image/*" multiple="1"
+              [uploader]="uploader"
+              class="well my-drop-zone"
+              style="border-style:groove;padding:0.5em;text-align:center;"
+            >
+              Tap to Select
+            </div>
+
+            <h3>Drop Files</h3>
+
+            <div ngfDrop
+              [ngClass]="{'nv-file-over': hasBaseDropZoneOver}"
+              (fileOver)="fileOverBase($event)"
+              [uploader]="uploader"
+              class="well my-drop-zone"
+            >
+                Base drop zone
+            </div>
+
+            <div ngfDrop multiple="1" selectable="1"
+              [ngClass]="{'another-file-over-class': validComboDrag}"
+              [(validDrag)]="validComboDrag"
+              [uploader]="uploader"
+              class="well my-drop-zone"
+            >
+              Combo drop/select zone
+            </div>
         </div>
 
         <div class="col-md-9" style="margin-bottom: 40px">
 
-            <h3>Upload queue</h3>
+            <h3>Upload Queue</h3>
             <p>Queue length: {{ uploader?.queue?.length }}</p>
 
             <table class="table">

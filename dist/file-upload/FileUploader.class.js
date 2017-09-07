@@ -124,10 +124,14 @@ var FileUploader = /** @class */ (function () {
         }
         this.progress = 0;
     };
+    //most likely deprecated
+    FileUploader.prototype.isHtml5Mode = function () {
+        return this.options.isHTML5 || this.options.isHTML5 == null;
+    };
     FileUploader.prototype.uploadItem = function (value) {
         var index = this.getIndexOfItem(value);
         var item = this.queue[index];
-        var transport = this.options.isHTML5 ? '_xhrTransport' : '_iframeTransport';
+        var transport = this.isHtml5Mode() ? '_xhrTransport' : '_iframeTransport';
         item._prepareToUploading();
         if (this.isUploading) {
             return;
@@ -138,7 +142,7 @@ var FileUploader = /** @class */ (function () {
     FileUploader.prototype.cancelItem = function (value) {
         var index = this.getIndexOfItem(value);
         var item = this.queue[index];
-        var prop = this.options.isHTML5 ? item._xhr : item._form;
+        var prop = this.isHtml5Mode() ? item._xhr : item._form;
         if (item && item.isUploading) {
             prop.abort();
         }
@@ -217,10 +221,12 @@ var FileUploader = /** @class */ (function () {
         return void 0;
     };
     FileUploader.prototype._acceptFilter = function (item) {
+        if (!this.options.accept)
+            return true;
         var acceptReg = '^((' + this.options.accept.replace(/\*/g, '.*');
         acceptReg = acceptReg.replace(/,/g, ')|(') + '))$';
         var regx = new RegExp(acceptReg, 'gi');
-        return !(this.options.accept && item.type.search(regx) === -1);
+        return item.type.search(regx) >= 0;
     };
     FileUploader.prototype._mimeTypeFilter = function (item) {
         return !(this.options.allowedMimeType && this.options.allowedMimeType.indexOf(item.type) === -1);
@@ -461,106 +467,112 @@ var FileUploader = /** @class */ (function () {
     };
     /** converts file-input file into base64 dataUri */
     FileUploader.prototype.dataUrl = function (file, disallowObjectUrl) {
-        if (!file)
-            return Promise.resolve(file);
-        if ((disallowObjectUrl && file.$ngfDataUrl != null) || (!disallowObjectUrl && file.$ngfBlobUrl != null)) {
-            return Promise.resolve(disallowObjectUrl ? file.$ngfDataUrl : file.$ngfBlobUrl);
-        }
-        var p = disallowObjectUrl ? file.$$ngfDataUrlPromise : file.$$ngfBlobUrlPromise;
-        if (p)
-            return p;
-        var win = getWindow();
-        var deferred = Promise.resolve();
-        if (win.FileReader && file &&
-            (!win.FileAPI || navigator.userAgent.indexOf('MSIE 8') === -1 || file.size < 20000) &&
-            (!win.FileAPI || navigator.userAgent.indexOf('MSIE 9') === -1 || file.size < 4000000)) {
-            //prefer URL.createObjectURL for handling refrences to files of all sizes
-            //since it doesn´t build a large string in memory
-            var URL = win.URL || win.webkitURL;
-            if (FileReader) {
-                deferred = new Promise(function (res, rej) {
-                    var fileReader = new FileReader();
-                    fileReader.onload = function (event) {
-                        file.$ngfDataUrl = event.target.result;
-                        delete file.$ngfDataUrl;
-                        res(event.target.result);
-                    };
-                    fileReader.onerror = function (e) {
-                        file.$ngfDataUrl = '';
-                        rej(e);
-                    };
-                    fileReader.readAsDataURL(file);
-                });
-            }
-            else {
-                var url;
-                try {
-                    url = URL.createObjectURL(file);
-                }
-                catch (e) {
-                    return Promise.reject(e);
-                }
-                deferred = deferred.then(function () { return url; });
-                file.$ngfBlobUrl = url;
-            }
-        }
-        else {
-            file[disallowObjectUrl ? '$ngfDataUrl' : '$ngfBlobUrl'] = '';
-            return Promise.reject(new Error('Browser does not support window.FileReader, window.FileReader, or window.FileAPI')); //deferred.reject();
-        }
-        if (disallowObjectUrl) {
-            p = file.$$ngfDataUrlPromise = deferred;
-        }
-        else {
-            p = file.$$ngfBlobUrlPromise = deferred;
-        }
-        p = p.then(function (x) {
-            delete file[disallowObjectUrl ? '$$ngfDataUrlPromise' : '$$ngfBlobUrlPromise'];
-            return x;
-        });
-        return p;
+        return dataUrl(file, disallowObjectUrl);
     };
     FileUploader.prototype.applyExifRotation = function (file) {
         if (file.type.indexOf('image/jpeg') !== 0) {
             return Promise.resolve(file);
         }
-        return new Promise(function (res, rej) {
-            readOrientation(file)
-                .then(function (result) {
-                if (result.orientation < 2 || result.orientation > 8) {
-                    return res(file);
-                }
-                return this.dataUrl(file, true)
-                    .then(function (url) {
-                    var canvas = document.createElement('canvas');
-                    var img = document.createElement('img');
-                    img.onload = function () {
-                        try {
-                            canvas.width = result.orientation > 4 ? img.height : img.width;
-                            canvas.height = result.orientation > 4 ? img.width : img.height;
-                            var ctx = canvas.getContext('2d');
-                            applyTransform(ctx, result.orientation, img.width, img.height);
-                            ctx.drawImage(img, 0, 0);
-                            var dataUrl = canvas.toDataURL(file.type || 'image/WebP', 0.934);
-                            var base = arrayBufferToBase64(result.fixedArrayBuffer);
-                            dataUrl = restoreExif(base, dataUrl);
-                            var blob = dataUrltoBlob(dataUrl, file.name);
-                            res(blob);
-                        }
-                        catch (e) {
-                            return rej(e);
-                        }
-                    };
-                    img.onerror = rej;
-                    img.src = url;
-                });
-            })
-                .catch(rej);
+        return readOrientation(file)
+            .then(function (result) {
+            if (result.orientation < 2 || result.orientation > 8) {
+                return file;
+            }
+            return fixFileOrientationByMeta(file, result);
         });
     };
     return FileUploader;
 }());
 exports.FileUploader = FileUploader;
+/** converts file-input file into base64 dataUri */
+function dataUrl(file, disallowObjectUrl) {
+    if (!file)
+        return Promise.resolve(file);
+    if ((disallowObjectUrl && file.$ngfDataUrl != null) || (!disallowObjectUrl && file.$ngfBlobUrl != null)) {
+        return Promise.resolve(disallowObjectUrl ? file.$ngfDataUrl : file.$ngfBlobUrl);
+    }
+    var p = disallowObjectUrl ? file.$$ngfDataUrlPromise : file.$$ngfBlobUrlPromise;
+    if (p)
+        return p;
+    var win = getWindow();
+    var deferred = Promise.resolve();
+    if (win.FileReader && file &&
+        (!win.FileAPI || navigator.userAgent.indexOf('MSIE 8') === -1 || file.size < 20000) &&
+        (!win.FileAPI || navigator.userAgent.indexOf('MSIE 9') === -1 || file.size < 4000000)) {
+        //prefer URL.createObjectURL for handling refrences to files of all sizes
+        //since it doesn´t build a large string in memory
+        var URL = win.URL || win.webkitURL;
+        if (FileReader) {
+            deferred = new Promise(function (res, rej) {
+                var fileReader = new FileReader();
+                fileReader.onload = function (event) {
+                    file.$ngfDataUrl = event.target.result;
+                    delete file.$ngfDataUrl;
+                    res(event.target.result);
+                };
+                fileReader.onerror = function (e) {
+                    file.$ngfDataUrl = '';
+                    rej(e);
+                };
+                fileReader.readAsDataURL(file);
+            });
+        }
+        else {
+            var url;
+            try {
+                url = URL.createObjectURL(file);
+            }
+            catch (e) {
+                return Promise.reject(e);
+            }
+            deferred = deferred.then(function () { return url; });
+            file.$ngfBlobUrl = url;
+        }
+    }
+    else {
+        file[disallowObjectUrl ? '$ngfDataUrl' : '$ngfBlobUrl'] = '';
+        return Promise.reject(new Error('Browser does not support window.FileReader, window.FileReader, or window.FileAPI')); //deferred.reject();
+    }
+    if (disallowObjectUrl) {
+        p = file.$$ngfDataUrlPromise = deferred;
+    }
+    else {
+        p = file.$$ngfBlobUrlPromise = deferred;
+    }
+    p = p.then(function (x) {
+        delete file[disallowObjectUrl ? '$$ngfDataUrlPromise' : '$$ngfBlobUrlPromise'];
+        return x;
+    });
+    return p;
+}
+function fixFileOrientationByMeta(file, result) {
+    return dataUrl(file, true)
+        .then(function (url) {
+        var canvas = document.createElement('canvas');
+        var img = document.createElement('img');
+        return new Promise(function (res, rej) {
+            img.onload = function () {
+                try {
+                    canvas.width = result.orientation > 4 ? img.height : img.width;
+                    canvas.height = result.orientation > 4 ? img.width : img.height;
+                    var ctx = canvas.getContext('2d');
+                    applyTransform(ctx, result.orientation, img.width, img.height);
+                    ctx.drawImage(img, 0, 0);
+                    var dataUrl = canvas.toDataURL(file.type || 'image/WebP', 0.934);
+                    var base = arrayBufferToBase64(result.fixedArrayBuffer);
+                    dataUrl = restoreExif(base, dataUrl);
+                    var blob = dataUrltoBlob(dataUrl, file.name);
+                    res(blob);
+                }
+                catch (e) {
+                    return rej(e);
+                }
+            };
+            img.onerror = rej;
+            img.src = url;
+        });
+    });
+}
 function arrayBufferToBase64(buffer) {
     var binary = '';
     var bytes = new Uint8Array(buffer);

@@ -25560,6 +25560,7 @@ var FileUploader_class_1 = __webpack_require__(81);
 var ngf = /** @class */ (function () {
     function ngf(element) {
         this.element = element;
+        this.ngfFixOrientation = true;
         this.fileDropDisabled = false;
         this.selectable = false;
         this.refChange = new core_1.EventEmitter();
@@ -25577,6 +25578,10 @@ var ngf = /** @class */ (function () {
         var _this = this;
         if (this.selectable) {
             this.enableSelecting();
+        }
+        if (this.multiple) {
+            this.uploader.options.multiple = this.multiple;
+            this.paramFileElm().setAttribute('multiple', this.multiple);
         }
         if (this.accept) {
             this.uploader.options.accept = this.accept;
@@ -25634,23 +25639,28 @@ var ngf = /** @class */ (function () {
         }
         this.lastInvalidsChange.emit(this.lastInvalids);
         if (valids.length) {
-            /*
-            if(){
-              this.applyExifRotations(valids)
+            if (this.ngfFixOrientation) {
+                this.applyExifRotations(valids)
+                    .then(function (fixedFiles) { return _this.que(fixedFiles); });
             }
-            */
-            this.uploader.addToQueue(valids);
-            this.filesChange.emit(this.files = valids);
-            if (valids.length) {
-                this.fileChange.emit(this.file = valids[0]);
-                if (this.fileUrlChange.observers.length) {
-                    this.uploader.dataUrl(valids[0])
-                        .then(function (url) { return _this.fileUrlChange.emit(url); });
-                }
+            else {
+                this.que(valids);
             }
         }
         if (this.isEmptyAfterSelection()) {
             this.element.nativeElement.value = '';
+        }
+    };
+    ngf.prototype.que = function (files) {
+        var _this = this;
+        this.uploader.addToQueue(files);
+        this.filesChange.emit(this.files = files);
+        if (files.length) {
+            this.fileChange.emit(this.file = files[0]);
+            if (this.fileUrlChange.observers.length) {
+                this.uploader.dataUrl(files[0])
+                    .then(function (url) { return _this.fileUrlChange.emit(url); });
+            }
         }
     };
     ngf.prototype.changeFn = function (event) {
@@ -25669,7 +25679,9 @@ var ngf = /** @class */ (function () {
         // prevent the click if it is a swipe
         if (r != null)
             return r;
-        this.paramFileElm().dispatchEvent(new Event('click'));
+        var fileElm = this.paramFileElm();
+        fileElm.click();
+        //fileElm.dispatchEvent( new Event('click') );
         return false;
     };
     ngf.prototype.isEmptyAfterSelection = function () {
@@ -25710,13 +25722,13 @@ var ngf = /** @class */ (function () {
         var _this = this;
         var mapper = function (file, index) {
             return _this.uploader.applyExifRotation(file)
-                .then(function (fixedFile) { return files[index] = fixedFile; });
+                .then(function (fixedFile) { return files.splice(index, 1, fixedFile); });
         };
         var proms = [];
         for (var x = files.length - 1; x >= 0; --x) {
             proms[x] = mapper(files[x], x);
         }
-        return Promise.all(proms);
+        return Promise.all(proms).then(function () { return files; });
     };
     ngf.prototype.onChange = function (event) {
         var files = this.element.nativeElement.files || this.eventToFiles(event);
@@ -25725,6 +25737,10 @@ var ngf = /** @class */ (function () {
         this.stopEvent(event);
         this.handleFiles(files);
     };
+    __decorate([
+        core_1.Input(),
+        __metadata("design:type", String)
+    ], ngf.prototype, "multiple", void 0);
     __decorate([
         core_1.Input(),
         __metadata("design:type", String)
@@ -25741,6 +25757,10 @@ var ngf = /** @class */ (function () {
         core_1.Input(),
         __metadata("design:type", String)
     ], ngf.prototype, "forcePostname", void 0);
+    __decorate([
+        core_1.Input(),
+        __metadata("design:type", Boolean)
+    ], ngf.prototype, "ngfFixOrientation", void 0);
     __decorate([
         core_1.Input(),
         __metadata("design:type", Object)
@@ -27193,106 +27213,112 @@ var FileUploader = /** @class */ (function () {
     };
     /** converts file-input file into base64 dataUri */
     FileUploader.prototype.dataUrl = function (file, disallowObjectUrl) {
-        if (!file)
-            return Promise.resolve(file);
-        if ((disallowObjectUrl && file.$ngfDataUrl != null) || (!disallowObjectUrl && file.$ngfBlobUrl != null)) {
-            return Promise.resolve(disallowObjectUrl ? file.$ngfDataUrl : file.$ngfBlobUrl);
-        }
-        var p = disallowObjectUrl ? file.$$ngfDataUrlPromise : file.$$ngfBlobUrlPromise;
-        if (p)
-            return p;
-        var win = getWindow();
-        var deferred = Promise.resolve();
-        if (win.FileReader && file &&
-            (!win.FileAPI || navigator.userAgent.indexOf('MSIE 8') === -1 || file.size < 20000) &&
-            (!win.FileAPI || navigator.userAgent.indexOf('MSIE 9') === -1 || file.size < 4000000)) {
-            //prefer URL.createObjectURL for handling refrences to files of all sizes
-            //since it doesn´t build a large string in memory
-            var URL = win.URL || win.webkitURL;
-            if (FileReader) {
-                deferred = new Promise(function (res, rej) {
-                    var fileReader = new FileReader();
-                    fileReader.onload = function (event) {
-                        file.$ngfDataUrl = event.target.result;
-                        delete file.$ngfDataUrl;
-                        res(event.target.result);
-                    };
-                    fileReader.onerror = function (e) {
-                        file.$ngfDataUrl = '';
-                        rej(e);
-                    };
-                    fileReader.readAsDataURL(file);
-                });
-            }
-            else {
-                var url;
-                try {
-                    url = URL.createObjectURL(file);
-                }
-                catch (e) {
-                    return Promise.reject(e);
-                }
-                deferred = deferred.then(function () { return url; });
-                file.$ngfBlobUrl = url;
-            }
-        }
-        else {
-            file[disallowObjectUrl ? '$ngfDataUrl' : '$ngfBlobUrl'] = '';
-            return Promise.reject(new Error('Browser does not support window.FileReader, window.FileReader, or window.FileAPI')); //deferred.reject();
-        }
-        if (disallowObjectUrl) {
-            p = file.$$ngfDataUrlPromise = deferred;
-        }
-        else {
-            p = file.$$ngfBlobUrlPromise = deferred;
-        }
-        p = p.then(function (x) {
-            delete file[disallowObjectUrl ? '$$ngfDataUrlPromise' : '$$ngfBlobUrlPromise'];
-            return x;
-        });
-        return p;
+        return dataUrl(file, disallowObjectUrl);
     };
     FileUploader.prototype.applyExifRotation = function (file) {
         if (file.type.indexOf('image/jpeg') !== 0) {
             return Promise.resolve(file);
         }
-        return new Promise(function (res, rej) {
-            readOrientation(file)
-                .then(function (result) {
-                if (result.orientation < 2 || result.orientation > 8) {
-                    return res(file);
-                }
-                return this.dataUrl(file, true)
-                    .then(function (url) {
-                    var canvas = document.createElement('canvas');
-                    var img = document.createElement('img');
-                    img.onload = function () {
-                        try {
-                            canvas.width = result.orientation > 4 ? img.height : img.width;
-                            canvas.height = result.orientation > 4 ? img.width : img.height;
-                            var ctx = canvas.getContext('2d');
-                            applyTransform(ctx, result.orientation, img.width, img.height);
-                            ctx.drawImage(img, 0, 0);
-                            var dataUrl = canvas.toDataURL(file.type || 'image/WebP', 0.934);
-                            var base = arrayBufferToBase64(result.fixedArrayBuffer);
-                            dataUrl = restoreExif(base, dataUrl);
-                            var blob = dataUrltoBlob(dataUrl, file.name);
-                            res(blob);
-                        }
-                        catch (e) {
-                            return rej(e);
-                        }
-                    };
-                    img.onerror = rej;
-                    img.src = url;
-                });
-            })
-                .catch(rej);
+        return readOrientation(file)
+            .then(function (result) {
+            if (result.orientation < 2 || result.orientation > 8) {
+                return file;
+            }
+            return fixFileOrientationByMeta(file, result);
         });
     };
     return FileUploader;
 }());
 exports.FileUploader = FileUploader;
+/** converts file-input file into base64 dataUri */
+function dataUrl(file, disallowObjectUrl) {
+    if (!file)
+        return Promise.resolve(file);
+    if ((disallowObjectUrl && file.$ngfDataUrl != null) || (!disallowObjectUrl && file.$ngfBlobUrl != null)) {
+        return Promise.resolve(disallowObjectUrl ? file.$ngfDataUrl : file.$ngfBlobUrl);
+    }
+    var p = disallowObjectUrl ? file.$$ngfDataUrlPromise : file.$$ngfBlobUrlPromise;
+    if (p)
+        return p;
+    var win = getWindow();
+    var deferred = Promise.resolve();
+    if (win.FileReader && file &&
+        (!win.FileAPI || navigator.userAgent.indexOf('MSIE 8') === -1 || file.size < 20000) &&
+        (!win.FileAPI || navigator.userAgent.indexOf('MSIE 9') === -1 || file.size < 4000000)) {
+        //prefer URL.createObjectURL for handling refrences to files of all sizes
+        //since it doesn´t build a large string in memory
+        var URL = win.URL || win.webkitURL;
+        if (FileReader) {
+            deferred = new Promise(function (res, rej) {
+                var fileReader = new FileReader();
+                fileReader.onload = function (event) {
+                    file.$ngfDataUrl = event.target.result;
+                    delete file.$ngfDataUrl;
+                    res(event.target.result);
+                };
+                fileReader.onerror = function (e) {
+                    file.$ngfDataUrl = '';
+                    rej(e);
+                };
+                fileReader.readAsDataURL(file);
+            });
+        }
+        else {
+            var url;
+            try {
+                url = URL.createObjectURL(file);
+            }
+            catch (e) {
+                return Promise.reject(e);
+            }
+            deferred = deferred.then(function () { return url; });
+            file.$ngfBlobUrl = url;
+        }
+    }
+    else {
+        file[disallowObjectUrl ? '$ngfDataUrl' : '$ngfBlobUrl'] = '';
+        return Promise.reject(new Error('Browser does not support window.FileReader, window.FileReader, or window.FileAPI')); //deferred.reject();
+    }
+    if (disallowObjectUrl) {
+        p = file.$$ngfDataUrlPromise = deferred;
+    }
+    else {
+        p = file.$$ngfBlobUrlPromise = deferred;
+    }
+    p = p.then(function (x) {
+        delete file[disallowObjectUrl ? '$$ngfDataUrlPromise' : '$$ngfBlobUrlPromise'];
+        return x;
+    });
+    return p;
+}
+function fixFileOrientationByMeta(file, result) {
+    return dataUrl(file, true)
+        .then(function (url) {
+        var canvas = document.createElement('canvas');
+        var img = document.createElement('img');
+        return new Promise(function (res, rej) {
+            img.onload = function () {
+                try {
+                    canvas.width = result.orientation > 4 ? img.height : img.width;
+                    canvas.height = result.orientation > 4 ? img.width : img.height;
+                    var ctx = canvas.getContext('2d');
+                    applyTransform(ctx, result.orientation, img.width, img.height);
+                    ctx.drawImage(img, 0, 0);
+                    var dataUrl = canvas.toDataURL(file.type || 'image/WebP', 0.934);
+                    var base = arrayBufferToBase64(result.fixedArrayBuffer);
+                    dataUrl = restoreExif(base, dataUrl);
+                    var blob = dataUrltoBlob(dataUrl, file.name);
+                    res(blob);
+                }
+                catch (e) {
+                    return rej(e);
+                }
+            };
+            img.onerror = rej;
+            img.src = url;
+        });
+    });
+}
 function arrayBufferToBase64(buffer) {
     var binary = '';
     var bytes = new Uint8Array(buffer);
@@ -29514,37 +29540,56 @@ exports.string = "<style>" +
     "\n    </div>" +
     "\n" +
     "\n    <div class=\"row\">" +
-    "\n" +
     "\n        <div class=\"col-md-3\">" +
-    "\n" +
-    "\n            <h3>Select files</h3>" +
-    "\n" +
-    "\n            <div ngfDrop" +
-    "\n                 [ngClass]=\"{'nv-file-over': hasBaseDropZoneOver}\"" +
-    "\n                 (fileOver)=\"fileOverBase($event)\"" +
-    "\n                 [uploader]=\"uploader\"" +
-    "\n                 class=\"well my-drop-zone\">" +
-    "\n                Base drop zone" +
-    "\n            </div>" +
-    "\n" +
-    "\n            <div ngfDrop" +
-    "\n                 [ngClass]=\"{'another-file-over-class': hasAnotherDropZoneOver}\"" +
-    "\n                 (fileOver)=\"fileOverAnother($event)\"" +
-    "\n                 [uploader]=\"uploader\"" +
-    "\n                 class=\"well my-drop-zone\">" +
-    "\n                Another drop zone" +
-    "\n            </div>" +
+    "\n            <h3>Select Files</h3>" +
     "\n" +
     "\n            Multiple" +
     "\n            <input type=\"file\" ngfSelect [uploader]=\"uploader\" multiple  />" +
     "\n            <br/>" +
     "\n            Single" +
     "\n            <input type=\"file\" ngfSelect [uploader]=\"uploader\" />" +
+    "\n            <br/>" +
+    "\n            Element" +
+    "\n            <div ngfSelect multiple=\"1\"" +
+    "\n              [uploader]=\"uploader\"" +
+    "\n              class=\"well my-drop-zone\"" +
+    "\n              style=\"border-style:groove;padding:0.5em;text-align:center;\"" +
+    "\n            >" +
+    "\n              Tap to Select" +
+    "\n            </div>" +
+    "\n            Images Only" +
+    "\n            <div ngfSelect accept=\"image/*\" multiple=\"1\"" +
+    "\n              [uploader]=\"uploader\"" +
+    "\n              class=\"well my-drop-zone\"" +
+    "\n              style=\"border-style:groove;padding:0.5em;text-align:center;\"" +
+    "\n            >" +
+    "\n              Tap to Select" +
+    "\n            </div>" +
+    "\n" +
+    "\n            <h3>Drop Files</h3>" +
+    "\n" +
+    "\n            <div ngfDrop" +
+    "\n              [ngClass]=\"{'nv-file-over': hasBaseDropZoneOver}\"" +
+    "\n              (fileOver)=\"fileOverBase($event)\"" +
+    "\n              [uploader]=\"uploader\"" +
+    "\n              class=\"well my-drop-zone\"" +
+    "\n            >" +
+    "\n                Base drop zone" +
+    "\n            </div>" +
+    "\n" +
+    "\n            <div ngfDrop multiple=\"1\" selectable=\"1\"" +
+    "\n              [ngClass]=\"{'another-file-over-class': validComboDrag}\"" +
+    "\n              [(validDrag)]=\"validComboDrag\"" +
+    "\n              [uploader]=\"uploader\"" +
+    "\n              class=\"well my-drop-zone\"" +
+    "\n            >" +
+    "\n              Combo drop/select zone" +
+    "\n            </div>" +
     "\n        </div>" +
     "\n" +
     "\n        <div class=\"col-md-9\" style=\"margin-bottom: 40px\">" +
     "\n" +
-    "\n            <h3>Upload queue</h3>" +
+    "\n            <h3>Upload Queue</h3>" +
     "\n            <p>Queue length: {{ uploader?.queue?.length }}</p>" +
     "\n" +
     "\n            <table class=\"table\">" +
@@ -64919,30 +64964,7 @@ exports.string = "<h1 id=\"getting-started\">Getting started</h1>" +
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.string = "" +
-    "\n<main class=\"bd-pageheader\">" +
-    "\n  <div class=\"container\">" +
-    "\n    <h1>angular-file</h1>" +
-    "\n    <p>The Angular2 File Upload directives</p><a class=\"btn btn-primary\" href=\"https://github.com/valor-software/angular-file\">View on GitHub</a>" +
-    "\n    <div class=\"row\">" +
-    "\n      <div class=\"col-lg-1\">" +
-    "\n        <iframe src=\"https://ghbtns.com/github-btn.html?user=valor-software&amp;repo=angular-file&amp;type=star&amp;count=true\" frameborder=\"0\" scrolling=\"0\" width=\"170px\" height=\"20px\"></iframe>" +
-    "\n      </div>" +
-    "\n      <div class=\"col-lg-1\">" +
-    "\n        <iframe src=\"https://ghbtns.com/github-btn.html?user=valor-software&amp;repo=angular-file&amp;type=fork&amp;count=true\" frameborder=\"0\" scrolling=\"0\" width=\"170px\" height=\"20px\"></iframe>" +
-    "\n      </div>" +
-    "\n    </div>" +
-    "\n  </div>" +
-    "\n</main>" +
-    "\n<div class=\"container\">" +
-    "\n  <section id=\"getting-started\" [innerHTML]=\"gettingStarted|safeHtml\"></section>" +
-    "\n  <file-upload-section class=\"col-md-12\"></file-upload-section>" +
-    "\n</div>" +
-    "\n<footer class=\"footer\">" +
-    "\n  <div class=\"container\">" +
-    "\n    <p class=\"text-muted text-center\"><a href=\"https://github.com/valor-software/angular-file\">angular-file</a>&nbsp;is maintained by&nbsp;<a href=\"https://github.com/valor-software\">valor-software</a>.</p>" +
-    "\n  </div>" +
-    "\n</footer>";
+exports.string = "<main class=\"bd-pageheader\"><div class=\"container\"><h1>angular-file</h1><p>The Angular2 File Upload directives</p><a class=\"btn btn-primary\" href=\"https://github.com/ackerapple/angular-file\">View on GitHub</a><div class=\"row\"><div class=\"col-lg-1\"><iframe src=\"https://ghbtns.com/github-btn.html?user=ackerapple&amp;repo=angular-file&amp;type=star&amp;count=true\" frameborder=\"0\" scrolling=\"0\" width=\"170px\" height=\"20px\"></iframe></div><div class=\"col-lg-1\"><iframe src=\"https://ghbtns.com/github-btn.html?user=ackerapple&amp;repo=angular-file&amp;type=fork&amp;count=true\" frameborder=\"0\" scrolling=\"0\" width=\"170px\" height=\"20px\"></iframe></div></div></div></main><div class=\"container\"><section id=\"getting-started\" [innerHTML]=\"gettingStarted|safeHtml\"></section><file-upload-section class=\"col-md-12\"></file-upload-section></div><footer class=\"footer\"><div class=\"container\"><p class=\"text-muted text-center\"><a href=\"https://github.com/ackerapple/angular-file\">angular-file</a>&nbsp;is maintained by&nbsp;<a href=\"https://github.com/ackerapple\">ackerapple</a>.</p></div></footer>";
 
 
 /***/ }),
@@ -72012,37 +72034,26 @@ exports.string = "<section [attr.id]=\"name.toLowerCase()\"><div class=\"row\"><
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.string = "<h3 id=\"usage\">Usage</h3>" +
-    "\n<pre><code class=\"lang-typescript\">import { FileSelectDirective, FileDropDirective, FileUploader } from &#39;angular-file/angular-file&#39;;" +
+exports.string = "<h3 id=\"module-usage\">Module Usage</h3>" +
+    "\n<pre><code class=\"lang-typescript\">import { NgModule } from &#39;@angular/core&#39;;" +
+    "\nimport { ngfModule } from &quot;angular-file&quot;;" +
+    "\n" +
+    "\n@NgModule({imports: [ ngfModule ]})" +
+    "\nexport class AppModule {}" +
     "\n</code></pre>" +
     "\n<h3 id=\"annotations\">Annotations</h3>" +
-    "\n<pre><code class=\"lang-typescript\">// class FileSelectDirective" +
+    "\n<pre><code class=\"lang-typescript\">@Directive({ selector: &#39;[ngf]&#39; })" +
     "\n@Directive({ selector: &#39;[ngfSelect]&#39; })" +
-    "\n</code></pre>" +
-    "\n<pre><code class=\"lang-typescript\">// class FileDropDirective" +
     "\n@Directive({ selector: &#39;[ngfDrop]&#39; })" +
     "\n</code></pre>" +
-    "\n<h2 id=\"fileselect-api\">FileSelect API</h2>" +
+    "\n<h2 id=\"fileuploader-api\">FileUploader API</h2>" +
+    "\n<pre><code class=\"lang-typescript\">import { FileUploader } from &quot;angular-file&quot;;" +
+    "\n</code></pre>" +
     "\n<h3 id=\"properties\">Properties</h3>" +
     "\n<ul>" +
-    "\n<li><p><code>uploader</code> - (<code>FileUploader</code>) - uploader object. See using in <a href=\"https://github.com/valor-software/angular-file/blob/master/demo/components/file-upload/simple-demo.ts\">demo</a></p>" +
-    "\n<p>Parameters supported by this object:</p>" +
-    "\n</li>" +
-    "\n<li><p><code>url</code> - URL of File Uploader&#39;s route</p>" +
-    "\n</li>" +
+    "\n<li><code>url</code> - URL of File Uploader&#39;s route</li>" +
     "\n<li><code>authToken</code> - auth token that will be applied as &#39;Authorization&#39; header during file send.</li>" +
     "\n<li><code>disableMultipart</code> - If &#39;true&#39;, disable using a multipart form for file upload and instead stream the file. Some APIs (e.g. Amazon S3) may expect the file to be streamed rather than sent via a form. Defaults to false.</li>" +
-    "\n</ul>" +
-    "\n<h2 id=\"filedrop-api\">FileDrop API</h2>" +
-    "\n<h3 id=\"properties\">Properties</h3>" +
-    "\n<ul>" +
-    "\n<li><code>uploader</code> - (<code>FileUploader</code>) - uploader object. See using in <a href=\"https://github.com/valor-software/angular-file/blob/master/demo/components/file-upload/simple-demo.ts\">demo</a></li>" +
-    "\n</ul>" +
-    "\n<h3 id=\"events\">Events</h3>" +
-    "\n<ul>" +
-    "\n<li><code>fileOver</code> - it fires during &#39;over&#39; and &#39;out&#39; events for Drop Area; returns <code>boolean</code>: <code>true</code> if file is over Drop Area, <code>false</code> in case of out." +
-    "\nSee using in <a href=\"https://github.com/valor-software/angular-file/blob/master/demo/components/file-upload/simple-demo.ts\">ts demo</a> and" +
-    "\n<a href=\"https://github.com/valor-software/angular-file/blob/master/demo/components/file-upload/simple-demo.html\">html demo</a></li>" +
     "\n</ul>" +
     "\n";
 
@@ -72100,7 +72111,7 @@ exports.string = "/*eslint-disable*/" +
     "\nvar upload = multer({dest: DIR});" +
     "\n" +
     "\napp.use(function (req, res, next) {" +
-    "\n  res.setHeader('Access-Control-Allow-Origin', 'http://valor-software.github.io');" +
+    "\n  res.setHeader('Access-Control-Allow-Origin', 'http://ackerapple.github.io');" +
     "\n  res.setHeader('Access-Control-Allow-Methods', 'POST');" +
     "\n  res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');" +
     "\n  res.setHeader('Access-Control-Allow-Credentials', true);" +

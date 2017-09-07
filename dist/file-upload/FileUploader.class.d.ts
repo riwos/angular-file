@@ -55,6 +55,7 @@ export declare class FileUploader {
     addToQueue(files: File[], options?: FileUploaderOptions, filters?: FilterFunction[] | string): void;
     removeFromQueue(value: FileItem): void;
     clearQueue(): void;
+    isHtml5Mode(): boolean;
     uploadItem(value: FileItem): void;
     cancelItem(value: FileItem): void;
     uploadAll(): void;

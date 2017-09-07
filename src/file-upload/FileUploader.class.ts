@@ -580,65 +580,7 @@ export class FileUploader {
 
   /** converts file-input file into base64 dataUri */
   dataUrl(file:any, disallowObjectUrl?:any):Promise<string>{
-    if (!file) return Promise.resolve(file)
-    
-    if ((disallowObjectUrl && file.$ngfDataUrl != null) || (!disallowObjectUrl && file.$ngfBlobUrl != null)) {
-      return Promise.resolve( disallowObjectUrl ? file.$ngfDataUrl : file.$ngfBlobUrl )
-    }
-
-    var p = disallowObjectUrl ? file.$$ngfDataUrlPromise : file.$$ngfBlobUrlPromise;
-    if (p) return p;
-
-    const win = getWindow()
-    let deferred:Promise<any> = Promise.resolve()
-    if (win.FileReader && file &&
-      (!win.FileAPI || navigator.userAgent.indexOf('MSIE 8') === -1 || file.size < 20000) &&
-      (!win.FileAPI || navigator.userAgent.indexOf('MSIE 9') === -1 || file.size < 4000000)) {
-      //prefer URL.createObjectURL for handling refrences to files of all sizes
-      //since it doesn´t build a large string in memory
-      var URL = win.URL || win.webkitURL;
-      if (FileReader) {
-        deferred = new Promise((res,rej)=>{
-          var fileReader = new FileReader();
-          fileReader.onload = function (event:any) {
-            file.$ngfDataUrl = event.target.result;
-            delete file.$ngfDataUrl;
-            res( event.target.result )
-          };
-          fileReader.onerror = function (e) {
-            file.$ngfDataUrl = '';
-            rej(e)
-          };
-          fileReader.readAsDataURL(file);
-        })
-      } else {
-        var url:any;
-        try {
-          url = URL.createObjectURL(file);
-        } catch (e) {
-          return Promise.reject(e);
-        }
-        
-        deferred = deferred.then( ()=>url );
-        file.$ngfBlobUrl = url;
-      }
-    } else {
-      file[disallowObjectUrl ? '$ngfDataUrl' : '$ngfBlobUrl'] = '';
-      return Promise.reject( new Error('Browser does not support window.FileReader, window.FileReader, or window.FileAPI') )//deferred.reject();
-    }
-
-    if (disallowObjectUrl) {
-      p = file.$$ngfDataUrlPromise = deferred;
-    } else {
-      p = file.$$ngfBlobUrlPromise = deferred;
-    }
-
-    p = p.then((x:any)=>{
-      delete file[disallowObjectUrl ? '$$ngfDataUrlPromise' : '$$ngfBlobUrlPromise'];
-      return x
-    })
-
-    return p;
+    return dataUrl(file,disallowObjectUrl)
   }
 
   applyExifRotation(file:File):Promise<any>{
@@ -646,40 +588,108 @@ export class FileUploader {
       return Promise.resolve(file);
     }
 
-    return new Promise((res,rej)=>{
-      readOrientation(file)
-      .then(function (result:orientationMeta) {
-        if (result.orientation < 2 || result.orientation > 8) {
-          return res(file);
-        }
-        return this.dataUrl(file, true)
-        .then(function (url) {
-          var canvas = document.createElement('canvas');
-          var img = document.createElement('img');
-
-          img.onload = function () {
-            try {
-              canvas.width = result.orientation > 4 ? img.height : img.width;
-              canvas.height = result.orientation > 4 ? img.width : img.height;
-              var ctx = canvas.getContext('2d');
-              applyTransform(ctx, result.orientation, img.width, img.height);
-              ctx.drawImage(img, 0, 0);
-              var dataUrl = canvas.toDataURL(file.type || 'image/WebP', 0.934);
-              const base = arrayBufferToBase64(result.fixedArrayBuffer)
-              dataUrl = restoreExif(base, dataUrl);
-              var blob = dataUrltoBlob(dataUrl, file.name);
-              res(blob);
-            } catch (e) {
-              return rej(e);
-            }
-          };
-          img.onerror = rej;
-          img.src = url;
-        })
-      })
-      .catch( rej )
+    return readOrientation(file)
+    .then((result:orientationMeta)=>{
+      if (result.orientation < 2 || result.orientation > 8) {
+        return file
+      }
+      
+      return fixFileOrientationByMeta(file,result)
     })
   }
+}
+
+
+/** converts file-input file into base64 dataUri */
+function dataUrl(file:any, disallowObjectUrl?:any):Promise<string>{
+  if (!file) return Promise.resolve(file)
+  
+  if ((disallowObjectUrl && file.$ngfDataUrl != null) || (!disallowObjectUrl && file.$ngfBlobUrl != null)) {
+    return Promise.resolve( disallowObjectUrl ? file.$ngfDataUrl : file.$ngfBlobUrl )
+  }
+
+  var p = disallowObjectUrl ? file.$$ngfDataUrlPromise : file.$$ngfBlobUrlPromise;
+  if (p) return p;
+
+  const win = getWindow()
+  let deferred:Promise<any> = Promise.resolve()
+  if (win.FileReader && file &&
+    (!win.FileAPI || navigator.userAgent.indexOf('MSIE 8') === -1 || file.size < 20000) &&
+    (!win.FileAPI || navigator.userAgent.indexOf('MSIE 9') === -1 || file.size < 4000000)) {
+    //prefer URL.createObjectURL for handling refrences to files of all sizes
+    //since it doesn´t build a large string in memory
+    var URL = win.URL || win.webkitURL;
+    if (FileReader) {
+      deferred = new Promise((res,rej)=>{
+        var fileReader = new FileReader();
+        fileReader.onload = function (event:any) {
+          file.$ngfDataUrl = event.target.result;
+          delete file.$ngfDataUrl;
+          res( event.target.result )
+        };
+        fileReader.onerror = function (e) {
+          file.$ngfDataUrl = '';
+          rej(e)
+        };
+        fileReader.readAsDataURL(file);
+      })
+    } else {
+      var url:any;
+      try {
+        url = URL.createObjectURL(file);
+      } catch (e) {
+        return Promise.reject(e);
+      }
+      
+      deferred = deferred.then( ()=>url );
+      file.$ngfBlobUrl = url;
+    }
+  } else {
+    file[disallowObjectUrl ? '$ngfDataUrl' : '$ngfBlobUrl'] = '';
+    return Promise.reject( new Error('Browser does not support window.FileReader, window.FileReader, or window.FileAPI') )//deferred.reject();
+  }
+
+  if (disallowObjectUrl) {
+    p = file.$$ngfDataUrlPromise = deferred;
+  } else {
+    p = file.$$ngfBlobUrlPromise = deferred;
+  }
+
+  p = p.then((x:any)=>{
+    delete file[disallowObjectUrl ? '$$ngfDataUrlPromise' : '$$ngfBlobUrlPromise'];
+    return x
+  })
+
+  return p;
+}
+
+function fixFileOrientationByMeta(file:File, result:orientationMeta){
+  return dataUrl(file, true)
+  .then(url=>{
+    var canvas = document.createElement('canvas');
+    var img = document.createElement('img');
+
+    return new Promise(function(res,rej){
+      img.onload = function () {
+        try {
+          canvas.width = result.orientation > 4 ? img.height : img.width;
+          canvas.height = result.orientation > 4 ? img.width : img.height;
+          var ctx = canvas.getContext('2d');
+          applyTransform(ctx, result.orientation, img.width, img.height);
+          ctx.drawImage(img, 0, 0);
+          var dataUrl = canvas.toDataURL(file.type || 'image/WebP', 0.934);
+          const base = arrayBufferToBase64(result.fixedArrayBuffer)
+          dataUrl = restoreExif(base, dataUrl);
+          var blob = dataUrltoBlob(dataUrl, file.name);
+          res(blob);
+        } catch (e) {
+          return rej(e);
+        }
+      };
+      img.onerror = rej;
+      img.src = url;    
+    })
+  })
 }
 
 function arrayBufferToBase64(buffer) {

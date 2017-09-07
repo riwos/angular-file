@@ -20,37 +20,56 @@ export const string = "<style>"+
 "\n    </div>"+
 "\n"+
 "\n    <div class=\"row\">"+
-"\n"+
 "\n        <div class=\"col-md-3\">"+
-"\n"+
-"\n            <h3>Select files</h3>"+
-"\n"+
-"\n            <div ngfDrop"+
-"\n                 [ngClass]=\"{'nv-file-over': hasBaseDropZoneOver}\""+
-"\n                 (fileOver)=\"fileOverBase($event)\""+
-"\n                 [uploader]=\"uploader\""+
-"\n                 class=\"well my-drop-zone\">"+
-"\n                Base drop zone"+
-"\n            </div>"+
-"\n"+
-"\n            <div ngfDrop"+
-"\n                 [ngClass]=\"{'another-file-over-class': hasAnotherDropZoneOver}\""+
-"\n                 (fileOver)=\"fileOverAnother($event)\""+
-"\n                 [uploader]=\"uploader\""+
-"\n                 class=\"well my-drop-zone\">"+
-"\n                Another drop zone"+
-"\n            </div>"+
+"\n            <h3>Select Files</h3>"+
 "\n"+
 "\n            Multiple"+
 "\n            <input type=\"file\" ngfSelect [uploader]=\"uploader\" multiple  />"+
 "\n            <br/>"+
 "\n            Single"+
 "\n            <input type=\"file\" ngfSelect [uploader]=\"uploader\" />"+
+"\n            <br/>"+
+"\n            Element"+
+"\n            <div ngfSelect multiple=\"1\""+
+"\n              [uploader]=\"uploader\""+
+"\n              class=\"well my-drop-zone\""+
+"\n              style=\"border-style:groove;padding:0.5em;text-align:center;\""+
+"\n            >"+
+"\n              Tap to Select"+
+"\n            </div>"+
+"\n            Images Only"+
+"\n            <div ngfSelect accept=\"image/*\" multiple=\"1\""+
+"\n              [uploader]=\"uploader\""+
+"\n              class=\"well my-drop-zone\""+
+"\n              style=\"border-style:groove;padding:0.5em;text-align:center;\""+
+"\n            >"+
+"\n              Tap to Select"+
+"\n            </div>"+
+"\n"+
+"\n            <h3>Drop Files</h3>"+
+"\n"+
+"\n            <div ngfDrop"+
+"\n              [ngClass]=\"{'nv-file-over': hasBaseDropZoneOver}\""+
+"\n              (fileOver)=\"fileOverBase($event)\""+
+"\n              [uploader]=\"uploader\""+
+"\n              class=\"well my-drop-zone\""+
+"\n            >"+
+"\n                Base drop zone"+
+"\n            </div>"+
+"\n"+
+"\n            <div ngfDrop multiple=\"1\" selectable=\"1\""+
+"\n              [ngClass]=\"{'another-file-over-class': validComboDrag}\""+
+"\n              [(validDrag)]=\"validComboDrag\""+
+"\n              [uploader]=\"uploader\""+
+"\n              class=\"well my-drop-zone\""+
+"\n            >"+
+"\n              Combo drop/select zone"+
+"\n            </div>"+
 "\n        </div>"+
 "\n"+
 "\n        <div class=\"col-md-9\" style=\"margin-bottom: 40px\">"+
 "\n"+
-"\n            <h3>Upload queue</h3>"+
+"\n            <h3>Upload Queue</h3>"+
 "\n            <p>Queue length: {{ uploader?.queue?.length }}</p>"+
 "\n"+
 "\n            <table class=\"table\">"+

@@ -7,6 +7,7 @@ export declare class ngf {
     maxSize: number;
     forceFilename: string;
     forcePostname: string;
+    ngfFixOrientation: boolean;
     fileDropDisabled: boolean;
     selectable: boolean;
     ref: ngf;
@@ -34,6 +35,7 @@ export declare class ngf {
     getOptions(): any;
     getFilters(): any;
     handleFiles(files: File[]): void;
+    que(files: File[]): void;
     changeFn(event: any): void;
     clickHandler(evt: any): boolean;
     isEmptyAfterSelection(): boolean;
@@ -42,4 +44,5 @@ export declare class ngf {
     transferHasFiles(transfer: any): any;
     eventToFiles(event: Event): any;
     applyExifRotations(files: File[]): Promise<File[]>;
+    onChange(event: Event): void;
 }

@@ -6,6 +6,7 @@ var FileUploader_class_1 = require("./FileUploader.class");
 var ngf = /** @class */ (function () {
     function ngf(element) {
         this.element = element;
+        this.ngfFixOrientation = true;
         this.fileDropDisabled = false;
         this.selectable = false;
         this.refChange = new core_1.EventEmitter();
@@ -56,6 +57,8 @@ var ngf = /** @class */ (function () {
     };
     ngf.prototype.enableSelecting = function () {
         var elm = this.element.nativeElement;
+        if (doc_event_help_functions_1.isFileInput(elm))
+            return;
         var bindedHandler = this.clickHandler.bind(this);
         elm.addEventListener('click', bindedHandler);
         elm.addEventListener('touchstart', bindedHandler);
@@ -78,23 +81,28 @@ var ngf = /** @class */ (function () {
         }
         this.lastInvalidsChange.emit(this.lastInvalids);
         if (valids.length) {
-            /*
-            if(){
-              this.applyExifRotations(valids)
+            if (this.ngfFixOrientation) {
+                this.applyExifRotations(valids)
+                    .then(function (fixedFiles) { return _this.que(fixedFiles); });
             }
-            */
-            this.uploader.addToQueue(valids);
-            this.filesChange.emit(this.files = valids);
-            if (valids.length) {
-                this.fileChange.emit(this.file = valids[0]);
-                if (this.fileUrlChange.observers.length) {
-                    this.uploader.dataUrl(valids[0])
-                        .then(function (url) { return _this.fileUrlChange.emit(url); });
-                }
+            else {
+                this.que(valids);
             }
         }
         if (this.isEmptyAfterSelection()) {
             this.element.nativeElement.value = '';
+        }
+    };
+    ngf.prototype.que = function (files) {
+        var _this = this;
+        this.uploader.addToQueue(files);
+        this.filesChange.emit(this.files = files);
+        if (files.length) {
+            this.fileChange.emit(this.file = files[0]);
+            if (this.fileUrlChange.observers.length) {
+                this.uploader.dataUrl(files[0])
+                    .then(function (url) { return _this.fileUrlChange.emit(url); });
+            }
         }
     };
     ngf.prototype.changeFn = function (event) {
@@ -106,20 +114,23 @@ var ngf = /** @class */ (function () {
     };
     ngf.prototype.clickHandler = function (evt) {
         var elm = this.element.nativeElement;
-        if (elm.getAttribute('disabled') || this.fileDropDisabled)
+        if (elm.getAttribute('disabled') || this.fileDropDisabled) {
             return false;
+        }
         var r = doc_event_help_functions_1.detectSwipe(evt);
         // prevent the click if it is a swipe
         if (r != null)
             return r;
-        this.fileElm.click();
+        this.paramFileElm().dispatchEvent(new Event('click'));
         return false;
     };
     ngf.prototype.isEmptyAfterSelection = function () {
         return !!this.element.nativeElement.attributes.multiple;
     };
     ngf.prototype.eventToTransfer = function (event) {
-        return event.dataTransfer ? event.dataTransfer : event.originalEvent.dataTransfer;
+        if (event.dataTransfer)
+            return event.dataTransfer;
+        return event.originalEvent ? event.originalEvent.dataTransfer : null;
     };
     ngf.prototype.stopEvent = function (event) {
         event.preventDefault();
@@ -151,13 +162,20 @@ var ngf = /** @class */ (function () {
         var _this = this;
         var mapper = function (file, index) {
             return _this.uploader.applyExifRotation(file)
-                .then(function (fixedFile) { return files[index] = fixedFile; });
+                .then(function (fixedFile) { return files.splice(index, 1, fixedFile); });
         };
         var proms = [];
         for (var x = files.length - 1; x >= 0; --x) {
             proms[x] = mapper(files[x], x);
         }
-        return Promise.all(proms);
+        return Promise.all(proms).then(function () { return files; });
+    };
+    ngf.prototype.onChange = function (event) {
+        var files = this.element.nativeElement.files || this.eventToFiles(event);
+        if (!files.length)
+            return;
+        this.stopEvent(event);
+        this.handleFiles(files);
     };
     ngf.decorators = [
         { type: core_1.Directive, args: [{ selector: '[ngf]' },] },
@@ -171,6 +189,7 @@ var ngf = /** @class */ (function () {
         'maxSize': [{ type: core_1.Input },],
         'forceFilename': [{ type: core_1.Input },],
         'forcePostname': [{ type: core_1.Input },],
+        'ngfFixOrientation': [{ type: core_1.Input },],
         'fileDropDisabled': [{ type: core_1.Input },],
         'selectable': [{ type: core_1.Input },],
         'ref': [{ type: core_1.Input, args: ['ngf',] },],
@@ -184,6 +203,7 @@ var ngf = /** @class */ (function () {
         'fileChange': [{ type: core_1.Output },],
         'files': [{ type: core_1.Input },],
         'filesChange': [{ type: core_1.Output },],
+        'onChange': [{ type: core_1.HostListener, args: ['change', ['$event'],] },],
     };
     return ngf;
 }());

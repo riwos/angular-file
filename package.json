@@ -36,16 +36,16 @@
     "ng-file-upload",
     "angular-file-upload"
   ],
-  "author": "Vyacheslav Chub <vyacheslav.chub@valor-software.com>",
+  "author": "Vyacheslav Chub <vyacheslav.chub@ackerapple.com>",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/valor-software/angular-file.git"
+    "url": "git+ssh://git@github.com/ackerapple/angular-file.git"
   },
   "bugs": {
-    "url": "https://github.com/valor-software/angular-file/issues"
+    "url": "https://github.com/ackerapple/angular-file/issues"
   },
-  "homepage": "https://github.com/valor-software/angular-file#readme",
+  "homepage": "https://github.com/ackerapple/angular-file#readme",
   "peerDependencies": {
     "@angular/common": "^2.3.1 || >=4.0.0",
     "@angular/core": "^2.3.1 || >=4.0.0"
@@ -97,7 +97,7 @@
   "contributors": [
     {
       "name": "Vyacheslav Chub",
-      "email": "vyacheslav.chub@valor-software.com",
+      "email": "vyacheslav.chub@ackerapple.com",
       "url": "https://github.com/buchslava"
     },
     {

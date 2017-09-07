@@ -9,7 +9,7 @@ export const string = "/*eslint-disable*/"+
 "\nvar upload = multer({dest: DIR});"+
 "\n"+
 "\napp.use(function (req, res, next) {"+
-"\n  res.setHeader('Access-Control-Allow-Origin', 'http://valor-software.github.io');"+
+"\n  res.setHeader('Access-Control-Allow-Origin', 'http://ackerapple.github.io');"+
 "\n  res.setHeader('Access-Control-Allow-Methods', 'POST');"+
 "\n  res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');"+
 "\n  res.setHeader('Access-Control-Allow-Credentials', true);"+
