@@ -16,7 +16,7 @@ export class ContainerComponent {}
 
 describe('ngfDrop', () => {
   let fixture: ComponentFixture<ContainerComponent>;
-  let component
+  let component:any
   
   beforeEach(async(() => {
     TestBed.configureTestingModule({

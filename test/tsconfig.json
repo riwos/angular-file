@@ -9,7 +9,7 @@
       "jasmine"
     ],
     "mapRoot": "./",
-    "noImplicitAny": true,
+    "noImplicitAny": false,
     "suppressImplicitAnyIndexErrors": true,
     "module": "es6",
     "moduleResolution": "node",
@@ -19,5 +19,8 @@
     "typeRoots": [
       "../node_modules/@types"
     ]
-  }
+  },
+  "include": [
+    "**/*.spec.ts"
+  ]
 }

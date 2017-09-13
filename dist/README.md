@@ -28,8 +28,8 @@ Easy to use Angular directives for files upload ([demo](http://ackerapple.github
 
   Alternatively, you can [download it in a ZIP file](https://github.com/ackerapple/angular-file/archive/master.zip).
 
-2. Currently `angular-file` contains two directives: `ng2-file-select` and `ng2-file-drop`. `ng2-file-select` is used for 'file-input' field of form and
-  `ng2-file-drop` is used for area that will be used for dropping of file or files.
+2. Currently `angular-file` contains two directives: `ngfSelect` and `ngFileDrop`. `ngfSelect` is used for 'file-input' field of form and
+  `ngfDrop` is used for area that will be used for dropping of file or files.
 
 3. More information regarding using of ***angular-file*** is located in
   [demo](http://ackerapple.github.io/angular-file/) and [demo sources](https://github.com/ackerapple/angular-file/tree/master/demo).

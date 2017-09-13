@@ -21,12 +21,19 @@ declare var require: any;
 
 __karma__.loaded = Function.prototype;
 
+/*var __spec_files__ = [
+  'src/file-upload/ngfDrop.directive.spec.ts'
+]*/
+
+
 getTestBed().initTestEnvironment(
   BrowserDynamicTestingModule,
   platformBrowserDynamicTesting()
 );
 
-let context2 = require.context('../src', true, /\.spec\.ts/);
-context2.keys().map(context2);
-// Finally, start Karma to run the tests.
+//grab all test files
+const context = require.context('../src', true);
+//require all test files. HINT: Typically requires tsconfig.json to have: {"include": ["**/*.spec.ts"]}
+context.keys().map(filepath=>context(filepath))
+
 __karma__.start();

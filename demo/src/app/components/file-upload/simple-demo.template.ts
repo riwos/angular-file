@@ -10,15 +10,7 @@ export const string = "<style>"+
 "\n      background-repeat:no-repeat;"+
 "\n    }"+
 "\n</style>"+
-"\n"+
 "\n<div class=\"container\">"+
-"\n"+
-"\n    <div class=\"navbar navbar-default\">"+
-"\n        <div class=\"navbar-header\">"+
-"\n            <a class=\"navbar-brand\" href>Angular2 File Upload</a>"+
-"\n        </div>"+
-"\n    </div>"+
-"\n"+
 "\n    <div class=\"row\">"+
 "\n        <div class=\"col-md-3\">"+
 "\n            <h3>Select Files</h3>"+

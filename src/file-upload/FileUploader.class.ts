@@ -692,7 +692,7 @@ function fixFileOrientationByMeta(file:File, result:orientationMeta){
   })
 }
 
-function arrayBufferToBase64(buffer) {
+function arrayBufferToBase64(buffer:any) {
   var binary = '';
   var bytes = new Uint8Array(buffer);
   var len = bytes.byteLength;
@@ -702,12 +702,12 @@ function arrayBufferToBase64(buffer) {
   return window.btoa(binary);
 }
 
-function restoreExif(orig, resized) {
+function restoreExif(orig:any, resized:any) {
   var ExifRestorer:any = {
     KEY_STR:'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/='
   }
 
-  ExifRestorer.encode64 = function (input) {
+  ExifRestorer.encode64 = function (input:any) {
     var output = '',
       chr1, chr2, chr3:any = '',
       enc1, enc2, enc3, enc4:any = '',
@@ -741,7 +741,7 @@ function restoreExif(orig, resized) {
     return output;
   };
 
-  ExifRestorer.restore = function (origFileBase64, resizedFileBase64) {
+  ExifRestorer.restore = function (origFileBase64:any, resizedFileBase64:any) {
     if (origFileBase64.match('data:image/jpeg;base64,')) {
       origFileBase64 = origFileBase64.replace('data:image/jpeg;base64,', '');
     }
@@ -755,14 +755,13 @@ function restoreExif(orig, resized) {
   };
 
 
-  ExifRestorer.exifManipulation = function (resizedFileBase64, segments) {
+  ExifRestorer.exifManipulation = function (resizedFileBase64:any, segments:any) {
     var exifArray = this.getExifArray(segments),
       newImageArray = this.insertExif(resizedFileBase64, exifArray);
     return new Uint8Array(newImageArray);
   };
 
-
-  ExifRestorer.getExifArray = function (segments) {
+  ExifRestorer.getExifArray = function (segments:number[][]) {
     var seg;
     for (var x = 0; x < segments.length; x++) {
       seg = segments[x];
@@ -775,7 +774,7 @@ function restoreExif(orig, resized) {
   };
 
 
-  ExifRestorer.insertExif = function (resizedFileBase64, exifArray) {
+  ExifRestorer.insertExif = function (resizedFileBase64:any, exifArray:any) {
     var imageData = resizedFileBase64.replace('data:image/jpeg;base64,', ''),
       buf = this.decode64(imageData),
       separatePoint = buf.indexOf(255, 3),
@@ -789,7 +788,7 @@ function restoreExif(orig, resized) {
   };
 
 
-  ExifRestorer.slice2Segments = function (rawImageArray) {
+  ExifRestorer.slice2Segments = function (rawImageArray:any) {
     var head = 0,
       segments = [];
 
@@ -816,7 +815,7 @@ function restoreExif(orig, resized) {
   };
 
 
-  ExifRestorer.decode64 = function (input) {
+  ExifRestorer.decode64 = function (input:any) {
     var chr1, chr2, chr3:any = '',
       enc1, enc2, enc3, enc4:any = '',
       i = 0,
@@ -905,7 +904,7 @@ function readOrientation(file:File):Promise<orientationMeta>{
   })
 };
 
-function applyTransform(ctx:CanvasRenderingContext2D, orientation:number, width, height) {
+function applyTransform(ctx:CanvasRenderingContext2D, orientation:number, width:number, height:number) {
   switch (orientation) {
     case 2:
       return ctx.transform(-1, 0, 0, 1, width, 0);
@@ -924,7 +923,7 @@ function applyTransform(ctx:CanvasRenderingContext2D, orientation:number, width,
   }
 }
 
-function dataUrltoBlob(dataurl:string, name:string, origSize?):Blob{
+function dataUrltoBlob(dataurl:string, name:string, origSize?:any):Blob{
   var arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1],
     bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
   while (n--) {
