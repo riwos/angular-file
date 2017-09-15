@@ -5,9 +5,8 @@ import { ngfModule } from './ngf.module';
 
 @Component({
   selector: 'container',
-  template: '<input type="file" [(ngf)]="ngf" />'
-})
-export class ContainerComponent {}
+  template: '<input type="file" [(ngf)]="ngf" (init)="ngf2=$event" />'
+}) export class ContainerComponent {}
 
 @NgModule({
   imports: [ ngfModule ],
@@ -34,10 +33,13 @@ describe('ngf', () => {
   it('inits', ()=>{
     expect(fixture).not.toBeNull();
     expect(component).not.toBeNull();
+    expect(component.ngf).not.toBeNull();
+    expect(component.ngf2).not.toBeNull();
   })
 
-  it('uploader', ()=>{
+  it('uploader', ()=>{    
     expect(component.ngf.uploader).not.toBeNull();
+    expect(component.ngf2.uploader).not.toBeNull();
   })
 
   it('#getFormData', ()=>{

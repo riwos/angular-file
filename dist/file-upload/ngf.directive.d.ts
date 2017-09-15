@@ -11,6 +11,7 @@ export declare class ngf {
     ngfFixOrientation: boolean;
     fileDropDisabled: boolean;
     selectable: boolean;
+    directiveInit: EventEmitter<ngf>;
     ref: ngf;
     refChange: EventEmitter<ngf>;
     uploader: FileUploader;
@@ -22,8 +23,8 @@ export declare class ngf {
         file: File;
         type: string;
     }[]>;
-    fileUrl: string;
-    fileUrlChange: EventEmitter<string>;
+    lastBaseUrl: string;
+    lastBaseUrlChange: EventEmitter<string>;
     file: File;
     fileChange: EventEmitter<File>;
     files: File[];

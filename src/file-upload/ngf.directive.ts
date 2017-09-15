@@ -15,6 +15,7 @@ export class ngf {
 
   @Input() fileDropDisabled=false
   @Input() selectable = false
+  @Output('init') directiveInit:EventEmitter<ngf> = new EventEmitter()
   @Input('ngf') ref:ngf
   @Output('ngfChange') refChange:EventEmitter<ngf> = new EventEmitter()
   @Input() uploader:FileUploader = new FileUploader({});
@@ -22,8 +23,8 @@ export class ngf {
   @Input() lastInvalids:{file:File,type:string}[] = []
   @Output() lastInvalidsChange:EventEmitter<{file:File,type:string}[]> = new EventEmitter()
 
-  @Input() fileUrl:string//last file uploaded url
-  @Output() fileUrlChange:EventEmitter<string> = new EventEmitter()
+  @Input() lastBaseUrl:string//base64 last file uploaded url
+  @Output() lastBaseUrlChange:EventEmitter<string> = new EventEmitter()
   
   @Input() file:File//last file uploaded
   @Output() fileChange:EventEmitter<File> = new EventEmitter()
@@ -65,7 +66,10 @@ export class ngf {
     }
 
     //create reference to this class with one cycle delay to avoid ExpressionChangedAfterItHasBeenCheckedError
-    setTimeout(()=>this.refChange.emit(this), 0)
+    setTimeout(()=>{
+      this.refChange.emit(this)
+      this.directiveInit.emit(this)
+    }, 0)
   }
 
   paramFileElm(){
@@ -134,9 +138,9 @@ export class ngf {
     if(files.length){
       this.fileChange.emit( this.file=files[0] )
 
-      if(this.fileUrlChange.observers.length){
+      if(this.lastBaseUrlChange.observers.length){
         this.uploader.dataUrl( files[0] )
-        .then( url=>this.fileUrlChange.emit(url) )
+        .then( url=>this.lastBaseUrlChange.emit(url) )
       }
     }
   }

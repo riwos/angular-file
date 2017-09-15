@@ -6,10 +6,6 @@ Easy to use Angular directives for files upload ([demo](http://ackerapple.github
 [![Build status](https://ci.appveyor.com/api/projects/status/sq815bogrtky29b8/branch/development?svg=true)](https://ci.appveyor.com/project/AckerApple/angular-file/branch/development)
 [![Build Status](https://travis-ci.org/AckerApple/angular-file.svg?branch=development)](https://travis-ci.org/AckerApple/angular-file)
 [![Dependency Status](https://david-dm.org/ackerapple/angular-file.svg)](https://david-dm.org/ackerapple/angular-file)
-
-> ! UNDER CONSTRUCTION !
->> Forked from outdated package: [ng2-file-upload](https://www.npmjs.com/package/ng2-file-upload)
->> This package works. Just needs more documentation, bells, and whistles
   
 <details>
   <summary>Table of Contents</summary>
@@ -18,6 +14,7 @@ Easy to use Angular directives for files upload ([demo](http://ackerapple.github
 - [Examples](#examples)
 - [API](#api)
 - [Troubleshooting](#troubleshooting)
+- [Credits](#credits)
 - [License](#license)
 
 </details>
@@ -38,7 +35,84 @@ Easy to use Angular directives for files upload ([demo](http://ackerapple.github
 
 ## Examples
 
-### Select Files
+### Quickest Dirty Example
+```html
+<input
+  type="file"
+  multiple
+  accept="image/*"
+  ngf
+  (init)="$event.uploader.options={url:'...', autoUpload:1}"
+  maxSize="1024"
+/>
+```
+
+### Practical Example
+```typescript
+import { ngfModule, FileUploader, ngf } from "angular-file"
+import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
+import { BrowserModule } from '@angular/platform-browser';
+import { Component, NgModule } from "@angular/core"
+import { Http, Response, Request } from '@angular/http';
+import 'rxjs/add/operator/toPromise';
+
+const template = `
+<input
+  type="file"
+  multiple
+  accept="image/*"
+  [(ngf)]="ngfVar"
+  (filesChange)="uploadFiles($event)"
+  maxSize="1024"
+/>
+`
+
+@Component({
+  selector: 'app',
+  template: template
+})
+export class AppComponent {
+  ngfVar:ngf
+
+  constructor(public Http:Http){}
+
+  // takes array of HTML5 Files and uploads
+  uploadFiles(files:File[]):Promise<number>{
+    const uploader:FileUploader = ngfVar.uploader
+
+    //to HTML5 FormData for transmission
+    const formData:FormData = uploader.getFormData(files)
+    
+    const config = new Request({
+      url:'...',
+      method:'POST',
+      body:formData
+    })
+
+    return this.Http.request( config )
+    .toPromise()
+    .then( ()=>alert('upload complete, old school alert used') )
+    .catch( e=>alert('!failure beyond compare cause:' + e.toString()) )
+  }
+}
+
+@NgModule({
+  imports: [
+    BrowserModule,
+    ngfModule
+  ],
+  declarations: [
+    AppComponent
+  ],
+  bootstrap: [AppComponent]
+})
+export class AppModule {}
+
+platformBrowserDynamic().bootstrapModule(AppModule);
+```
+
+
+### Select Files Examples
 Examples of how to allow file selection
 
 Multiple
@@ -68,7 +142,7 @@ Images Only
 ></div>
 ```
 
-### Drop Files
+### Drop Files Examples
 Examples of how to allow file drag/drop
 
 Basic
@@ -110,9 +184,10 @@ Combo Drop Select
 [(ngf)]:ngf
 [uploader]:FileUploader = new FileUploader({})
 [(lastInvalids)]:{file:File,type:string}[] = []
-[(fileUrl)]:string//last file uploaded url
+[(lastBaseUrl)]:string//Base64 od last file uploaded url
 [(file)]:File//last file uploaded
 [(files)]:File[]
+(init):EventEmitter<ngf>
 ```
 
 ### ngfDrop Directive
@@ -152,6 +227,10 @@ Please follow this guidelines when reporting bugs and feature requests:
 2. Please **always** write steps to reproduce the error. That way we can focus on fixing the bug, not scratching our heads trying to reproduce it.
 
 Thanks for understanding!
+
+## Credits
+- Current Author: Acker Apple
+- Forked from outdated package: [ng2-file-upload](https://www.npmjs.com/package/ng2-file-upload)
 
 ## License
 The MIT License (see the [LICENSE](https://github.com/ackerapple/angular-file/blob/master/LICENSE) file for the full text)

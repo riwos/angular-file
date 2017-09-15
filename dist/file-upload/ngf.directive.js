@@ -9,11 +9,12 @@ var ngf = /** @class */ (function () {
         this.ngfFixOrientation = true;
         this.fileDropDisabled = false;
         this.selectable = false;
+        this.directiveInit = new core_1.EventEmitter();
         this.refChange = new core_1.EventEmitter();
         this.uploader = new FileUploader_class_1.FileUploader({});
         this.lastInvalids = [];
         this.lastInvalidsChange = new core_1.EventEmitter();
-        this.fileUrlChange = new core_1.EventEmitter();
+        this.lastBaseUrlChange = new core_1.EventEmitter();
         this.fileChange = new core_1.EventEmitter();
         this.filesChange = new core_1.EventEmitter();
     }
@@ -43,7 +44,10 @@ var ngf = /** @class */ (function () {
             this.uploader.options.forcePostname = this.forcePostname;
         }
         //create reference to this class with one cycle delay to avoid ExpressionChangedAfterItHasBeenCheckedError
-        setTimeout(function () { return _this.refChange.emit(_this); }, 0);
+        setTimeout(function () {
+            _this.refChange.emit(_this);
+            _this.directiveInit.emit(_this);
+        }, 0);
     };
     ngf.prototype.paramFileElm = function () {
         if (this.fileElm)
@@ -103,9 +107,9 @@ var ngf = /** @class */ (function () {
         this.filesChange.emit(this.files = files);
         if (files.length) {
             this.fileChange.emit(this.file = files[0]);
-            if (this.fileUrlChange.observers.length) {
+            if (this.lastBaseUrlChange.observers.length) {
                 this.uploader.dataUrl(files[0])
-                    .then(function (url) { return _this.fileUrlChange.emit(url); });
+                    .then(function (url) { return _this.lastBaseUrlChange.emit(url); });
             }
         }
     };
@@ -199,13 +203,14 @@ var ngf = /** @class */ (function () {
         'ngfFixOrientation': [{ type: core_1.Input },],
         'fileDropDisabled': [{ type: core_1.Input },],
         'selectable': [{ type: core_1.Input },],
+        'directiveInit': [{ type: core_1.Output, args: ['init',] },],
         'ref': [{ type: core_1.Input, args: ['ngf',] },],
         'refChange': [{ type: core_1.Output, args: ['ngfChange',] },],
         'uploader': [{ type: core_1.Input },],
         'lastInvalids': [{ type: core_1.Input },],
         'lastInvalidsChange': [{ type: core_1.Output },],
-        'fileUrl': [{ type: core_1.Input },],
-        'fileUrlChange': [{ type: core_1.Output },],
+        'lastBaseUrl': [{ type: core_1.Input },],
+        'lastBaseUrlChange': [{ type: core_1.Output },],
         'file': [{ type: core_1.Input },],
         'fileChange': [{ type: core_1.Output },],
         'files': [{ type: core_1.Input },],
