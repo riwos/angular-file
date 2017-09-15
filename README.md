@@ -1,13 +1,15 @@
-# angular-file [![npm version](https://badge.fury.io/js/angular-file.svg)](http://badge.fury.io/js/angular-file)[![npm downloads](https://img.shields.io/npm/dm/angular-file.svg)](https://npmjs.org/angular-file)[![slack](https://ngx-slack.herokuapp.com/badge.svg)](https://ngx-slack.herokuapp.com)
+# angular-file
+Easy to use Angular directives for files upload ([demo](http://ackerapple.github.io/angular-file/))
+
+[![npm version](https://badge.fury.io/js/angular-file.svg)](http://badge.fury.io/js/angular-file)
+[![npm downloads](https://img.shields.io/npm/dm/angular-file.svg)](https://npmjs.org/angular-file)
+[![Build status](https://ci.appveyor.com/api/projects/status/sq815bogrtky29b8/branch/development?svg=true)](https://ci.appveyor.com/project/AckerApple/angular-file/branch/development)
+[![Build Status](https://travis-ci.org/AckerApple/angular-file.svg?branch=development)](https://travis-ci.org/AckerApple/angular-file)
+[![Dependency Status](https://david-dm.org/ackerapple/angular-file.svg)](https://david-dm.org/ackerapple/angular-file)
 
 > ! UNDER CONSTRUCTION !
 >> Forked from outdated package: [ng2-file-upload](https://www.npmjs.com/package/ng2-file-upload)
 >> This package works. Just needs more documentation, bells, and whistles
-
-Easy to use Angular directives for files upload ([demo](http://ackerapple.github.io/angular-file/))
-
-[![Build Status](https://travis-ci.org/ackerapple/angular-file.svg?branch=development)](https://travis-ci.org/ackerapple/angular-file)
-[![Dependency Status](https://david-dm.org/ackerapple/angular-file.svg)](https://david-dm.org/ackerapple/angular-file)
   
 <details>
   <summary>Table of Contents</summary>
