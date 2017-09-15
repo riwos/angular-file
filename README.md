@@ -10,6 +10,7 @@ Easy to use Angular directives for files upload ([demo](http://ackerapple.github
 <details>
   <summary>Table of Contents</summary>
 
+- [Compare](#compare)
 - [Quick Start](#quick-start)
 - [Examples](#examples)
 - [API](#api)
@@ -18,6 +19,14 @@ Easy to use Angular directives for files upload ([demo](http://ackerapple.github
 - [License](#license)
 
 </details>
+
+## Compare
+Before even getting started, gage this package against others
+
+> Currently, September of 2017, [ng2-file-upload](https://www.npmjs.com/package/ng2-file-upload) is the most trending Angular file upload package. This package, **angular-file**, is a much improved fork of ng2-file-upload. Use angular-file **NOT** the outdated ng2-file-upload
+
+[TAP here for npmtrends of Angular file uploaders](http://www.npmtrends.com/angular2-http-file-upload-vs-angular2-file-uploader-vs-ng2-file-upload-vs-angular-file)
+
 
 ## Quick Start
 
