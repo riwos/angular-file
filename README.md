@@ -45,6 +45,7 @@ Before even getting started, gage this package against others
 ## Examples
 
 ### Quickest Dirty Example
+Showing off. This is NOT the best approach but sure does get a lot done for a little
 ```html
 <input
   type="file"
@@ -57,6 +58,7 @@ Before even getting started, gage this package against others
 ```
 
 ### Practical Example
+An example intended to have every line needed to run an app with angular-file
 ```typescript
 import { ngfModule, FileUploader, ngf } from "angular-file"
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
@@ -81,13 +83,13 @@ const template = `
   template: template
 })
 export class AppComponent {
-  ngfVar:ngf
+  ngfVar:ngf//becomes populated by template [(ngf)]="ngfVar"
 
   constructor(public Http:Http){}
 
   // takes array of HTML5 Files and uploads
   uploadFiles(files:File[]):Promise<number>{
-    const uploader:FileUploader = ngfVar.uploader
+    const uploader:FileUploader = this.ngfVar.uploader
 
     //to HTML5 FormData for transmission
     const formData:FormData = uploader.getFormData(files)
