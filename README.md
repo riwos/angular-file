@@ -1,5 +1,5 @@
 # angular-file
-Easy to use Angular directives for files upload ([demo](http://ackerapple.github.io/angular-file/))
+Easy to use Angular directives for file uploading ([demo](http://ackerapple.github.io/angular-file/))
 
 [![npm version](https://badge.fury.io/js/angular-file.svg)](http://badge.fury.io/js/angular-file)
 [![npm downloads](https://img.shields.io/npm/dm/angular-file.svg)](https://npmjs.org/angular-file)
@@ -32,12 +32,11 @@ Before even getting started, gage this package against others
 
 1. A recommended way to install ***angular-file*** is through [npm](https://www.npmjs.com/search?q=angular-file) package manager using the following command:
 
-  `npm i angular-file --save-dev`
+  `npm install angular-file --save-dev`
 
   Alternatively, you can [download it in a ZIP file](https://github.com/ackerapple/angular-file/archive/master.zip).
 
-2. Currently `angular-file` contains two directives: `ngfSelect` and `ngFileDrop`. `ngfSelect` is used for 'file-input' field of form and
-  `ngfDrop` is used for area that will be used for dropping of file or files.
+2. Currently `angular-file` contains three directives: `ngf`, `ngfSelect`, and `ngfDrop`. `ngf` and `ngfSelect` are quite the same with just different defaults and they both utilize `<input type="file" />` functionality. `ngfDrop` is used to designate an area that will be used for dropping of file(s).
 
 3. More information regarding using of ***angular-file*** is located in
   [demo](http://ackerapple.github.io/angular-file/) and [demo sources](https://github.com/ackerapple/angular-file/tree/master/demo).
