@@ -237,6 +237,9 @@ This package is a fork with a complete overhaul of [ng2-file-upload](https://www
 - Breaking Changes
   - ng2FileSelect becomes ngfSelect
   - ng2FileDrop becomes ngfDrop
+  - Import
+    - Deprecated `import { FileUploadModule } from "ng2-file-upload"`
+    - **Update** `import { ngfModule } from "angular-file"`
 
 > More breaking changes may exist in upgrading including file naming conventions. This list is to be updated
 
