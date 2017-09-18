@@ -14,6 +14,7 @@ Easy to use Angular directives for file uploading ([demo](http://ackerapple.gith
 - [Quick Start](#quick-start)
 - [Examples](#examples)
 - [API](#api)
+- [Upgrading from ng2-file-upload](#upgrading-from-ng2-file-upload)
 - [Troubleshooting](#troubleshooting)
 - [Credits](#credits)
 - [License](#license)
@@ -229,6 +230,25 @@ import { FileUploader } from "angular-file";
 - `authToken` - Auth token that will be applied as 'Authorization' header during file send.
 - `disableMultipart` - If 'true', disable using a multipart form for file upload and instead stream the file. Some APIs (e.g. Amazon S3) may expect the file to be streamed rather than sent via a form. Defaults to false.
 - `itemAlias` - item alias (form name redefenition)
+
+## Upgrading from ng2-file-upload
+This package is a fork with a complete overhaul of [ng2-file-upload](https://www.npmjs.com/package/ng2-file-upload)
+
+- Breaking Changes
+  - ng2FileSelect becomes ngfSelect
+  - ng2FileDrop becomes ngfDrop
+
+> More breaking changes may exist in upgrading including file naming conventions. This list is to be updated
+
+- Recommended Changes
+  - Use `ngf` selectable="1" instead of `ngfSelect`
+  - [uploader] was not to my liking
+    - I think this was a poor design
+    - Use `[(file)]` and `[(files)]` as models and then wrap them in HTML5 FormData for transmission
+      - Tools included to help do this
+  - `(fileOver)` is better suited as:
+    - `[(validDrag)]="validDragVar"`
+    - `[(invalidDrag)]="invalidDragVar"`
 
 ## Troubleshooting
 Please follow this guidelines when reporting bugs and feature requests:

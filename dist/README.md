@@ -1,5 +1,5 @@
 # angular-file
-Easy to use Angular directives for files upload ([demo](http://ackerapple.github.io/angular-file/))
+Easy to use Angular directives for file uploading ([demo](http://ackerapple.github.io/angular-file/))
 
 [![npm version](https://badge.fury.io/js/angular-file.svg)](http://badge.fury.io/js/angular-file)
 [![npm downloads](https://img.shields.io/npm/dm/angular-file.svg)](https://npmjs.org/angular-file)
@@ -10,25 +10,34 @@ Easy to use Angular directives for files upload ([demo](http://ackerapple.github
 <details>
   <summary>Table of Contents</summary>
 
+- [Compare](#compare)
 - [Quick Start](#quick-start)
 - [Examples](#examples)
 - [API](#api)
+- [Upgrading from ng2-file-upload](#upgrading-from-ng2-file-upload)
 - [Troubleshooting](#troubleshooting)
 - [Credits](#credits)
 - [License](#license)
 
 </details>
 
+## Compare
+Before even getting started, gage this package against others
+
+> Currently, September of 2017, [ng2-file-upload](https://www.npmjs.com/package/ng2-file-upload) is the most trending Angular file upload package. This package, **angular-file**, is a much improved fork of ng2-file-upload. Use angular-file **NOT** the outdated ng2-file-upload
+
+[TAP here for npmtrends of Angular file uploaders](http://www.npmtrends.com/angular2-http-file-upload-vs-angular2-file-uploader-vs-ng2-file-upload-vs-angular-file)
+
+
 ## Quick Start
 
 1. A recommended way to install ***angular-file*** is through [npm](https://www.npmjs.com/search?q=angular-file) package manager using the following command:
 
-  `npm i angular-file --save-dev`
+  `npm install angular-file --save-dev`
 
   Alternatively, you can [download it in a ZIP file](https://github.com/ackerapple/angular-file/archive/master.zip).
 
-2. Currently `angular-file` contains two directives: `ngfSelect` and `ngFileDrop`. `ngfSelect` is used for 'file-input' field of form and
-  `ngfDrop` is used for area that will be used for dropping of file or files.
+2. Currently `angular-file` contains three directives: `ngf`, `ngfSelect`, and `ngfDrop`. `ngf` and `ngfSelect` are quite the same with just different defaults and they both utilize `<input type="file" />` functionality. `ngfDrop` is used to designate an area that will be used for dropping of file(s).
 
 3. More information regarding using of ***angular-file*** is located in
   [demo](http://ackerapple.github.io/angular-file/) and [demo sources](https://github.com/ackerapple/angular-file/tree/master/demo).
@@ -36,6 +45,7 @@ Easy to use Angular directives for files upload ([demo](http://ackerapple.github
 ## Examples
 
 ### Quickest Dirty Example
+Showing off. This is NOT the best approach but sure does get a lot done for a little
 ```html
 <input
   type="file"
@@ -48,6 +58,7 @@ Easy to use Angular directives for files upload ([demo](http://ackerapple.github
 ```
 
 ### Practical Example
+An example intended to have every line needed to run an app with angular-file
 ```typescript
 import { ngfModule, FileUploader, ngf } from "angular-file"
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
@@ -72,13 +83,13 @@ const template = `
   template: template
 })
 export class AppComponent {
-  ngfVar:ngf
+  ngfVar:ngf//becomes populated by template [(ngf)]="ngfVar"
 
   constructor(public Http:Http){}
 
   // takes array of HTML5 Files and uploads
   uploadFiles(files:File[]):Promise<number>{
-    const uploader:FileUploader = ngfVar.uploader
+    const uploader:FileUploader = this.ngfVar.uploader
 
     //to HTML5 FormData for transmission
     const formData:FormData = uploader.getFormData(files)
@@ -219,6 +230,25 @@ import { FileUploader } from "angular-file";
 - `authToken` - Auth token that will be applied as 'Authorization' header during file send.
 - `disableMultipart` - If 'true', disable using a multipart form for file upload and instead stream the file. Some APIs (e.g. Amazon S3) may expect the file to be streamed rather than sent via a form. Defaults to false.
 - `itemAlias` - item alias (form name redefenition)
+
+## Upgrading from ng2-file-upload
+This package is a fork with a complete overhaul of [ng2-file-upload](https://www.npmjs.com/package/ng2-file-upload)
+
+- Breaking Changes
+  - ng2FileSelect becomes ngfSelect
+  - ng2FileDrop becomes ngfDrop
+
+> More breaking changes may exist in upgrading including file naming conventions. This list is to be updated
+
+- Recommended Changes
+  - Use `ngf` selectable="1" instead of `ngfSelect`
+  - [uploader] was not to my liking
+    - I think this was a poor design
+    - Use `[(file)]` and `[(files)]` as models and then wrap them in HTML5 FormData for transmission
+      - Tools included to help do this
+  - `(fileOver)` is better suited as:
+    - `[(validDrag)]="validDragVar"`
+    - `[(invalidDrag)]="invalidDragVar"`
 
 ## Troubleshooting
 Please follow this guidelines when reporting bugs and feature requests:
