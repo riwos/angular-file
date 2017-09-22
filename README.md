@@ -79,7 +79,7 @@ const template = `
   maxSize="1024"
 />
 <button *ngIf="file" (click)="sendByModel(file)">send one file</button>
-<button *ngIf="file" (click)="uploadFiles(files)">send multi file</button>
+<button *ngIf="files" (click)="manualFormDataUploadFiles(files)">send multi file</button>
 
 <input
   type="file"
@@ -101,7 +101,7 @@ export class AppComponent {
   constructor(public Http:Http){}
 
   // takes array of HTML5 Files and uploads
-  uploadFiles(files:File[]):Promise<number>{
+  uploadFiles(files:File[]):Promise<any>{
     const uploader:FileUploader = this.ngfVar.uploader
 
     //uploader.options.forcePostname = 'POST-NameIfNotJust-FILE'
@@ -118,7 +118,7 @@ export class AppComponent {
     return this.postRequest(config)
   }
 
-  postRequest( config:Request ){
+  postRequest( config:Request ):Promise<any>{
     return this.Http.request( config )
     .toPromise()
     .then( ()=>alert('upload complete, old school alert used') )
@@ -126,7 +126,7 @@ export class AppComponent {
   }
 
   // takes HTML5 File and uploads
-  sendByModel(file:File){
+  sendByModel(file:File):Promise<any>{
     const uploader:FileUploader = this.ngfVar.uploader
 
     //uploader.options.forcePostname = 'POST-NameIfNotJust-FILE'
@@ -141,6 +141,24 @@ export class AppComponent {
     })
 
     return this.postRequest( config )
+  }
+
+  // takes array of HTML5 Files and uploads without using FileUploader class
+  manualFormDataUploadFiles(files:File[]):Promise<any>{
+    const uploader:FileUploader = this.ngfVar.uploader
+
+    //to HTML5 FormData for transmission (hint: post name defaults to "file")
+    const formData:FormData = new FormData()
+
+    files.each( file=>formData.append('file', file, file.name) )
+    
+    const config = new Request({
+      url:'...',
+      method:'POST',
+      body:formData
+    })
+
+    return this.postRequest(config)
   }
 }
 
