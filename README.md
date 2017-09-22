@@ -67,12 +67,25 @@ import { Component, NgModule } from "@angular/core"
 import { Http, Response, Request } from '@angular/http';
 import 'rxjs/add/operator/toPromise';
 
+//two ways to upload files
 const template = `
 <input
   type="file"
   multiple
   accept="image/*"
   [(ngf)]="ngfVar"
+  [(file)]="file"
+  [(files)]="files"
+  maxSize="1024"
+/>
+<button *ngIf="file" (click)="sendByModel(file)">send one file</button>
+<button *ngIf="file" (click)="uploadFiles(files)">send multi file</button>
+
+<input
+  type="file"
+  multiple
+  accept="image/*"
+  ngf
   (filesChange)="uploadFiles($event)"
   maxSize="1024"
 />
@@ -91,7 +104,9 @@ export class AppComponent {
   uploadFiles(files:File[]):Promise<number>{
     const uploader:FileUploader = this.ngfVar.uploader
 
-    //to HTML5 FormData for transmission
+    //uploader.options.forcePostname = 'POST-NameIfNotJust-FILE'
+
+    //to HTML5 FormData for transmission (hint: post name defaults to "file")
     const formData:FormData = uploader.getFormData(files)
     
     const config = new Request({
@@ -100,10 +115,32 @@ export class AppComponent {
       body:formData
     })
 
+    return this.postRequest(config)
+  }
+
+  postRequest( config:Request ){
     return this.Http.request( config )
     .toPromise()
     .then( ()=>alert('upload complete, old school alert used') )
     .catch( e=>alert('!failure beyond compare cause:' + e.toString()) )
+  }
+
+  // takes HTML5 File and uploads
+  sendByModel(file:File){
+    const uploader:FileUploader = this.ngfVar.uploader
+
+    //uploader.options.forcePostname = 'POST-NameIfNotJust-FILE'
+
+    //to HTML5 FormData for transmission
+    const formData:FormData = uploader.getFormData( [file] )
+
+    const config = new Request({
+      url:'...',
+      method:'POST',
+      body:formData
+    })
+
+    return this.postRequest( config )
   }
 }
 
@@ -188,7 +225,7 @@ Combo Drop Select
 [accept]:string
 [maxSize]:number
 [forceFilename]:string
-[forcePostname]:string
+[forcePostname]:string//when FormData object created, sets name of POST input
 [ngfFixOrientation]:boolean = true
 [fileDropDisabled] = false
 [selectable] = false
@@ -237,7 +274,7 @@ This package is a fork with a complete overhaul of [ng2-file-upload](https://www
 - Breaking Changes
   - ng2FileSelect becomes ngfSelect
   - ng2FileDrop becomes ngfDrop
-  - Import
+  - Import Module
     - Deprecated `import { FileUploadModule } from "ng2-file-upload"`
     - **Update** `import { ngfModule } from "angular-file"`
 
