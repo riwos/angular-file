@@ -145,9 +145,6 @@ export class AppComponent {
 
   // takes array of HTML5 Files and uploads without using FileUploader class
   manualFormDataUploadFiles(files:File[]):Promise<any>{
-    const uploader:FileUploader = this.ngfVar.uploader
-
-    //to HTML5 FormData for transmission (hint: post name defaults to "file")
     const formData:FormData = new FormData()
 
     files.each( file=>formData.append('file', file, file.name) )
