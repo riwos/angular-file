@@ -10,7 +10,17 @@
     background-repeat:no-repeat;
   }
 </style>
-<div class="container">
+
+<!-- used by every file input to upload files -->
+<ngfUploader
+  [(ref)]   = "uploader"
+  [options] = "{url:url}"
+  (done)    = "done($event)"
+  (success) = "success($event)"
+  (catch)   = "catcher($event)"
+></ngfUploader>
+
+<div class="container" *ngIf="uploader">
   <div class="row">
     <div class="col-md-3">
       <h3>Select Files</h3>

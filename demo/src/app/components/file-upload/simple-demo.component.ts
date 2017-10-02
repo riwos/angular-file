@@ -2,8 +2,7 @@ import { Component } from '@angular/core';
 import { FileUploader } from '../../../../../src';
 import { string as template } from "./simple-demo.template"
 
-// const URL = '/api/';
-const URL = 'https://evening-anchorage-3159.herokuapp.com/api/';
+
 
 @Component({
   selector: 'simple-demo',
@@ -11,15 +10,30 @@ const URL = 'https://evening-anchorage-3159.herokuapp.com/api/';
   template:template
 })
 export class SimpleDemoComponent {
-  public uploader:FileUploader = new FileUploader({url: URL});
-  public hasBaseDropZoneOver:boolean = false;
-  public hasAnotherDropZoneOver:boolean = false;
+  url = 'https://evening-anchorage-3159.herokuapp.com/api/';
+  hasBaseDropZoneOver:boolean = false;
+  hasAnotherDropZoneOver:boolean = false;
 
-  public fileOverBase(e:any):void {
+  //deprecated
+  //uploader:FileUploader = new FileUploader({url: URL});
+
+  fileOverBase(e:any):void {
     this.hasBaseDropZoneOver = e;
   }
 
-  public fileOverAnother(e:any):void {
+  fileOverAnother(e:any):void {
     this.hasAnotherDropZoneOver = e;
+  }
+
+  done($event){
+    console.log('done uploading', $event)
+  }
+  
+  success($event){
+    console.log('successful upload', $event)
+  }
+  
+  catcher($event){
+    console.log('caught something', $event)
   }
 }

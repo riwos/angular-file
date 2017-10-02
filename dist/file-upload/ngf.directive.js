@@ -11,6 +11,7 @@ var ngf = /** @class */ (function () {
         this.selectable = false;
         this.directiveInit = new core_1.EventEmitter();
         this.refChange = new core_1.EventEmitter();
+        //deprecated
         this.uploader = new FileUploader_class_1.FileUploader({});
         this.lastInvalids = [];
         this.lastInvalidsChange = new core_1.EventEmitter();
@@ -27,7 +28,6 @@ var ngf = /** @class */ (function () {
             this.enableSelecting();
         }
         if (this.multiple) {
-            //this.uploader.options.multiple = this.multiple
             this.paramFileElm().setAttribute('multiple', this.multiple);
         }
         if (this.accept) {

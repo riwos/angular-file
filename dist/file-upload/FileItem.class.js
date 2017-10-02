@@ -27,13 +27,17 @@ var FileItem = /** @class */ (function () {
         this.url = uploader.options.url;
     }
     FileItem.prototype.upload = function () {
-        try {
-            this.uploader.uploadItem(this);
-        }
-        catch (e) {
-            this.uploader._onCompleteItem(this, '', 0, {});
-            this.uploader._onErrorItem(this, '', 0, {});
-        }
+        var _this = this;
+        return new Promise(function (res, rej) {
+            try {
+                return _this.uploader.uploadItem(_this).then(res).catch(rej);
+            }
+            catch (e) {
+                _this.uploader._onCompleteItem(_this, '', 0, {});
+                _this.uploader._onErrorItem(_this, '', 0, {});
+                rej(e);
+            }
+        });
     };
     FileItem.prototype.cancel = function () {
         this.uploader.cancelItem(this);

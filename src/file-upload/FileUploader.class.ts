@@ -1,8 +1,8 @@
-import { FileLikeObject } from './FileLikeObject.class';
-import { FileItem } from './FileItem.class';
-import { FileType } from './FileType.class';
+import { FileLikeObject } from './FileLikeObject.class'
+import { FileItem } from './FileItem.class'
+import { FileType } from './FileType.class'
 
-import { Injectable } from '@angular/core';
+import { EventEmitter, Output } from '@angular/core'
 
 function getWindow():any{return window}
 
@@ -45,6 +45,10 @@ export interface FileUploaderOptions {
 }
 
 export class FileUploader {
+  @Output() done = new EventEmitter()
+  @Output() success = new EventEmitter()
+  @Output('catch') catcher = new EventEmitter()
+
   authToken:string;
   isUploading:boolean = false;
   queue:Array<FileItem> = [];
@@ -71,20 +75,12 @@ export class FileUploader {
     this.authToken = options.authToken;
     this.authTokenHeader = options.authTokenHeader || 'Authorization';
     this.autoUpload = options.autoUpload;
-    
-    //options.queueLimit
+
+    this.options.filters = this.options.filters || []
     this.options.filters.unshift({name: 'queueLimit', fn: this._queueLimitFilter});
-    
-    //options.maxFileSize
     this.options.filters.unshift({name: 'fileSize', fn: this._fileSizeFilter});
-    
-    //options.allowedFileType
     this.options.filters.unshift({name: 'fileType', fn: this._fileTypeFilter});
-    
-    //options.allowedMimeType
     this.options.filters.unshift({name: 'mimeType', fn: this._mimeTypeFilter});
-    
-    //options.accept
     this.options.filters.unshift({name: 'accept', fn: this._acceptFilter});
 
     for(let i = 0; i < this.queue.length; i++) {
@@ -139,19 +135,19 @@ export class FileUploader {
     let arrayOfFilters = this._getFilters(filters);
     let count = this.queue.length;
     let addedFileItems:FileItem[] = [];
-    list.map((some:File,index:number) => {
+
+    list.forEach((some:File,index:number) => {
       if (!options) {
         options = this.options;
       }
 
-      let temp = new FileLikeObject(some);
-      this._isValidFile(temp, arrayOfFilters, options)
-      if(this.isFileValid(some)){
+      if( this.isFileValid(some) ){
         let fileItem = new FileItem(this, some, options);
         addedFileItems.push(fileItem);
         this.queue.push(fileItem);
         this._onAfterAddingFile(fileItem);
       } else {
+        let temp = new FileLikeObject(some);
         let filter = arrayOfFilters[index];
         this._onWhenAddingFileFailed(temp, filter, options);
       }
@@ -161,7 +157,7 @@ export class FileUploader {
       this._onAfterAddingAll(addedFileItems);
       this.progress = this._getTotalProgress();
     }
-    this._render();
+
     if (this.options.autoUpload) {
       this.uploadAll();
     }
@@ -185,38 +181,63 @@ export class FileUploader {
   }
 
   //most likely deprecated
-  isHtml5Mode(){
+  /*isHtml5Mode(){
     return this.options.isHTML5 || this.options.isHTML5==null
-  }
+  }*/
 
-  uploadItem(value:FileItem):void {
+  uploadItem(value:FileItem):Promise<any> {
     let index = this.getIndexOfItem(value);
     let item = this.queue[index];
-    let transport = this.isHtml5Mode() ? '_xhrTransport' : '_iframeTransport';
+    let transport = '_xhrTransport'
+    
+    //original author never finished this and iframe file sending is dead
+    //let transport = this.isHtml5Mode() ? '_xhrTransport' : '_iframeTransport';
+    
     item._prepareToUploading();
     if (this.isUploading) {
       return;
     }
     this.isUploading = true;
-    (this as any)[transport](item);
+    return (this as any)[transport](item);
   }
 
   cancelItem(value:FileItem):void {
     let index = this.getIndexOfItem(value);
     let item = this.queue[index];
-    let prop = this.isHtml5Mode() ? item._xhr : item._form;
+    
+    let prop = item._xhr
+    //original author never finished this
+    //let prop = this.isHtml5Mode() ? item._xhr : item._form;
+    
     if (item && item.isUploading) {
       prop.abort();
     }
   }
 
-  uploadAll():void {
+  uploadAll():Promise<any[]> {
     let items = this.getNotUploadedItems().filter((item:FileItem) => !item.isUploading);
+    
     if (!items.length) {
-      return;
+      this.done.emit([])
+      return Promise.resolve([]);
     }
+
     items.map((item:FileItem) => item._prepareToUploading());
-    items[0].upload();
+    
+    const promises = []
+
+    promises.push( items[0].upload() )
+
+    return Promise.all( promises )
+    .then(r=>{
+      this.done.emit(r)
+      this.success.emit(r)
+      return r
+    })
+    .catch(e=>{
+      this.catcher.emit(e)
+      return Promise.reject(e)
+    })
   }
 
   cancelAll():void {
@@ -340,7 +361,7 @@ export class FileUploader {
     }
     this.onCompleteAll();
     this.progress = this._getTotalProgress();
-    this._render();
+    //this._render();
   }
 
   protected _headersGetter(parsedHeaders:ParsedResponseHeaders):any {
@@ -373,7 +394,7 @@ export class FileUploader {
     return formData
   }
 
-  protected _xhrTransport(item:FileItem):any {
+  protected _xhrTransport(item:FileItem):Promise<any> {
     let xhr = item._xhr = new XMLHttpRequest();
     let sendable:any;
     this._onBeforeUploadItem(item);
@@ -401,47 +422,59 @@ export class FileUploader {
       sendable = item._file;
     }
 
+    return this.sendFormDataFileItem(sendable, item, xhr)
+  }
+
+  sendFormDataFileItem(sendable:FormData, item:FileItem, xhr?:XMLHttpRequest):Promise<any>{
+    xhr = xhr || new XMLHttpRequest()
+
     xhr.upload.onprogress = (event:any) => {
       let progress = Math.round(event.lengthComputable ? event.loaded * 100 / event.total : 0);
       this._onProgressItem(item, progress);
     };
-    xhr.onload = () => {
-      let headers = this._parseHeaders(xhr.getAllResponseHeaders());
-      let response = this._transformResponse(xhr.response, headers);
-      let gist = this._isSuccessCode(xhr.status) ? 'Success' : 'Error';
-      let method = '_on' + gist + 'Item';
-      (this as any)[method](item, response, xhr.status, headers);
-      this._onCompleteItem(item, response, xhr.status, headers);
-    };
-    xhr.onerror = () => {
-      let headers = this._parseHeaders(xhr.getAllResponseHeaders());
-      let response = this._transformResponse(xhr.response, headers);
-      this._onErrorItem(item, response, xhr.status, headers);
-      this._onCompleteItem(item, response, xhr.status, headers);
-    };
-    xhr.onabort = () => {
-      let headers = this._parseHeaders(xhr.getAllResponseHeaders());
-      let response = this._transformResponse(xhr.response, headers);
-      this._onCancelItem(item, response, xhr.status, headers);
-      this._onCompleteItem(item, response, xhr.status, headers);
-    };
-    xhr.open(item.method, item.url, true);
-    xhr.withCredentials = item.withCredentials;
-    if (this.options.headers) {
-      for (let header of this.options.headers) {
-        xhr.setRequestHeader(header.name, header.value);
+    
+    return new Promise((res,rej)=>{
+      xhr.onload = () => {
+        let headers = this._parseHeaders(xhr.getAllResponseHeaders());
+        let response = this._transformResponse(xhr.response, headers);
+        let gist = this._isSuccessCode(xhr.status) ? 'Success' : 'Error';
+        let method = '_on' + gist + 'Item';
+        (this as any)[method](item, response, xhr.status, headers);
+        this._onCompleteItem(item, response, xhr.status, headers);
+        res(response)
+      };
+      xhr.onerror = (e) => {
+        let headers = this._parseHeaders(xhr.getAllResponseHeaders());
+        let response = this._transformResponse(xhr.response, headers);
+        this._onErrorItem(item, response, xhr.status, headers);
+        this._onCompleteItem(item, response, xhr.status, headers);
+        rej(e)
+      };
+      xhr.onabort = () => {
+        let headers = this._parseHeaders(xhr.getAllResponseHeaders());
+        let response = this._transformResponse(xhr.response, headers);
+        this._onCancelItem(item, response, xhr.status, headers);
+        this._onCompleteItem(item, response, xhr.status, headers);
+        res(response)
+      };
+      xhr.open(item.method, item.url, true);
+      xhr.withCredentials = item.withCredentials;
+      if (this.options.headers) {
+        for (let header of this.options.headers) {
+          xhr.setRequestHeader(header.name, header.value);
+        }
       }
-    }
-    if (item.headers.length) {
-      for (let header of item.headers) {
-        xhr.setRequestHeader(header.name, header.value);
+      if (item.headers.length) {
+        for (let header of item.headers) {
+          xhr.setRequestHeader(header.name, header.value);
+        }
       }
-    }
-    if (this.authToken) {
-      xhr.setRequestHeader(this.authTokenHeader, this.authToken);
-    }
-    xhr.send(sendable);
-    this._render();
+      if (this.authToken) {
+        xhr.setRequestHeader(this.authTokenHeader, this.authToken);
+      }
+      xhr.send(sendable);
+      //this._render();
+    })
   }
 
   protected _getTotalProgress(value:number = 0):number {
@@ -470,10 +503,10 @@ export class FileUploader {
     return this.options.filters;
   }
 
-  protected _render():any {
+  /*protected _render():any {
     return void 0;
     // todo: ?
-  }
+  }*/
 
   protected _queueLimitFilter():boolean {
     return this.options.queueLimit === undefined || this.queue.length < this.options.queueLimit;
@@ -563,7 +596,7 @@ export class FileUploader {
     item._onProgress(progress);
     this.onProgressItem(item, progress);
     this.onProgressAll(total);
-    this._render();
+    //this._render();
   }
 
   /* tslint:disable */

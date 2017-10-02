@@ -1,5 +1,6 @@
 import { FileLikeObject } from './FileLikeObject.class';
 import { FileItem } from './FileItem.class';
+import { EventEmitter } from '@angular/core';
 export interface Headers {
     name: string;
     value: string;
@@ -35,6 +36,9 @@ export interface FileUploaderOptions {
     };
 }
 export declare class FileUploader {
+    done: EventEmitter<{}>;
+    success: EventEmitter<{}>;
+    catcher: EventEmitter<{}>;
     authToken: string;
     isUploading: boolean;
     queue: Array<FileItem>;
@@ -55,10 +59,9 @@ export declare class FileUploader {
     addToQueue(files: File[], options?: FileUploaderOptions, filters?: FilterFunction[] | string): void;
     removeFromQueue(value: FileItem): void;
     clearQueue(): void;
-    isHtml5Mode(): boolean;
-    uploadItem(value: FileItem): void;
+    uploadItem(value: FileItem): Promise<any>;
     cancelItem(value: FileItem): void;
-    uploadAll(): void;
+    uploadAll(): Promise<any[]>;
     cancelAll(): void;
     isFile(value: any): boolean;
     isFileLikeObject(value: any): boolean;
@@ -87,10 +90,10 @@ export declare class FileUploader {
     protected _headersGetter(parsedHeaders: ParsedResponseHeaders): any;
     getQuedFiles(): File[];
     getFormData(files?: File[]): FormData;
-    protected _xhrTransport(item: FileItem): any;
+    protected _xhrTransport(item: FileItem): Promise<any>;
+    sendFormDataFileItem(sendable: FormData, item: FileItem, xhr?: XMLHttpRequest): Promise<any>;
     protected _getTotalProgress(value?: number): number;
     protected _getFilters(filters?: FilterFunction[] | string): FilterFunction[];
-    protected _render(): any;
     protected _queueLimitFilter(): boolean;
     getFileFilterFailName(file: File | FileLikeObject): string;
     _isValidFile(file: FileLikeObject, filters: FilterFunction[], options: FileUploaderOptions): boolean;

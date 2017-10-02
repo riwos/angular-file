@@ -5,5 +5,5 @@ import { ngf } from "./ngf.directive"
 export class ngfSelect extends ngf {
   @Input() selectable:any = true
   @Input('ngfSelect') ref:ngfSelect
-  @Output('ngfSelectChange') refChange:EventEmitter<ngfSelect> = new EventEmitter()  
+  @Output('ngfSelectChange') refChange:EventEmitter<ngfSelect> = new EventEmitter()
 }

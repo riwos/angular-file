@@ -10,6 +10,7 @@ Easy to use Angular directives for file uploading ([demo](http://ackerapple.gith
 <details>
   <summary>Table of Contents</summary>
 
+- [Forked](#forked)
 - [Compare](#compare)
 - [Quick Start](#quick-start)
 - [Examples](#examples)
@@ -20,6 +21,11 @@ Easy to use Angular directives for file uploading ([demo](http://ackerapple.gith
 - [License](#license)
 
 </details>
+
+## Forked
+PLEASE NOTE
+
+This code is made up of several packages that came before this one. Not all code is intended to be used and old code is often only to support others that are converting to this package.
 
 ## Compare
 Before even getting started, gage this package against others
@@ -48,19 +54,26 @@ Before even getting started, gage this package against others
 Showing off. This is NOT the best approach but sure does get a lot done for a little
 ```html
 <input
-  type="file"
+  type          = "file"
   multiple
-  accept="image/*"
+  accept        = "image/*"
   ngf
-  (init)="$event.uploader.options={url:'...', autoUpload:1}"
-  maxSize="1024"
+  (filesChange) = "uploader.uploadFiles($event)"
+  maxSize       = "1024"
 />
+
+<ngfUploader
+  [(ref)]   = "uploader"
+  [options] = "{url:'...'}"
+  (save)    = ""
+  (catch)   = ""
+></ngfUploader>
 ```
 
 ### Practical Example
 An example intended to have every line needed to run an app with angular-file
 ```typescript
-import { ngfModule, FileUploader, ngf } from "angular-file"
+import { ngfModule, ngfUploader, ngf } from "angular-file"
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { BrowserModule } from '@angular/platform-browser';
 import { Component, NgModule } from "@angular/core"
@@ -69,11 +82,18 @@ import 'rxjs/add/operator/toPromise';
 
 //two ways to upload files
 const template = `
+<ngfUploader
+  [(ref)]   = "uploader"
+  [options] = "{url:'...'}"
+  (save)    = ""
+  (catch)   = ""
+></ngfUploader>
+
 <input
   type="file"
   multiple
   accept="image/*"
-  [(ngf)]="ngfVar"
+  ngf
   [(file)]="file"
   [(files)]="files"
   maxSize="1024"
@@ -96,13 +116,13 @@ const template = `
   template: template
 })
 export class AppComponent {
-  ngfVar:ngf//becomes populated by template [(ngf)]="ngfVar"
+  uploader:ngfUploader//becomes <ngfUploader [(ref)]="uploader">
 
   constructor(public Http:Http){}
 
   // takes array of HTML5 Files and uploads
   uploadFiles(files:File[]):Promise<any>{
-    const uploader:FileUploader = this.ngfVar.uploader
+    const uploader:FileUploader = this.uploader
 
     //uploader.options.forcePostname = 'POST-NameIfNotJust-FILE'
 
@@ -127,12 +147,10 @@ export class AppComponent {
 
   // takes HTML5 File and uploads
   sendByModel(file:File):Promise<any>{
-    const uploader:FileUploader = this.ngfVar.uploader
-
-    //uploader.options.forcePostname = 'POST-NameIfNotJust-FILE'
+    //this.uploader.options.forcePostname = 'POST-NameIfNotJust-FILE'
 
     //to HTML5 FormData for transmission
-    const formData:FormData = uploader.getFormData( [file] )
+    const formData:FormData = this.uploader.getFormData( [file] )
 
     const config = new Request({
       url:'...',
@@ -238,19 +256,21 @@ Combo Drop Select
 ```javascript
 [multiple]:string
 [accept]:string
-[maxSize]:number
+[maxSize]:number//bytes . 1024 = 1k . 1048576 = 1mb
 [forceFilename]:string
 [forcePostname]:string//when FormData object created, sets name of POST input
 [ngfFixOrientation]:boolean = true
 [fileDropDisabled] = false
 [selectable] = false
 [(ngf)]:ngf
-[uploader]:FileUploader = new FileUploader({})
 [(lastInvalids)]:{file:File,type:string}[] = []
 [(lastBaseUrl)]:string//Base64 od last file uploaded url
 [(file)]:File//last file uploaded
 [(files)]:File[]
 (init):EventEmitter<ngf>
+
+//deprecated
+[uploader]:FileUploader = new FileUploader({})
 ```
 
 ### ngfDrop Directive
@@ -282,6 +302,26 @@ import { FileUploader } from "angular-file";
 - `authToken` - Auth token that will be applied as 'Authorization' header during file send.
 - `disableMultipart` - If 'true', disable using a multipart form for file upload and instead stream the file. Some APIs (e.g. Amazon S3) may expect the file to be streamed rather than sent via a form. Defaults to false.
 - `itemAlias` - item alias (form name redefenition)
+- `options`
+  - forceFilename?       : string//override that all files will have defined name
+  - forcePostname?       : string//override all FormData post names
+  - accept?              : string;//acts like file input accept
+  - allowedMimeType?     : Array<string>
+  - allowedFileType?     : Array<string>
+  - autoUpload?          : boolean
+  - isHTML5?             : boolean
+  - filters?             : Array<FilterFunction>
+  - headers?             : Array<Headers>
+  - method?              : string
+  - authToken?           : string
+  - maxFileSize?         : number
+  - queueLimit?          : number
+  - removeAfterUpload?   : boolean
+  - url?                 : string
+  - disableMultipart?    : boolean
+  - itemAlias?           :  string
+  - authTokenHeader?     :  string
+  - additionalParameter? : {[key: string]: any}
 
 ## Upgrading from ng2-file-upload
 This package is a fork with a complete overhaul of [ng2-file-upload](https://www.npmjs.com/package/ng2-file-upload)

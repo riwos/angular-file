@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var FileLikeObject_class_1 = require("./FileLikeObject.class");
 var FileItem_class_1 = require("./FileItem.class");
 var FileType_class_1 = require("./FileType.class");
+var core_1 = require("@angular/core");
 function getWindow() { return window; }
 function isFile(value) {
     return (File && value instanceof File);
@@ -10,6 +11,9 @@ function isFile(value) {
 var FileUploader = /** @class */ (function () {
     function FileUploader(options) {
         if (options === void 0) { options = {}; }
+        this.done = new core_1.EventEmitter();
+        this.success = new core_1.EventEmitter();
+        this.catcher = new core_1.EventEmitter();
         this.isUploading = false;
         this.queue = [];
         this.progress = 0;
@@ -28,15 +32,11 @@ var FileUploader = /** @class */ (function () {
         this.authToken = options.authToken;
         this.authTokenHeader = options.authTokenHeader || 'Authorization';
         this.autoUpload = options.autoUpload;
-        //options.queueLimit
+        this.options.filters = this.options.filters || [];
         this.options.filters.unshift({ name: 'queueLimit', fn: this._queueLimitFilter });
-        //options.maxFileSize
         this.options.filters.unshift({ name: 'fileSize', fn: this._fileSizeFilter });
-        //options.allowedFileType
         this.options.filters.unshift({ name: 'fileType', fn: this._fileTypeFilter });
-        //options.allowedMimeType
         this.options.filters.unshift({ name: 'mimeType', fn: this._mimeTypeFilter });
-        //options.accept
         this.options.filters.unshift({ name: 'accept', fn: this._acceptFilter });
         for (var i = 0; i < this.queue.length; i++) {
             this.queue[i].url = this.options.url;
@@ -83,12 +83,10 @@ var FileUploader = /** @class */ (function () {
         var arrayOfFilters = this._getFilters(filters);
         var count = this.queue.length;
         var addedFileItems = [];
-        list.map(function (some, index) {
+        list.forEach(function (some, index) {
             if (!options) {
                 options = _this.options;
             }
-            var temp = new FileLikeObject_class_1.FileLikeObject(some);
-            _this._isValidFile(temp, arrayOfFilters, options);
             if (_this.isFileValid(some)) {
                 var fileItem = new FileItem_class_1.FileItem(_this, some, options);
                 addedFileItems.push(fileItem);
@@ -96,6 +94,7 @@ var FileUploader = /** @class */ (function () {
                 _this._onAfterAddingFile(fileItem);
             }
             else {
+                var temp = new FileLikeObject_class_1.FileLikeObject(some);
                 var filter = arrayOfFilters[index];
                 _this._onWhenAddingFileFailed(temp, filter, options);
             }
@@ -104,7 +103,6 @@ var FileUploader = /** @class */ (function () {
             this._onAfterAddingAll(addedFileItems);
             this.progress = this._getTotalProgress();
         }
-        this._render();
         if (this.options.autoUpload) {
             this.uploadAll();
         }
@@ -125,35 +123,52 @@ var FileUploader = /** @class */ (function () {
         this.progress = 0;
     };
     //most likely deprecated
-    FileUploader.prototype.isHtml5Mode = function () {
-        return this.options.isHTML5 || this.options.isHTML5 == null;
-    };
+    /*isHtml5Mode(){
+      return this.options.isHTML5 || this.options.isHTML5==null
+    }*/
     FileUploader.prototype.uploadItem = function (value) {
         var index = this.getIndexOfItem(value);
         var item = this.queue[index];
-        var transport = this.isHtml5Mode() ? '_xhrTransport' : '_iframeTransport';
+        var transport = '_xhrTransport';
+        //original author never finished this and iframe file sending is dead
+        //let transport = this.isHtml5Mode() ? '_xhrTransport' : '_iframeTransport';
         item._prepareToUploading();
         if (this.isUploading) {
             return;
         }
         this.isUploading = true;
-        this[transport](item);
+        return this[transport](item);
     };
     FileUploader.prototype.cancelItem = function (value) {
         var index = this.getIndexOfItem(value);
         var item = this.queue[index];
-        var prop = this.isHtml5Mode() ? item._xhr : item._form;
+        var prop = item._xhr;
+        //original author never finished this
+        //let prop = this.isHtml5Mode() ? item._xhr : item._form;
         if (item && item.isUploading) {
             prop.abort();
         }
     };
     FileUploader.prototype.uploadAll = function () {
+        var _this = this;
         var items = this.getNotUploadedItems().filter(function (item) { return !item.isUploading; });
         if (!items.length) {
-            return;
+            this.done.emit([]);
+            return Promise.resolve([]);
         }
         items.map(function (item) { return item._prepareToUploading(); });
-        items[0].upload();
+        var promises = [];
+        promises.push(items[0].upload());
+        return Promise.all(promises)
+            .then(function (r) {
+            _this.done.emit(r);
+            _this.success.emit(r);
+            return r;
+        })
+            .catch(function (e) {
+            _this.catcher.emit(e);
+            return Promise.reject(e);
+        });
     };
     FileUploader.prototype.cancelAll = function () {
         var items = this.getNotUploadedItems();
@@ -253,7 +268,7 @@ var FileUploader = /** @class */ (function () {
         }
         this.onCompleteAll();
         this.progress = this._getTotalProgress();
-        this._render();
+        //this._render();
     };
     FileUploader.prototype._headersGetter = function (parsedHeaders) {
         return function (name) {
@@ -307,49 +322,59 @@ var FileUploader = /** @class */ (function () {
         else {
             sendable = item._file;
         }
+        return this.sendFormDataFileItem(sendable, item, xhr);
+    };
+    FileUploader.prototype.sendFormDataFileItem = function (sendable, item, xhr) {
+        var _this = this;
+        xhr = xhr || new XMLHttpRequest();
         xhr.upload.onprogress = function (event) {
             var progress = Math.round(event.lengthComputable ? event.loaded * 100 / event.total : 0);
             _this._onProgressItem(item, progress);
         };
-        xhr.onload = function () {
-            var headers = _this._parseHeaders(xhr.getAllResponseHeaders());
-            var response = _this._transformResponse(xhr.response, headers);
-            var gist = _this._isSuccessCode(xhr.status) ? 'Success' : 'Error';
-            var method = '_on' + gist + 'Item';
-            _this[method](item, response, xhr.status, headers);
-            _this._onCompleteItem(item, response, xhr.status, headers);
-        };
-        xhr.onerror = function () {
-            var headers = _this._parseHeaders(xhr.getAllResponseHeaders());
-            var response = _this._transformResponse(xhr.response, headers);
-            _this._onErrorItem(item, response, xhr.status, headers);
-            _this._onCompleteItem(item, response, xhr.status, headers);
-        };
-        xhr.onabort = function () {
-            var headers = _this._parseHeaders(xhr.getAllResponseHeaders());
-            var response = _this._transformResponse(xhr.response, headers);
-            _this._onCancelItem(item, response, xhr.status, headers);
-            _this._onCompleteItem(item, response, xhr.status, headers);
-        };
-        xhr.open(item.method, item.url, true);
-        xhr.withCredentials = item.withCredentials;
-        if (this.options.headers) {
-            for (var _i = 0, _a = this.options.headers; _i < _a.length; _i++) {
-                var header = _a[_i];
-                xhr.setRequestHeader(header.name, header.value);
+        return new Promise(function (res, rej) {
+            xhr.onload = function () {
+                var headers = _this._parseHeaders(xhr.getAllResponseHeaders());
+                var response = _this._transformResponse(xhr.response, headers);
+                var gist = _this._isSuccessCode(xhr.status) ? 'Success' : 'Error';
+                var method = '_on' + gist + 'Item';
+                _this[method](item, response, xhr.status, headers);
+                _this._onCompleteItem(item, response, xhr.status, headers);
+                res(response);
+            };
+            xhr.onerror = function (e) {
+                var headers = _this._parseHeaders(xhr.getAllResponseHeaders());
+                var response = _this._transformResponse(xhr.response, headers);
+                _this._onErrorItem(item, response, xhr.status, headers);
+                _this._onCompleteItem(item, response, xhr.status, headers);
+                rej(e);
+            };
+            xhr.onabort = function () {
+                var headers = _this._parseHeaders(xhr.getAllResponseHeaders());
+                var response = _this._transformResponse(xhr.response, headers);
+                _this._onCancelItem(item, response, xhr.status, headers);
+                _this._onCompleteItem(item, response, xhr.status, headers);
+                res(response);
+            };
+            xhr.open(item.method, item.url, true);
+            xhr.withCredentials = item.withCredentials;
+            if (_this.options.headers) {
+                for (var _i = 0, _a = _this.options.headers; _i < _a.length; _i++) {
+                    var header = _a[_i];
+                    xhr.setRequestHeader(header.name, header.value);
+                }
             }
-        }
-        if (item.headers.length) {
-            for (var _b = 0, _c = item.headers; _b < _c.length; _b++) {
-                var header = _c[_b];
-                xhr.setRequestHeader(header.name, header.value);
+            if (item.headers.length) {
+                for (var _b = 0, _c = item.headers; _b < _c.length; _b++) {
+                    var header = _c[_b];
+                    xhr.setRequestHeader(header.name, header.value);
+                }
             }
-        }
-        if (this.authToken) {
-            xhr.setRequestHeader(this.authTokenHeader, this.authToken);
-        }
-        xhr.send(sendable);
-        this._render();
+            if (_this.authToken) {
+                xhr.setRequestHeader(_this.authTokenHeader, _this.authToken);
+            }
+            xhr.send(sendable);
+            //this._render();
+        });
     };
     FileUploader.prototype._getTotalProgress = function (value) {
         if (value === void 0) { value = 0; }
@@ -376,10 +401,10 @@ var FileUploader = /** @class */ (function () {
         }
         return this.options.filters;
     };
-    FileUploader.prototype._render = function () {
-        return void 0;
-        // todo: ?
-    };
+    /*protected _render():any {
+      return void 0;
+      // todo: ?
+    }*/
     FileUploader.prototype._queueLimitFilter = function () {
         return this.options.queueLimit === undefined || this.queue.length < this.options.queueLimit;
     };
@@ -453,7 +478,7 @@ var FileUploader = /** @class */ (function () {
         item._onProgress(progress);
         this.onProgressItem(item, progress);
         this.onProgressAll(total);
-        this._render();
+        //this._render();
     };
     /* tslint:disable */
     FileUploader.prototype._onSuccessItem = function (item, response, status, headers) {
@@ -480,6 +505,11 @@ var FileUploader = /** @class */ (function () {
             }
             return fixFileOrientationByMeta(file, result);
         });
+    };
+    FileUploader.propDecorators = {
+        'done': [{ type: core_1.Output },],
+        'success': [{ type: core_1.Output },],
+        'catcher': [{ type: core_1.Output, args: ['catch',] },],
     };
     return FileUploader;
 }());

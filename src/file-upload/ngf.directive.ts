@@ -18,6 +18,8 @@ export class ngf {
   @Output('init') directiveInit:EventEmitter<ngf> = new EventEmitter()
   @Input('ngf') ref:ngf
   @Output('ngfChange') refChange:EventEmitter<ngf> = new EventEmitter()
+  
+  //deprecated
   @Input() uploader:FileUploader = new FileUploader({});
 
   @Input() lastInvalids:{file:File,type:string}[] = []
@@ -44,7 +46,6 @@ export class ngf {
     }
 
     if( this.multiple ){
-      //this.uploader.options.multiple = this.multiple
       this.paramFileElm().setAttribute('multiple', this.multiple)
     }
 
