@@ -19,11 +19,11 @@ export declare class FileItem {
     index: number;
     _xhr: XMLHttpRequest;
     _form: any;
-    protected uploader: FileUploader;
-    protected some: File;
-    protected options: FileUploaderOptions;
+    uploader: FileUploader;
+    some: File;
+    options: FileUploaderOptions;
     constructor(uploader: FileUploader, some: File, options: FileUploaderOptions);
-    upload(): void;
+    upload(): Promise<any>;
     cancel(): void;
     remove(): void;
     onBeforeUpload(): void;

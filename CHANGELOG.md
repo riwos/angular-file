@@ -1,6 +1,12 @@
 # angular-file - Change Log
 All notable changes to this project will be documented here.
 
+## [0.2.0] - 2017-10-02
+### Breaking Changes
+- FileUploader isHtml5Mode has been removed
+### Added
+- ngfUploader
+
 ## [0.1.0] - 2017-08-31
 ### Breaking Changes
 - fileUrl is now lastBaseUrl
