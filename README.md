@@ -366,6 +366,10 @@ This package is a fork with a complete overhaul of [ng2-file-upload](https://www
   - Use `ngf` selectable="1" instead of `ngfSelect`
   - [uploader] was not to my liking
     - I think this was a poor design
+    - replace `A` with `B.1` and `B.2`
+      - A. `<div ng2FileDrop [uploader]="uploader">`
+      - B.1 `<input ngfDrop (filesChange)="uploader.uploadFiles($event)" />`
+      - B.2 `<ngfUploader [(ref)]="uploader" ></ngfUploader>`
     - Use `[(file)]` and `[(files)]` as models and then wrap them in HTML5 FormData for transmission
       - Tools included to help do this
   - `(fileOver)` is better suited as:
