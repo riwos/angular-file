@@ -215,7 +215,13 @@ export const string = "<style>"+
 "\n          <div class=\"progress\" style=\"\">"+
 "\n            <div class=\"progress-bar\""+
 "\n              role=\"progressbar\""+
-"\n              [ngStyle]=\"{ 'width': progress || uploader.progress + '%' }\""+
+"\n              [ngStyle]=\"{ 'width': progress + '%' }\""+
+"\n            ></div>"+
+"\n          </div>"+
+"\n          <div class=\"progress\" style=\"\">"+
+"\n            <div class=\"progress-bar\""+
+"\n              role=\"progressbar\""+
+"\n              [ngStyle]=\"{ 'width': uploader.progress + '%' }\""+
 "\n            ></div>"+
 "\n          </div>"+
 "\n        </div>"+
