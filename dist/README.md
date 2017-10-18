@@ -121,7 +121,7 @@ export class AppComponent {
   constructor(public Http:Http){}
 
   // takes array of HTML5 Files and uploads
-  uploadFiles(files:File[]):Promise<any>{
+  uploadFiles(files:File[]):Promise<Response>{
     const uploader:FileUploader = this.uploader
 
     //uploader.options.forcePostname = 'POST-NameIfNotJust-FILE'
@@ -138,15 +138,18 @@ export class AppComponent {
     return this.postRequest(config)
   }
 
-  postRequest( config:Request ):Promise<any>{
+  postRequest( config:Request ):Promise<Response>{
     return this.Http.request( config )
     .toPromise()
-    .then( ()=>alert('upload complete, old school alert used') )
+    .then( response=>{
+      alert('upload complete, old school alert used')
+      return response
+    })
     .catch( e=>alert('!failure beyond compare cause:' + e.toString()) )
   }
 
   // takes HTML5 File and uploads
-  sendByModel(file:File):Promise<any>{
+  sendByModel(file:File):Promise<Response>{
     //this.uploader.options.forcePostname = 'POST-NameIfNotJust-FILE'
 
     //to HTML5 FormData for transmission
@@ -162,7 +165,7 @@ export class AppComponent {
   }
 
   // takes array of HTML5 Files and uploads without using FileUploader class
-  manualFormDataUploadFiles(files:File[]):Promise<any>{
+  manualFormDataUploadFiles(files:File[]):Promise<Response>{
     const formData:FormData = new FormData()
 
     files.each( file=>formData.append('file', file, file.name) )
@@ -252,22 +255,49 @@ Combo Drop Select
 
 ## API
 
+### ngfUploader Directive
+```javascript
+[(ref)]     : ngfUploader//reference to directive class
+[useNgHttp] : any = false//use Angular Http to transmit (beta)
+[options]   : {
+  forceFilename?       : string//override that all files will have defined name
+  forcePostname?       : string//override all FormData post names
+  accept?              : string;//acts like file input accept
+  allowedMimeType?     : Array<string>
+  allowedFileType?     : Array<string>
+  autoUpload?          : boolean
+  isHTML5?             : boolean
+  filters?             : Array<FilterFunction>
+  headers?             : Array<Headers>
+  method?              : string
+  authToken?           : string
+  maxFileSize?         : number
+  queueLimit?          : number
+  removeAfterUpload?   : boolean
+  url?                 : string
+  disableMultipart?    : boolean
+  itemAlias?           : string
+  authTokenHeader?     : string
+  additionalParameter? : {[key: string]: any}  
+}
+```
+
 ### ngf Directive
 ```javascript
-[multiple]:string
-[accept]:string
-[maxSize]:number//bytes . 1024 = 1k . 1048576 = 1mb
-[forceFilename]:string
-[forcePostname]:string//when FormData object created, sets name of POST input
-[ngfFixOrientation]:boolean = true
-[fileDropDisabled] = false
-[selectable] = false
-[(ngf)]:ngf
-[(lastInvalids)]:{file:File,type:string}[] = []
-[(lastBaseUrl)]:string//Base64 od last file uploaded url
-[(file)]:File//last file uploaded
-[(files)]:File[]
-(init):EventEmitter<ngf>
+[(ngf)]             : ngf//reference to directive class
+[multiple]          : string
+[accept]            : string
+[maxSize]           : number//bytes . 1024 = 1k . 1048576 = 1mb
+[forceFilename]     : string
+[forcePostname]     : string//when FormData object created, sets name of POST input
+[ngfFixOrientation] : boolean = true
+[fileDropDisabled]  : any = false
+[selectable]        : any = false
+[(lastInvalids)]    : {file:File,type:string}[] = []
+[(lastBaseUrl)]     : string//Base64 od last file uploaded url
+[(file)]            : File//last file uploaded
+[(files)]           : File[]
+(init)              : EventEmitter<ngf>
 
 //deprecated
 [uploader]:FileUploader = new FileUploader({})
@@ -276,15 +306,15 @@ Combo Drop Select
 ### ngfDrop Directive
 This directive **extends** `ngf`
 ```javascript
-(fileOver):EventEmitter<any> = new EventEmitter()
-[(validDrag)] = false
-[(invalidDrag)] = false
+(fileOver)      :EventEmitter<any> = new EventEmitter()
+[(validDrag)]   :any = false
+[(invalidDrag)] :any = false
 ```
 
 ### ngfSelect Directive
 This directive **extends** `ngf`
 ```javascript
-[selectable] = true
+[selectable]:any = true
 ```
 
 ### ngfBackground Directive
@@ -292,7 +322,7 @@ This directive **extends** `ngf`
 [ngfBackground]:File
 ```
 
-### FileUploader
+### FileUploader Class
 ```typescript
 import { FileUploader } from "angular-file";
 ```
@@ -339,6 +369,10 @@ This package is a fork with a complete overhaul of [ng2-file-upload](https://www
   - Use `ngf` selectable="1" instead of `ngfSelect`
   - [uploader] was not to my liking
     - I think this was a poor design
+    - replace `A` with `B.1` and `B.2`
+      - A. `<div ng2FileDrop [uploader]="uploader">`
+      - B.1 `<input ngfDrop (filesChange)="uploader.uploadFiles($event)" />`
+      - B.2 `<ngfUploader [(ref)]="uploader" ></ngfUploader>`
     - Use `[(file)]` and `[(files)]` as models and then wrap them in HTML5 FormData for transmission
       - Tools included to help do this
   - `(fileOver)` is better suited as:

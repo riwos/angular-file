@@ -7,7 +7,7 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { TabsModule } from 'ngx-bootstrap/tabs';
 import { ngfModule } from '../../../src';
-
+import { HttpClientModule } from '@angular/common/http';
 import { AppComponent } from './app.component';
 import { FileUploadSectionComponent } from './components/file-upload-section';
 import { SimpleDemoComponent } from './components/file-upload/simple-demo.component';
@@ -25,7 +25,8 @@ import { SimpleDemoComponent } from './components/file-upload/simple-demo.compon
     CommonModule,
     ngfModule,
     TabsModule.forRoot(),
-    FormsModule
+    FormsModule,
+    HttpClientModule
   ],
   declarations: [
     SafeHtml,

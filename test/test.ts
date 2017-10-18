@@ -32,7 +32,7 @@ getTestBed().initTestEnvironment(
 );
 
 //grab all test files
-const context = require.context('../src', true);
+const context = require.context('../src', true, /\.spec\.ts/);
 //require all test files. HINT: Typically requires tsconfig.json to have: {"include": ["**/*.spec.ts"]}
 context.keys().map(filepath=>context(filepath))
 

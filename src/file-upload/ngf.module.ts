@@ -6,21 +6,23 @@ import { ngfDrop } from './ngfDrop.directive';
 import { ngf } from './ngf.directive';
 import { ngfSelect } from './ngfSelect.directive';
 import { ngfUploader } from './ngfUploader.directive';
-import{ HttpModule } from '@angular/http';
+import { ngfUploadStatus } from './ngfUploadStatus.directive';
+//import{ HttpModule } from '@angular/http';
 
 const declarations = [
   ngfDrop,
   ngfSelect,
   ngfBackground,
   ngfUploader,
+  ngfUploadStatus,
   ngf
 ]
 
 @NgModule({
   imports: [
-    CommonModule,
-    HttpModule
+    CommonModule
+    //,HttpModule
   ],
   declarations: declarations,
-  exports: [HttpModule, ...declarations]
+  exports: declarations//[HttpModule, ...declarations]
 }) export class ngfModule {}
