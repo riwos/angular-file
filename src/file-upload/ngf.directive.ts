@@ -31,7 +31,7 @@ export class ngf {
   @Input() file:File//last file uploaded
   @Output() fileChange:EventEmitter<File> = new EventEmitter()
 
-  @Input() files:File[]
+  @Input() files:File[] = []
   @Output() filesChange:EventEmitter<File[]> = new EventEmitter<File[]>();
 
   constructor(public element:ElementRef){}
@@ -128,14 +128,18 @@ export class ngf {
     }
 
     if (this.isEmptyAfterSelection()) {
-      this.element.nativeElement.value = '';
+      this.element.nativeElement.value = ''
     }
   }
 
   que(files:File[]){
-    this.uploader.addToQueue(files);
-    this.filesChange.emit( this.files=files );
+    this.uploader.addToQueue(files)
+
+    if(!this.files)this.files=[]
     
+    Array.prototype.push.apply(this.files, files)
+    this.filesChange.emit( this.files )
+
     if(files.length){
       this.fileChange.emit( this.file=files[0] )
 

@@ -74,9 +74,9 @@ export class ngfUploader extends FileUploader {
     config.body = formData
     const request = new Request(config)
     return this.postRequest(config)
-  }*/
+  }
 
   postRequest( config:Request ):Promise<Response>{
     return this.Http.request( config ).toPromise()
-  }
+  }*/
 }

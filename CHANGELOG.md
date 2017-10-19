@@ -1,6 +1,14 @@
 # angular-file - Change Log
 All notable changes to this project will be documented here.
 
+## [0.3.0] - 2017-10-02
+### Breaking Changes
+- [(files)] is now a default blank array . May cause issues if you have *ngIf="files" instead of *ngIf="files.length"
+- removed useNgHttp from ngfUploader and no longer depend on angular/http
+- ngf, ngfSelect, and ngfDrop no longer reset the [(files)]. They always append new files
+### Added
+- ngfUploadStatus
+
 ## [0.2.0] - 2017-10-02
 ### Breaking Changes
 - FileUploader isHtml5Mode has been removed

@@ -7,12 +7,14 @@ var ngfDrop_directive_1 = require("./ngfDrop.directive");
 var ngf_directive_1 = require("./ngf.directive");
 var ngfSelect_directive_1 = require("./ngfSelect.directive");
 var ngfUploader_directive_1 = require("./ngfUploader.directive");
-var http_1 = require("@angular/http");
+var ngfUploadStatus_directive_1 = require("./ngfUploadStatus.directive");
+//import{ HttpModule } from '@angular/http';
 var declarations = [
     ngfDrop_directive_1.ngfDrop,
     ngfSelect_directive_1.ngfSelect,
     ngfBackground_directive_1.ngfBackground,
     ngfUploader_directive_1.ngfUploader,
+    ngfUploadStatus_directive_1.ngfUploadStatus,
     ngf_directive_1.ngf
 ];
 var ngfModule = /** @class */ (function () {
@@ -21,11 +23,11 @@ var ngfModule = /** @class */ (function () {
     ngfModule.decorators = [
         { type: core_1.NgModule, args: [{
                     imports: [
-                        common_1.CommonModule,
-                        http_1.HttpModule
+                        common_1.CommonModule
+                        //,HttpModule
                     ],
                     declarations: declarations,
-                    exports: [http_1.HttpModule].concat(declarations)
+                    exports: declarations //[HttpModule, ...declarations]
                 },] },
     ];
     /** @nocollapse */

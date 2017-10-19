@@ -1,7 +1,7 @@
 import { Component } from '@angular/core'
-import { Observable } from 'rxjs'
+import { Observable, Subscription } from 'rxjs'
 import { string as template } from "./simple-demo.template"
-import { HttpClient, HttpRequest, HttpEvent } from '@angular/common/http'
+import { HttpClient, HttpRequest, HttpResponse, HttpEvent } from '@angular/common/http'
 
 @Component({
   selector: 'simple-demo',
@@ -9,37 +9,25 @@ import { HttpClient, HttpRequest, HttpEvent } from '@angular/common/http'
   template:template
 })
 export class SimpleDemoComponent {
+  files:File[] = []
+  progress:number
   url = 'https://evening-anchorage-3159.herokuapp.com/api/'
   hasBaseDropZoneOver:boolean = false
-  hasAnotherDropZoneOver:boolean = false
-  httpEmitter:Observable<HttpEvent<HttpRequest<FormData>>>
+  
+  httpEmitter:Subscription
+  httpEvent:HttpEvent<any>
 
   constructor(public HttpClient:HttpClient){}
 
-  //deprecated
-  //uploader:FileUploader = new FileUploader({url: URL});
-
-  fileOverBase(e:any):void {
-    this.hasBaseDropZoneOver = e;
+  cancel(){
+    this.progress = 0
+    if( this.httpEmitter ){
+      console.log('cancelled')
+      this.httpEmitter.unsubscribe()
+    }
   }
 
-  fileOverAnother(e:any):void {
-    this.hasAnotherDropZoneOver = e;
-  }
-
-  done($event){
-    console.log('done uploading', $event)
-  }
-  
-  success($event){
-    console.log('successful upload', $event)
-  }
-  
-  catcher($event){
-    console.log('caught something', $event)
-  }
-
-  uploadFiles(files:File[]):Observable<HttpEvent<HttpRequest<FormData>>>{
+  uploadFiles(files:File[]):Subscription{
     const formData:FormData = new FormData();
     for (let file of files) {
       formData.append('file', file, file.name)//input-name, file-contents, filename
@@ -49,6 +37,13 @@ export class SimpleDemoComponent {
       reportProgress: true//, responseType: 'text'
     })
     
-    return this.httpEmitter = this.HttpClient.request<HttpRequest<FormData>>(req)
+    return this.httpEmitter = this.HttpClient.request(req).subscribe(event=>{
+      this.httpEvent = event
+      
+      if (event instanceof HttpResponse) {
+        delete this.httpEmitter
+        console.log('request done', event)
+      }
+    })
   }
 }

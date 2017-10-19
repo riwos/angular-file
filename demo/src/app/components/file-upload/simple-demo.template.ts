@@ -11,18 +11,9 @@ export const string = "<style>"+
 "\n  }"+
 "\n</style>"+
 "\n"+
-"\n<!-- used by every file input to upload files -->"+
-"\n<ngfUploader"+
-"\n  [(ref)]   = \"uploader\""+
-"\n  [options] = \"{url:url}\""+
-"\n  (done)    = \"done($event)\""+
-"\n  (success) = \"success($event)\""+
-"\n  (catch)   = \"catcher($event)\""+
-"\n></ngfUploader>"+
+"\n<ngfUploadStatus [(percent)]=\"progress\" [httpEvent]=\"httpEvent\"></ngfUploadStatus>"+
 "\n"+
-"\n<ngfUploadStatus [(percent)]=\"progress\" [httpEmitter]=\"httpEmitter\"></ngfUploadStatus>"+
-"\n"+
-"\n<div class=\"container\" *ngIf=\"uploader\">"+
+"\n<div class=\"container\">"+
 "\n  <div class=\"row\">"+
 "\n    <div class=\"col-md-3\">"+
 "\n      <h3>Select Files</h3>"+
@@ -30,11 +21,11 @@ export const string = "<style>"+
 "\n      <input type=\"file\" ngfSelect [(files)]=\"files\" multiple  />"+
 "\n      <br/>"+
 "\n      Single"+
-"\n      <input type=\"file\" ngfSelect [uploader]=\"uploader\" />"+
+"\n      <input type=\"file\" ngfSelect [(files)]=\"files\" />"+
 "\n      <br/>"+
 "\n      Element"+
 "\n      <div ngfSelect multiple=\"1\""+
-"\n        [uploader]=\"uploader\""+
+"\n        [(files)]=\"files\""+
 "\n        class=\"well my-drop-zone\""+
 "\n        style=\"border-style:groove;padding:0.5em;text-align:center;\""+
 "\n      >"+
@@ -42,7 +33,7 @@ export const string = "<style>"+
 "\n      </div>"+
 "\n      Images Only"+
 "\n      <div ngfSelect accept=\"image/*\" multiple=\"1\""+
-"\n        [uploader]=\"uploader\""+
+"\n        [(files)]=\"files\""+
 "\n        class=\"well my-drop-zone\""+
 "\n        style=\"border-style:groove;padding:0.5em;text-align:center;\""+
 "\n      >"+
@@ -53,8 +44,8 @@ export const string = "<style>"+
 "\n"+
 "\n      <div ngfDrop"+
 "\n        [ngClass]=\"{'nv-file-over': hasBaseDropZoneOver}\""+
-"\n        (fileOver)=\"fileOverBase($event)\""+
-"\n        [uploader]=\"uploader\""+
+"\n        (fileOver)=\"hasBaseDropZoneOver=$event\""+
+"\n        [(files)]=\"files\""+
 "\n        class=\"well my-drop-zone\""+
 "\n      >"+
 "\n        Base drop zone"+
@@ -63,7 +54,7 @@ export const string = "<style>"+
 "\n      <div ngfDrop multiple=\"1\" selectable=\"1\""+
 "\n        [ngClass]=\"{'another-file-over-class': validComboDrag}\""+
 "\n        [(validDrag)]=\"validComboDrag\""+
-"\n        [uploader]=\"uploader\""+
+"\n        [(files)]=\"files\""+
 "\n        class=\"well my-drop-zone\""+
 "\n      >"+
 "\n        Combo drop/select zone"+
@@ -72,20 +63,18 @@ export const string = "<style>"+
 "\n"+
 "\n    <div class=\"col-md-9\" style=\"margin-bottom: 40px\">"+
 "\n      <h3>Upload Queue</h3>"+
-"\n      <p>Queue length: {{ uploader?.queue?.length }}</p>"+
+"\n      <p>Queue length: {{ files.length }}</p>"+
 "\n      <table class=\"table\">"+
 "\n        <thead>"+
 "\n          <tr>"+
 "\n            <th>Name</th>"+
 "\n            <th>Type</th>"+
 "\n            <th>Size</th>"+
-"\n            <th>Progress</th>"+
-"\n            <th>Status</th>"+
 "\n            <th>Actions</th>"+
 "\n          </tr>"+
 "\n        </thead>"+
 "\n        <tbody>"+
-"\n          <tr *ngFor=\"let item of files\">"+
+"\n          <tr *ngFor=\"let item of files;let i=index\">"+
 "\n            <td>"+
 "\n              <div *ngIf=\"['image/png','image/jpeg'].indexOf(item.type)>=0\">"+
 "\n                <div class=\"previewIcon\" [ngfBackground]=\"item\"></div>"+
@@ -98,109 +87,10 @@ export const string = "<style>"+
 "\n            <td nowrap>"+
 "\n              {{ item.size/1024/1024 | number:'.2' }} MB"+
 "\n            </td>"+
-"\n            <td>"+
-"\n              <!--<div class=\"progress\" style=\"margin-bottom: 0;\">"+
-"\n                <div"+
-"\n                  class=\"progress-bar\""+
-"\n                  role=\"progressbar\""+
-"\n                  [ngStyle]=\"{ 'width': item.progress + '%' }\""+
-"\n                ></div>"+
-"\n              </div>-->"+
-"\n            </td>"+
-"\n            <td class=\"text-center\">"+
-"\n              <!--"+
-"\n              <span *ngIf=\"item.isSuccess\">"+
-"\n                <i class=\"glyphicon glyphicon-ok\"></i>"+
-"\n              </span>"+
-"\n              <span *ngIf=\"item.isCancel\">"+
-"\n                <i class=\"glyphicon glyphicon-ban-circle\"></i>"+
-"\n              </span>"+
-"\n              <span *ngIf=\"item.isError\">"+
-"\n                <i class=\"glyphicon glyphicon-remove\"></i>"+
-"\n              </span>"+
-"\n              -->"+
-"\n            </td>"+
 "\n            <td nowrap>"+
-"\n              <!--"+
-"\n              <button type=\"button\""+
-"\n                class=\"btn btn-success btn-xs\""+
-"\n                (click)=\"item.upload()\""+
-"\n                [disabled]=\"item.isReady || item.isUploading || item.isSuccess\""+
-"\n              >"+
-"\n                <span class=\"glyphicon glyphicon-upload\"></span>"+
-"\n                &nbsp;Upload"+
-"\n              </button>"+
-"\n              <button type=\"button\""+
-"\n                class=\"btn btn-warning btn-xs\""+
-"\n                (click)=\"item.cancel()\""+
-"\n                [disabled]=\"!item.isUploading\""+
-"\n              >"+
-"\n                <span class=\"glyphicon glyphicon-ban-circle\"></span>"+
-"\n                &nbsp;Cancel"+
-"\n              </button>"+
 "\n              <button type=\"button\""+
 "\n                class=\"btn btn-danger btn-xs\""+
-"\n                (click)=\"item.remove()\""+
-"\n              >"+
-"\n                <span class=\"glyphicon glyphicon-trash\"></span>"+
-"\n              </button>"+
-"\n              -->"+
-"\n            </td>"+
-"\n          </tr>"+
-"\n          <!-- old deprecated files -->"+
-"\n          <tr *ngFor=\"let item of uploader.queue\">"+
-"\n            <td>"+
-"\n              <div *ngIf=\"['image/png','image/jpeg'].indexOf(item._file.type)>=0\">"+
-"\n                <div class=\"previewIcon\" [ngfBackground]=\"item._file\"></div>"+
-"\n              </div>"+
-"\n              <strong>{{ item?.file?.name }}</strong>"+
-"\n            </td>"+
-"\n            <td nowrap>"+
-"\n              {{ item._file.type }}"+
-"\n            </td>"+
-"\n            <td nowrap>"+
-"\n              {{ item._file?.size/1024/1024 | number:'.2' }} MB"+
-"\n            </td>"+
-"\n            <td>"+
-"\n              <div class=\"progress\" style=\"margin-bottom: 0;\">"+
-"\n                <div"+
-"\n                  class=\"progress-bar\""+
-"\n                  role=\"progressbar\""+
-"\n                  [ngStyle]=\"{ 'width': item.progress + '%' }\""+
-"\n                ></div>"+
-"\n              </div>"+
-"\n            </td>"+
-"\n            <td class=\"text-center\">"+
-"\n              <span *ngIf=\"item.isSuccess\">"+
-"\n                <i class=\"glyphicon glyphicon-ok\"></i>"+
-"\n              </span>"+
-"\n              <span *ngIf=\"item.isCancel\">"+
-"\n                <i class=\"glyphicon glyphicon-ban-circle\"></i>"+
-"\n              </span>"+
-"\n              <span *ngIf=\"item.isError\">"+
-"\n                <i class=\"glyphicon glyphicon-remove\"></i>"+
-"\n              </span>"+
-"\n            </td>"+
-"\n            <td nowrap>"+
-"\n              <button type=\"button\""+
-"\n                class=\"btn btn-success btn-xs\""+
-"\n                (click)=\"item.upload()\""+
-"\n                [disabled]=\"item.isReady || item.isUploading || item.isSuccess\""+
-"\n              >"+
-"\n                <span class=\"glyphicon glyphicon-upload\"></span>"+
-"\n                &nbsp;Upload"+
-"\n              </button>"+
-"\n              <button type=\"button\""+
-"\n                class=\"btn btn-warning btn-xs\""+
-"\n                (click)=\"item.cancel()\""+
-"\n                [disabled]=\"!item.isUploading\""+
-"\n              >"+
-"\n                <span class=\"glyphicon glyphicon-ban-circle\"></span>"+
-"\n                &nbsp;Cancel"+
-"\n              </button>"+
-"\n              <button type=\"button\""+
-"\n                class=\"btn btn-danger btn-xs\""+
-"\n                (click)=\"item.remove()\""+
+"\n                (click)=\"files.splice(i,1)\""+
 "\n              >"+
 "\n                <span class=\"glyphicon glyphicon-trash\"></span>"+
 "\n              </button>"+
@@ -218,41 +108,29 @@ export const string = "<style>"+
 "\n              [ngStyle]=\"{ 'width': progress + '%' }\""+
 "\n            ></div>"+
 "\n          </div>"+
-"\n          <div class=\"progress\" style=\"\">"+
-"\n            <div class=\"progress-bar\""+
-"\n              role=\"progressbar\""+
-"\n              [ngStyle]=\"{ 'width': uploader.progress + '%' }\""+
-"\n            ></div>"+
-"\n          </div>"+
 "\n        </div>"+
+"\n"+
+"\n        <i *ngIf=\"progress==100\" class=\"glyphicon glyphicon-ok\"></i>"+
 "\n"+
 "\n        <button type=\"button\""+
 "\n          class=\"btn btn-success btn-s\""+
 "\n          (click)=\"uploadFiles(files)\""+
 "\n          [disabled]=\"!files\""+
 "\n        >"+
-"\n          <span class=\"glyphicon glyphicon-upload\"></span> Angular Upload all"+
-"\n        </button>"+
-"\n"+
-"\n        <button type=\"button\""+
-"\n          class=\"btn btn-success btn-s\""+
-"\n          (click)=\"uploadFiles(files);uploader.uploadAll()\""+
-"\n          [disabled]=\"!uploader.getNotUploadedItems().length\""+
-"\n        >"+
 "\n          <span class=\"glyphicon glyphicon-upload\"></span> Upload all"+
 "\n        </button>"+
 "\n"+
 "\n        <button type=\"button\""+
 "\n          class=\"btn btn-warning btn-s\""+
-"\n          (click)=\"uploader.cancelAll()\""+
-"\n          [disabled]=\"!uploader.isUploading\""+
+"\n          (click)=\"cancel()\""+
+"\n          [disabled]=\"!httpEmitter\""+
 "\n        >"+
 "\n          <span class=\"glyphicon glyphicon-ban-circle\"></span> Cancel all"+
 "\n        </button>"+
 "\n        <button type=\"button\""+
 "\n          class=\"btn btn-danger btn-s\""+
-"\n          (click)=\"files.length=0;uploader.clearQueue()\""+
-"\n          [disabled]=\"!files && !uploader.queue.length\""+
+"\n          (click)=\"files.length=0\""+
+"\n          [disabled]=\"!files\""+
 "\n        >"+
 "\n          <span class=\"glyphicon glyphicon-trash\"></span> Remove all"+
 "\n        </button>"+
