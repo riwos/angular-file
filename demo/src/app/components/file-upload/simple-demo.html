@@ -9,26 +9,29 @@
     background-size:cover;
     background-repeat:no-repeat;
   }
+
+  .inline-block{
+    display:inline-block;
+    margin:.2em;
+  }
 </style>
 
 <ngfUploadStatus [(percent)]="progress" [httpEvent]="httpEvent"></ngfUploadStatus>
 
-<div class="container">
-  <div class="row">
-    <div class="col-md-3">
+<div class="inline-block">
+    <h3>Select Files</h3>
 
-      <h3>Select Files</h3>
-
+    <div class="inline-block">
       Multiple
       <input type="file" ngfSelect [(files)]="files" multiple  />
+    </div>
 
-      <br/>
-
+    <div class="inline-block">
       Single
       <input type="file" ngfSelect [(files)]="files" />
+    </div>
 
-      <br/>
-
+    <div class="inline-block">
       Element
       <div ngfSelect multiple="1"
         [(files)]="files"
@@ -37,7 +40,9 @@
       >
         Tap to Select
       </div>
+    </div>
 
+    <div class="inline-block">
       Images Only
       <div ngfSelect accept="image/*" multiple="1"
         [(files)]="files"
@@ -46,104 +51,108 @@
       >
         Tap to Select
       </div>
-
-      <h3>Drop Files</h3>
-
-      <div ngfDrop
-        [ngClass]="{'nv-file-over': hasBaseDropZoneOver}"
-        (fileOver)="hasBaseDropZoneOver=$event"
-        [(files)]="files"
-        class="well my-drop-zone"
-      >
-        Base drop zone
-      </div>
-
-      <div ngfDrop multiple="1" selectable="1"
-        [ngClass]="{'another-file-over-class': validComboDrag}"
-        [(validDrag)]="validComboDrag"
-        [(files)]="files"
-        class="well my-drop-zone"
-      >
-        Combo drop/select zone
-      </div>
     </div>
+</div>
 
-    <div class="col-md-9" style="margin-bottom: 40px">
-      
-      <h3>Upload Queue</h3>
-      
-      <p>Queue length: {{ files.length }}</p>
-      <table class="table">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Type</th>
-            <th>Size</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let item of files;let i=index">
-            <td>
-              <div *ngIf="['image/png','image/jpeg'].indexOf(item.type)>=0">
-                <div class="previewIcon" [ngfBackground]="item"></div>
-              </div>
-              <strong>{{ item.name }}</strong>
-            </td>
-            <td nowrap>
-              {{ item.type }}
-            </td>
-            <td nowrap>
-              {{ item.size/1024/1024 | number:'.2' }} MB
-            </td>
-            <td nowrap>
-              <button type="button"
-                class="btn btn-danger btn-xs"
-                (click)="files.splice(i,1)"
-              >
-                <span class="glyphicon glyphicon-trash"></span>
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+<div class="inline-block">
+  <h3>Drop Files</h3>
 
-      <div>
-        <div>
-          Queue progress:
-          <div class="progress" style="">
-            <div class="progress-bar"
-              role="progressbar"
-              [ngStyle]="{ 'width': progress + '%' }"
-            ></div>
+  <div class="inline-block">
+    <div ngfDrop
+      [ngClass]="{'nv-file-over': hasBaseDropZoneOver}"
+      (fileOver)="hasBaseDropZoneOver=$event"
+      [(files)]="files"
+      class="well my-drop-zone"
+    >
+      Base drop zone
+    </div>
+  </div>
+
+  <div class="inline-block">
+    <div ngfDrop multiple="1" selectable="1"
+      [ngClass]="{'another-file-over-class': validComboDrag}"
+      [(validDrag)]="validComboDrag"
+      [(files)]="files"
+      class="well my-drop-zone"
+    >
+      Combo drop/select zone
+    </div>
+  </div>
+</div>
+
+<div style="margin-bottom: 40px">
+  <h3>Upload Queue</h3>
+  
+  <p>Queue length: {{ files.length }}</p>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Size</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of files;let i=index">
+        <td>
+          <div *ngIf="['image/png','image/jpeg'].indexOf(item.type)>=0">
+            <div class="previewIcon" [ngfBackground]="item"></div>
           </div>
-        </div>
+          <strong>{{ item.name }}</strong>
+        </td>
+        <td nowrap>
+          {{ item.type }}
+        </td>
+        <td nowrap>
+          {{ item.size/1024/1024 | number:'.2' }} MB
+        </td>
+        <td nowrap>
+          <button type="button"
+            class="btn btn-danger btn-xs"
+            (click)="files.splice(i,1)"
+          >
+            <span class="glyphicon glyphicon-trash"></span>
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
 
-        <i *ngIf="progress==100" class="glyphicon glyphicon-ok"></i>
-
-        <button type="button"
-          class="btn btn-success btn-s"
-          (click)="uploadFiles(files)"
-          [disabled]="!files"
-        >
-          <span class="glyphicon glyphicon-upload"></span> Upload all
-        </button>
-
-        <button type="button"
-          class="btn btn-warning btn-s"
-          (click)="cancel()"
-          [disabled]="!httpEmitter"
-        >
-          <span class="glyphicon glyphicon-ban-circle"></span> Cancel all
-        </button>
-        <button type="button"
-          class="btn btn-danger btn-s"
-          (click)="files.length=0"
-          [disabled]="!files"
-        >
-          <span class="glyphicon glyphicon-trash"></span> Remove all
-        </button>
+  <div>
+    <div>
+      Queue progress:
+      <div class="progress" style="">
+        <div class="progress-bar"
+          role="progressbar"
+          [ngStyle]="{ 'width': progress + '%' }"
+        ></div>
       </div>
     </div>
+
+    <i *ngIf="progress==100" class="glyphicon glyphicon-ok"></i>
+
+    <button type="button"
+      class="btn btn-success btn-s"
+      (click)="uploadFiles(files)"
+      [disabled]="!files"
+    >
+      <span class="glyphicon glyphicon-upload"></span> Upload all
+    </button>
+
+    <button type="button"
+      class="btn btn-warning btn-s"
+      (click)="cancel()"
+      [disabled]="!httpEmitter"
+    >
+      <span class="glyphicon glyphicon-ban-circle"></span> Cancel all
+    </button>
+    <button type="button"
+      class="btn btn-danger btn-s"
+      (click)="files.length=0"
+      [disabled]="!files"
+    >
+      <span class="glyphicon glyphicon-trash"></span> Remove all
+    </button>
   </div>
 </div>

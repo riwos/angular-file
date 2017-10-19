@@ -1,29 +1,10 @@
-section([attr.id]="name.toLowerCase()")
-  .row
-    tabset
-      ng-container(*ngFor="let desc of tabs")
-        tab("(select)"="select($event)" heading="{{desc.heading}}")
-          .card.card-block.panel.panel-default.panel-body
-            simple-demo
+simple-demo
 
-            br
+tabset
+  tab(heading="Template")
+    .card.card-block.panel.panel-default.panel-body
+      pre.prettyprint.linenums.lang-html {{ tabs.html }}
 
-            .row(style="margin: 0px;")
-              tabset
-                tab(heading="Markup")
-                  div
-                    .card.card-block.panel.panel-default.panel-body
-                      pre.prettyprint.linenums.lang-html {{desc.html}}
-                tab(heading="TypeScript")
-                  div
-                    .card.card-block.panel.panel-default.panel-body
-                      pre.prettyprint.linenums.lang-js {{desc.ts}}
-                      pre.language-typescript
-                        code.language-typescript(ng-non-bindable "[innerHTML]"="desc.ts|safeHtml")
-                //-tab(heading="Backend Demo")
-                  .card.card-block.panel.panel-default.panel-body
-                    pre.prettyprint.linenums.lang-js {{desc.js}}
-
-  .row
-    h2 API
-    .card.card-block.panel.panel-default.panel-body("[innerHTML]"="doc|safeHtml")
+  tab(heading="Typescript")
+    .card.card-block.panel.panel-default.panel-body
+      pre.prettyprint.linenums.lang-js {{ tabs.ts }}

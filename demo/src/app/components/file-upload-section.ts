@@ -1,29 +1,13 @@
 import { Component } from '@angular/core';
 import { string as template } from "./file-upload-section.template"
-
-//let doc = require('html-loader!markdown-loader!../../doc.md');
-//let doc = 'hello doc world'
 import { string as doc } from "./doc.template"
 import { string as tsString } from "./file-upload/simple-demo.component.template"
-//import { string as jsString } from "./file-upload/file-catcher.component.template"
 import { string as htmlString } from "./file-upload/simple-demo.template"
 
-let tabDesc:Array<any> = [
-  {
-    heading: 'Simple',
-    //ts: require('!!raw-loader?lang=typescript!./file-upload/simple-demo.ts'),
-    //html: require('!!raw-loader?lang=markup!./file-upload/simple-demo.html'),
-    //js: require('!!raw-loader?lang=javascript!./file-upload/file-catcher.js')
-
-    //ts: 'hello ts world',
-    //html: 'hello html world',
-    //js: 'hello js world'
-
-    ts: tsString,
-    html: htmlString
-    //,js: jsString
-  }
-];
+let tabDesc:any ={
+  ts: tsString,
+  html: htmlString
+}
 
 @Component({
   selector: 'file-upload-section',
