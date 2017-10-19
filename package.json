@@ -1,10 +1,10 @@
 {
   "name": "angular-file",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "private": true,
   "description": "Angular file upload directives",
   "scripts": {
-    "build": "npm-run-all build:dist build:demo:js:prod",
+    "build": "npm-run-all compile:templates build:dist build:demo:js:prod",
     "build:dist": "npm-run-all update:dist build:dist:js",
     "update:dist": "node scripts/update-dist-package.js",
     "build:dist:js": "ngc -p src/tsconfig.json",
