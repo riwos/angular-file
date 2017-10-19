@@ -16,13 +16,19 @@ export const string = "<style>"+
 "\n<div class=\"container\">"+
 "\n  <div class=\"row\">"+
 "\n    <div class=\"col-md-3\">"+
+"\n"+
 "\n      <h3>Select Files</h3>"+
+"\n"+
 "\n      Multiple"+
 "\n      <input type=\"file\" ngfSelect [(files)]=\"files\" multiple  />"+
+"\n"+
 "\n      <br/>"+
+"\n"+
 "\n      Single"+
 "\n      <input type=\"file\" ngfSelect [(files)]=\"files\" />"+
+"\n"+
 "\n      <br/>"+
+"\n"+
 "\n      Element"+
 "\n      <div ngfSelect multiple=\"1\""+
 "\n        [(files)]=\"files\""+
@@ -31,6 +37,7 @@ export const string = "<style>"+
 "\n      >"+
 "\n        Tap to Select"+
 "\n      </div>"+
+"\n"+
 "\n      Images Only"+
 "\n      <div ngfSelect accept=\"image/*\" multiple=\"1\""+
 "\n        [(files)]=\"files\""+
@@ -62,7 +69,9 @@ export const string = "<style>"+
 "\n    </div>"+
 "\n"+
 "\n    <div class=\"col-md-9\" style=\"margin-bottom: 40px\">"+
+"\n      "+
 "\n      <h3>Upload Queue</h3>"+
+"\n      "+
 "\n      <p>Queue length: {{ files.length }}</p>"+
 "\n      <table class=\"table\">"+
 "\n        <thead>"+

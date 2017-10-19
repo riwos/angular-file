@@ -5,7 +5,7 @@ import { string as template } from "./file-upload-section.template"
 //let doc = 'hello doc world'
 import { string as doc } from "./doc.template"
 import { string as tsString } from "./file-upload/simple-demo.component.template"
-import { string as jsString } from "./file-upload/file-catcher.component.template"
+//import { string as jsString } from "./file-upload/file-catcher.component.template"
 import { string as htmlString } from "./file-upload/simple-demo.template"
 
 let tabDesc:Array<any> = [
@@ -20,8 +20,8 @@ let tabDesc:Array<any> = [
     //js: 'hello js world'
 
     ts: tsString,
-    html: htmlString,
-    js: jsString
+    html: htmlString
+    //,js: jsString
   }
 ];
 

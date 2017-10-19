@@ -5,7 +5,6 @@ import { HttpClient, HttpRequest, HttpResponse, HttpEvent } from '@angular/commo
 
 @Component({
   selector: 'simple-demo',
-  //templateUrl: './simple-demo.html'
   template:template
 })
 export class SimpleDemoComponent {

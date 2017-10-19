@@ -5,7 +5,6 @@ export const string = "import { Component } from '@angular/core'"+
 "\n"+
 "\n@Component({"+
 "\n  selector: 'simple-demo',"+
-"\n  //templateUrl: './simple-demo.html'"+
 "\n  template:template"+
 "\n})"+
 "\nexport class SimpleDemoComponent {"+
