@@ -11,15 +11,15 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@angular/core");
-var http_1 = require("@angular/http");
-require("rxjs/add/operator/toPromise");
+//import { Http, Response, Request } from '@angular/http';
+//import 'rxjs/add/operator/toPromise';
 var FileUploader_class_1 = require("./FileUploader.class");
 var FileItem_class_1 = require("./FileItem.class");
 var ngfUploader = /** @class */ (function (_super) {
     __extends(ngfUploader, _super);
-    function ngfUploader(Http) {
+    //@Input() useNgHttp:any = false
+    function ngfUploader() {
         var _this = _super.call(this) || this;
-        _this.Http = Http;
         _this.refChange = new core_1.EventEmitter();
         _this.options = {
             autoUpload: false,
@@ -28,7 +28,6 @@ var ngfUploader = /** @class */ (function (_super) {
             removeAfterUpload: false,
             disableMultipart: false
         };
-        _this.useNgHttp = false;
         return _this;
     }
     ngfUploader.prototype.ngOnInit = function () {
@@ -52,7 +51,8 @@ var ngfUploader = /** @class */ (function (_super) {
                 valids.push(file);
             }
         });
-        var promise = this.useNgHttp ? this.ngHttpFiles(this.getFormData(valids)) : this.xhrOneByOne(valids);
+        //const promise:Promise<any> = this.useNgHttp ? this.ngHttpFiles( this.getFormData(valids) ) : this.xhrOneByOne(valids)
+        var promise = this.xhrOneByOne(valids);
         return promise.then(function (response) { return _this.success.emit(response); })
             .catch(function (e) {
             _this.catcher.emit(e);
@@ -69,27 +69,25 @@ var ngfUploader = /** @class */ (function (_super) {
         });
         return Promise.all(promises);
     };
-    ngfUploader.prototype.ngHttpFiles = function (formData) {
-        var config = Object.assign({}, this.options);
-        config.body = formData;
-        var request = new http_1.Request(config);
-        return this.postRequest(config);
-    };
-    ngfUploader.prototype.postRequest = function (config) {
-        return this.Http.request(config).toPromise();
-    };
+    /*ngHttpFiles( formData:FormData ){
+      const config:any = Object.assign({}, this.options)
+      config.body = formData
+      const request = new Request(config)
+      return this.postRequest(config)
+    }
+  
+    postRequest( config:Request ):Promise<Response>{
+      return this.Http.request( config ).toPromise()
+    }*/
     ngfUploader.decorators = [
         { type: core_1.Directive, args: [{ selector: 'ngfUploader' },] },
     ];
     /** @nocollapse */
-    ngfUploader.ctorParameters = function () { return [
-        { type: http_1.Http, },
-    ]; };
+    ngfUploader.ctorParameters = function () { return []; };
     ngfUploader.propDecorators = {
         'ref': [{ type: core_1.Input },],
         'refChange': [{ type: core_1.Output },],
         'options': [{ type: core_1.Input },],
-        'useNgHttp': [{ type: core_1.Input },],
     };
     return ngfUploader;
 }(FileUploader_class_1.FileUploader));

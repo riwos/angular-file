@@ -121,7 +121,7 @@ export class AppComponent {
   constructor(public Http:Http){}
 
   // takes array of HTML5 Files and uploads
-  uploadFiles(files:File[]):Promise<any>{
+  uploadFiles(files:File[]):Promise<Response>{
     const uploader:FileUploader = this.uploader
 
     //uploader.options.forcePostname = 'POST-NameIfNotJust-FILE'
@@ -138,15 +138,18 @@ export class AppComponent {
     return this.postRequest(config)
   }
 
-  postRequest( config:Request ):Promise<any>{
+  postRequest( config:Request ):Promise<Response>{
     return this.Http.request( config )
     .toPromise()
-    .then( ()=>alert('upload complete, old school alert used') )
+    .then( response=>{
+      alert('upload complete, old school alert used')
+      return response
+    })
     .catch( e=>alert('!failure beyond compare cause:' + e.toString()) )
   }
 
   // takes HTML5 File and uploads
-  sendByModel(file:File):Promise<any>{
+  sendByModel(file:File):Promise<Response>{
     //this.uploader.options.forcePostname = 'POST-NameIfNotJust-FILE'
 
     //to HTML5 FormData for transmission
@@ -162,7 +165,7 @@ export class AppComponent {
   }
 
   // takes array of HTML5 Files and uploads without using FileUploader class
-  manualFormDataUploadFiles(files:File[]):Promise<any>{
+  manualFormDataUploadFiles(files:File[]):Promise<Response>{
     const formData:FormData = new FormData()
 
     files.each( file=>formData.append('file', file, file.name) )

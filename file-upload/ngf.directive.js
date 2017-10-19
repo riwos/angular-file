@@ -17,6 +17,7 @@ var ngf = /** @class */ (function () {
         this.lastInvalidsChange = new core_1.EventEmitter();
         this.lastBaseUrlChange = new core_1.EventEmitter();
         this.fileChange = new core_1.EventEmitter();
+        this.files = [];
         this.filesChange = new core_1.EventEmitter();
     }
     ngf.prototype.ngOnDestroy = function () {
@@ -104,7 +105,10 @@ var ngf = /** @class */ (function () {
     ngf.prototype.que = function (files) {
         var _this = this;
         this.uploader.addToQueue(files);
-        this.filesChange.emit(this.files = files);
+        if (!this.files)
+            this.files = [];
+        Array.prototype.push.apply(this.files, files);
+        this.filesChange.emit(this.files);
         if (files.length) {
             this.fileChange.emit(this.file = files[0]);
             if (this.lastBaseUrlChange.observers.length) {
