@@ -33,12 +33,17 @@ export class ngfDrop extends ngf {
 
   @HostListener('dragover', ['$event'])
   onDragOver(event:Event):void {
+    const transfer = this.eventToTransfer(event)
+    const hasFiles = this.transferHasFiles(transfer)
+
     let files = this.eventToFiles(event)
 
-    if(!files.length)return
-    
+    //IE11 does NOT tell you about dragged files. Always 0 files
+    //if(!files.length)return
+
     this.validDrag = this.uploader.isFilesValid(files)
     this.validDragChange.emit(this.validDrag)
+
     this.invalidDrag = !this.validDrag
     this.invalidDragChange.emit(this.invalidDrag)
 

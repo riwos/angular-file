@@ -1,6 +1,9 @@
 # angular-file - Change Log
 All notable changes to this project will be documented here.
 
+## [0.3.3] - 2017-10-02
+- fixed IE11 dragdrop issue
+
 ## [0.3.0] - 2017-10-02
 ### Breaking Changes
 - [(files)] is now a default blank array . May cause issues if you have *ngIf="files" instead of *ngIf="files.length"

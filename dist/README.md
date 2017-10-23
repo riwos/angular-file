@@ -311,6 +311,10 @@ This directive **extends** `ngf`
 [(invalidDrag)] :any = false
 ```
 
+> Supporting Internet Explorer 11 or less?
+>> Only (fileOver) works accurately
+>> [(validDrag)] & [(invalidDrag)] should NOT be used as IE11 does not indicate the number of files NOR the types of files being dragged like other modern web browsers
+
 ### ngfSelect Directive
 This directive **extends** `ngf`
 ```javascript
