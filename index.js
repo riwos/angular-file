@@ -3,7 +3,7 @@ console.log('testing');
 e.prototype.onDragOver=function(t){
   console.log(0,t)
   var e=this.eventToFiles(t);
-  console.log('length',e.length)
+  console.log('length',e.length);
   e.length&&(
     this.validDrag=this.uploader.isFilesValid(e),
     this.validDragChange.emit(this.validDrag),
