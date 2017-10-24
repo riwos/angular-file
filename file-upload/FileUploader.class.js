@@ -236,12 +236,35 @@ var FileUploader = /** @class */ (function () {
         return void 0;
     };
     FileUploader.prototype._acceptFilter = function (item) {
+        return this.acceptType(item.type);
+    };
+    FileUploader.prototype.acceptType = function (type) {
         if (!this.options.accept)
             return true;
-        var acceptReg = '^((' + this.options.accept.replace(/\*/g, '.*');
-        acceptReg = acceptReg.replace(/,/g, ')|(') + '))$';
-        var regx = new RegExp(acceptReg, 'gi');
-        return item.type.search(regx) >= 0;
+        var defs = this.options.accept.split(',');
+        var regx = null;
+        var acceptRegString = null;
+        for (var x = defs.length - 1; x >= 0; --x) {
+            //Escapes dots in mimetype 
+            acceptRegString = defs[x]; //.replace(/\./g,'\\.')
+            //Escapes stars in mimetype 
+            acceptRegString = acceptRegString.replace(/\*/g, '.*');
+            //let acceptReg = '^((' + acceptRegString
+            //acceptReg = acceptReg.replace(/,/g,')|(') + '))$'
+            //try by mime
+            regx = new RegExp(acceptRegString, 'gi');
+            if (type.search(regx) >= 0) {
+                return true;
+            }
+            //try by ext
+            if (acceptRegString.substring(0, 1) == '.') {
+                regx = new RegExp(acceptRegString.substring(1, acceptRegString.length - 1) + '$');
+                if (type.search(regx) >= 0) {
+                    return true;
+                }
+            }
+        }
+        return false;
     };
     FileUploader.prototype._mimeTypeFilter = function (item) {
         return !(this.options.allowedMimeType && this.options.allowedMimeType.indexOf(item.type) === -1);
