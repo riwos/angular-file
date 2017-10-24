@@ -82,6 +82,7 @@ export declare class FileUploader {
     onCompleteItem(item: FileItem, response: string, status: number, headers: ParsedResponseHeaders): any;
     onCompleteAll(): any;
     _acceptFilter(item: FileLikeObject): boolean;
+    acceptType(type: string): boolean;
     _mimeTypeFilter(item: FileLikeObject): boolean;
     _fileSizeFilter(item: FileLikeObject): boolean;
     _fileTypeFilter(item: FileLikeObject): boolean;

@@ -1,158 +1,158 @@
-export const string = "<style>"+
-"\n  .my-drop-zone { border: dotted 3px lightgray; }"+
-"\n  /* Default class applied to drop zones on over */"+
-"\n  .nv-file-over { border: dotted 3px red; }"+
-"\n  .another-file-over-class { border: dotted 3px green; }"+
-"\n  html, body { height: 100%; }"+
-"\n  .previewIcon{"+
-"\n    width:100px;height:100px;"+
-"\n    background-size:cover;"+
-"\n    background-repeat:no-repeat;"+
-"\n  }"+
-"\n"+
-"\n  .inline-block{"+
-"\n    display:inline-block;"+
-"\n    margin:.2em;"+
-"\n  }"+
-"\n</style>"+
-"\n"+
-"\n<ngfUploadStatus [(percent)]=\"progress\" [httpEvent]=\"httpEvent\"></ngfUploadStatus>"+
-"\n"+
-"\n<div class=\"inline-block\">"+
-"\n    <h3>Select Files</h3>"+
-"\n"+
-"\n    <div class=\"inline-block\">"+
-"\n      Multiple"+
-"\n      <input type=\"file\" ngfSelect [(files)]=\"files\" multiple  />"+
-"\n    </div>"+
-"\n"+
-"\n    <div class=\"inline-block\">"+
-"\n      Single"+
-"\n      <input type=\"file\" ngfSelect [(files)]=\"files\" />"+
-"\n    </div>"+
-"\n"+
-"\n    <div class=\"inline-block\">"+
-"\n      Element"+
-"\n      <div ngfSelect multiple=\"1\""+
-"\n        [(files)]=\"files\""+
-"\n        class=\"well my-drop-zone\""+
-"\n        style=\"border-style:groove;padding:0.5em;text-align:center;\""+
-"\n      >"+
-"\n        Tap to Select"+
-"\n      </div>"+
-"\n    </div>"+
-"\n"+
-"\n    <div class=\"inline-block\">"+
-"\n      Images Only"+
-"\n      <div ngfSelect accept=\"image/*\" multiple=\"1\""+
-"\n        [(files)]=\"files\""+
-"\n        class=\"well my-drop-zone\""+
-"\n        style=\"border-style:groove;padding:0.5em;text-align:center;\""+
-"\n      >"+
-"\n        Tap to Select"+
-"\n      </div>"+
-"\n    </div>"+
-"\n</div>"+
-"\n"+
-"\n<div class=\"inline-block\">"+
-"\n  <h3>Drop Files</h3>"+
-"\n"+
-"\n  <div class=\"inline-block\">"+
-"\n    <div ngfDrop"+
-"\n      [ngClass]=\"{'nv-file-over': hasBaseDropZoneOver}\""+
-"\n      (fileOver)=\"hasBaseDropZoneOver=$event\""+
-"\n      [(files)]=\"files\""+
-"\n      class=\"well my-drop-zone\""+
-"\n    >"+
-"\n      Base drop zone"+
-"\n    </div>"+
-"\n  </div>"+
-"\n"+
-"\n  <div class=\"inline-block\">"+
-"\n    <div ngfDrop multiple=\"1\" selectable=\"1\""+
-"\n      [ngClass]=\"{'another-file-over-class': validComboDrag}\""+
-"\n      [(validDrag)]=\"validComboDrag\""+
-"\n      [(files)]=\"files\""+
-"\n      class=\"well my-drop-zone\""+
-"\n    >"+
-"\n      Combo drop/select zone"+
-"\n    </div>"+
-"\n  </div>"+
-"\n</div>"+
-"\n"+
-"\n<div style=\"margin-bottom: 40px\">"+
-"\n  <h3>Upload Queue</h3>"+
-"\n  "+
-"\n  <p>Queue length: {{ files.length }}</p>"+
-"\n  <table class=\"table\">"+
-"\n    <thead>"+
-"\n      <tr>"+
-"\n        <th>Name</th>"+
-"\n        <th>Type</th>"+
-"\n        <th>Size</th>"+
-"\n        <th>Actions</th>"+
-"\n      </tr>"+
-"\n    </thead>"+
-"\n    <tbody>"+
-"\n      <tr *ngFor=\"let item of files;let i=index\">"+
-"\n        <td>"+
-"\n          <div *ngIf=\"['image/png','image/jpeg'].indexOf(item.type)>=0\">"+
-"\n            <div class=\"previewIcon\" [ngfBackground]=\"item\"></div>"+
-"\n          </div>"+
-"\n          <strong>{{ item.name }}</strong>"+
-"\n        </td>"+
-"\n        <td nowrap>"+
-"\n          {{ item.type }}"+
-"\n        </td>"+
-"\n        <td nowrap>"+
-"\n          {{ item.size/1024/1024 | number:'.2' }} MB"+
-"\n        </td>"+
-"\n        <td nowrap>"+
-"\n          <button type=\"button\""+
-"\n            class=\"btn btn-danger btn-xs\""+
-"\n            (click)=\"files.splice(i,1)\""+
-"\n          >"+
-"\n            <span class=\"glyphicon glyphicon-trash\"></span>"+
-"\n          </button>"+
-"\n        </td>"+
-"\n      </tr>"+
-"\n    </tbody>"+
-"\n  </table>"+
-"\n"+
-"\n  <div>"+
-"\n    <div>"+
-"\n      Queue progress:"+
-"\n      <div class=\"progress\" style=\"\">"+
-"\n        <div class=\"progress-bar\""+
-"\n          role=\"progressbar\""+
-"\n          [ngStyle]=\"{ 'width': progress + '%' }\""+
-"\n        ></div>"+
-"\n      </div>"+
-"\n    </div>"+
-"\n"+
-"\n    <i *ngIf=\"progress==100\" class=\"glyphicon glyphicon-ok\"></i>"+
-"\n"+
-"\n    <button type=\"button\""+
-"\n      class=\"btn btn-success btn-s\""+
-"\n      (click)=\"uploadFiles(files)\""+
-"\n      [disabled]=\"!files\""+
-"\n    >"+
-"\n      <span class=\"glyphicon glyphicon-upload\"></span> Upload all"+
-"\n    </button>"+
-"\n"+
-"\n    <button type=\"button\""+
-"\n      class=\"btn btn-warning btn-s\""+
-"\n      (click)=\"cancel()\""+
-"\n      [disabled]=\"!httpEmitter\""+
-"\n    >"+
-"\n      <span class=\"glyphicon glyphicon-ban-circle\"></span> Cancel all"+
-"\n    </button>"+
-"\n    <button type=\"button\""+
-"\n      class=\"btn btn-danger btn-s\""+
-"\n      (click)=\"files.length=0\""+
-"\n      [disabled]=\"!files\""+
-"\n    >"+
-"\n      <span class=\"glyphicon glyphicon-trash\"></span> Remove all"+
-"\n    </button>"+
-"\n  </div>"+
+export const string = "<style>"+"\r"+
+"\n  .my-drop-zone { border: dotted 3px lightgray; }"+"\r"+
+"\n  /* Default class applied to drop zones on over */"+"\r"+
+"\n  .nv-file-over { border: dotted 3px red; }"+"\r"+
+"\n  .another-file-over-class { border: dotted 3px green; }"+"\r"+
+"\n  html, body { height: 100%; }"+"\r"+
+"\n  .previewIcon{"+"\r"+
+"\n    width:100px;height:100px;"+"\r"+
+"\n    background-size:cover;"+"\r"+
+"\n    background-repeat:no-repeat;"+"\r"+
+"\n  }"+"\r"+
+"\n"+"\r"+
+"\n  .inline-block{"+"\r"+
+"\n    display:inline-block;"+"\r"+
+"\n    margin:.2em;"+"\r"+
+"\n  }"+"\r"+
+"\n</style>"+"\r"+
+"\n"+"\r"+
+"\n<ngfUploadStatus [(percent)]=\"progress\" [httpEvent]=\"httpEvent\"></ngfUploadStatus>"+"\r"+
+"\n"+"\r"+
+"\n<div class=\"inline-block\">"+"\r"+
+"\n    <h3>Select Files</h3>"+"\r"+
+"\n"+"\r"+
+"\n    <div class=\"inline-block\">"+"\r"+
+"\n      Multiple"+"\r"+
+"\n      <input type=\"file\" ngfSelect [(files)]=\"files\" multiple  />"+"\r"+
+"\n    </div>"+"\r"+
+"\n"+"\r"+
+"\n    <div class=\"inline-block\">"+"\r"+
+"\n      Single"+"\r"+
+"\n      <input type=\"file\" ngfSelect [(files)]=\"files\" />"+"\r"+
+"\n    </div>"+"\r"+
+"\n"+"\r"+
+"\n    <div class=\"inline-block\">"+"\r"+
+"\n      Element"+"\r"+
+"\n      <div ngfSelect multiple=\"1\""+"\r"+
+"\n        [(files)]=\"files\""+"\r"+
+"\n        class=\"well my-drop-zone\""+"\r"+
+"\n        style=\"border-style:groove;padding:0.5em;text-align:center;\""+"\r"+
+"\n      >"+"\r"+
+"\n        Tap to Select"+"\r"+
+"\n      </div>"+"\r"+
+"\n    </div>"+"\r"+
+"\n"+"\r"+
+"\n    <div class=\"inline-block\">"+"\r"+
+"\n      Images Only"+"\r"+
+"\n      <div ngfSelect accept=\"image/*\" multiple=\"1\""+"\r"+
+"\n        [(files)]=\"files\""+"\r"+
+"\n        class=\"well my-drop-zone\""+"\r"+
+"\n        style=\"border-style:groove;padding:0.5em;text-align:center;\""+"\r"+
+"\n      >"+"\r"+
+"\n        Tap to Select"+"\r"+
+"\n      </div>"+"\r"+
+"\n    </div>"+"\r"+
+"\n</div>"+"\r"+
+"\n"+"\r"+
+"\n<div class=\"inline-block\">"+"\r"+
+"\n  <h3>Drop Files</h3>"+"\r"+
+"\n"+"\r"+
+"\n  <div class=\"inline-block\">"+"\r"+
+"\n    <div ngfDrop"+"\r"+
+"\n      [ngClass]=\"{'nv-file-over': hasBaseDropZoneOver}\""+"\r"+
+"\n      (fileOver)=\"hasBaseDropZoneOver=$event\""+"\r"+
+"\n      [(files)]=\"files\""+"\r"+
+"\n      class=\"well my-drop-zone\""+"\r"+
+"\n    >"+"\r"+
+"\n      Base drop zone"+"\r"+
+"\n    </div>"+"\r"+
+"\n  </div>"+"\r"+
+"\n"+"\r"+
+"\n  <div class=\"inline-block\">"+"\r"+
+"\n    <div ngfDrop multiple=\"1\" selectable=\"1\" accept=\"image/*\""+"\r"+
+"\n      [ngClass]=\"{'another-file-over-class': validComboDrag}\""+"\r"+
+"\n      [(validDrag)]=\"validComboDrag\""+"\r"+
+"\n      [(files)]=\"files\""+"\r"+
+"\n      class=\"well my-drop-zone\""+"\r"+
+"\n    >"+"\r"+
+"\n      Combo drop/select image only zone"+"\r"+
+"\n    </div>"+"\r"+
+"\n  </div>"+"\r"+
+"\n</div>"+"\r"+
+"\n"+"\r"+
+"\n<div style=\"margin-bottom: 40px\">"+"\r"+
+"\n  <h3>Upload Queue</h3>"+"\r"+
+"\n  "+"\r"+
+"\n  <p>Queue length: {{ files.length }}</p>"+"\r"+
+"\n  <table class=\"table\">"+"\r"+
+"\n    <thead>"+"\r"+
+"\n      <tr>"+"\r"+
+"\n        <th>Name</th>"+"\r"+
+"\n        <th>Type</th>"+"\r"+
+"\n        <th>Size</th>"+"\r"+
+"\n        <th>Actions</th>"+"\r"+
+"\n      </tr>"+"\r"+
+"\n    </thead>"+"\r"+
+"\n    <tbody>"+"\r"+
+"\n      <tr *ngFor=\"let item of files;let i=index\">"+"\r"+
+"\n        <td>"+"\r"+
+"\n          <div *ngIf=\"['image/png','image/jpeg'].indexOf(item.type)>=0\">"+"\r"+
+"\n            <div class=\"previewIcon\" [ngfBackground]=\"item\"></div>"+"\r"+
+"\n          </div>"+"\r"+
+"\n          <strong>{{ item.name }}</strong>"+"\r"+
+"\n        </td>"+"\r"+
+"\n        <td nowrap>"+"\r"+
+"\n          {{ item.type }}"+"\r"+
+"\n        </td>"+"\r"+
+"\n        <td nowrap>"+"\r"+
+"\n          {{ item.size/1024/1024 | number:'.2' }} MB"+"\r"+
+"\n        </td>"+"\r"+
+"\n        <td nowrap>"+"\r"+
+"\n          <button type=\"button\""+"\r"+
+"\n            class=\"btn btn-danger btn-xs\""+"\r"+
+"\n            (click)=\"files.splice(i,1)\""+"\r"+
+"\n          >"+"\r"+
+"\n            <span class=\"glyphicon glyphicon-trash\"></span>"+"\r"+
+"\n          </button>"+"\r"+
+"\n        </td>"+"\r"+
+"\n      </tr>"+"\r"+
+"\n    </tbody>"+"\r"+
+"\n  </table>"+"\r"+
+"\n"+"\r"+
+"\n  <div>"+"\r"+
+"\n    <div>"+"\r"+
+"\n      Queue progress:"+"\r"+
+"\n      <div class=\"progress\" style=\"\">"+"\r"+
+"\n        <div class=\"progress-bar\""+"\r"+
+"\n          role=\"progressbar\""+"\r"+
+"\n          [ngStyle]=\"{ 'width': progress + '%' }\""+"\r"+
+"\n        ></div>"+"\r"+
+"\n      </div>"+"\r"+
+"\n    </div>"+"\r"+
+"\n"+"\r"+
+"\n    <i *ngIf=\"progress==100\" class=\"glyphicon glyphicon-ok\"></i>"+"\r"+
+"\n"+"\r"+
+"\n    <button type=\"button\""+"\r"+
+"\n      class=\"btn btn-success btn-s\""+"\r"+
+"\n      (click)=\"uploadFiles(files)\""+"\r"+
+"\n      [disabled]=\"!files\""+"\r"+
+"\n    >"+"\r"+
+"\n      <span class=\"glyphicon glyphicon-upload\"></span> Upload all"+"\r"+
+"\n    </button>"+"\r"+
+"\n"+"\r"+
+"\n    <button type=\"button\""+"\r"+
+"\n      class=\"btn btn-warning btn-s\""+"\r"+
+"\n      (click)=\"cancel()\""+"\r"+
+"\n      [disabled]=\"!httpEmitter\""+"\r"+
+"\n    >"+"\r"+
+"\n      <span class=\"glyphicon glyphicon-ban-circle\"></span> Cancel all"+"\r"+
+"\n    </button>"+"\r"+
+"\n    <button type=\"button\""+"\r"+
+"\n      class=\"btn btn-danger btn-s\""+"\r"+
+"\n      (click)=\"files.length=0\""+"\r"+
+"\n      [disabled]=\"!files\""+"\r"+
+"\n    >"+"\r"+
+"\n      <span class=\"glyphicon glyphicon-trash\"></span> Remove all"+"\r"+
+"\n    </button>"+"\r"+
+"\n  </div>"+"\r"+
 "\n</div>"

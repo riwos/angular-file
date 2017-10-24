@@ -69,13 +69,13 @@
   </div>
 
   <div class="inline-block">
-    <div ngfDrop multiple="1" selectable="1"
+    <div ngfDrop multiple="1" selectable="1" accept="image/*"
       [ngClass]="{'another-file-over-class': validComboDrag}"
       [(validDrag)]="validComboDrag"
       [(files)]="files"
       class="well my-drop-zone"
     >
-      Combo drop/select zone
+      Combo drop/select image only zone
     </div>
   </div>
 </div>
