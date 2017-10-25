@@ -325,10 +325,10 @@ export class FileUploader {
   }
 
   _acceptFilter(item:FileLikeObject):boolean {
-    return this.acceptType( item.type )
+    return this.acceptType(item.type, item.name)
   }
 
-  acceptType(type:string):boolean {
+  acceptType(type:string, name?:string):boolean {
     if(!this.options.accept)return true
 
     const defs = this.options.accept.split(',')
@@ -351,8 +351,9 @@ export class FileUploader {
 
       //try by ext
       if( acceptRegString.substring(0, 1)=='.' ){      
-        regx = new RegExp(acceptRegString.substring(1, acceptRegString.length-1)+'$')
-        if( type.search(regx)>=0 ){
+        acceptRegString = '\\'+ acceptRegString//.substring(1, acceptRegString.length-1)//remove dot at front
+        regx = new RegExp(acceptRegString+'$')
+        if( (name||type).search(regx)>=0 ){
           return true
         }
       }

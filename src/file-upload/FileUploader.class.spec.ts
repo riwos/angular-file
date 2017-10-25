@@ -24,5 +24,6 @@ describe('FileUploader', () => {
     expect( fU.acceptType('mxf/video') ).toBe( false )
     expect( fU.acceptType('audio/mxf') ).toBe( true )
     expect( fU.acceptType('video/mxf') ).toBe( true )
+    expect( fU.acceptType('','<my-file>.mxf') ).toBe( true )
   })
 })
