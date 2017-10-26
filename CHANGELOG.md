@@ -1,6 +1,9 @@
 # angular-file - Change Log
 All notable changes to this project will be documented here.
 
+## [0.3.6] - 2017-10-26
+- case-insensative accept filtering
+
 ## [0.3.5] - 2017-10-25
 - Ensured accept filters transmit file names when possible for better mime type checking
 
