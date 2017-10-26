@@ -352,7 +352,7 @@ export class FileUploader {
       //try by ext
       if( acceptRegString.substring(0, 1)=='.' ){      
         acceptRegString = '\\'+ acceptRegString//.substring(1, acceptRegString.length-1)//remove dot at front
-        regx = new RegExp(acceptRegString+'$')
+        regx = new RegExp(acceptRegString+'$', 'i')
         if( (name||type).search(regx)>=0 ){
           return true
         }
