@@ -27,6 +27,7 @@
     "./index.ts"
   ],
   "angularCompilerOptions": {
-    "genDir": "../temp/factories"
+    "skipMetadataEmit" : false,
+    "skipTemplateCodegen" : true
   }
 }
