@@ -15,6 +15,11 @@ Easy to use Angular directives for file uploading ([demo](http://ackerapple.gith
 - [Quick Start](#quick-start)
 - [Examples](#examples)
 - [API](#api)
+  - [ngf Directive](#ngf-directive)
+  - [ngfDrop Directive](#ngfdrop-directive)
+  - [ngfBackground Directive](#ngfbackground-directive)
+  - [ngfSelect Directive](#ngfselect-directive)
+  - [ngfUploadStatus Directive](#ngfuploadstatus-directive)
 - [Upgrading from ng2-file-upload](#upgrading-from-ng2-file-upload)
 - [Troubleshooting](#troubleshooting)
 - [Credits](#credits)
@@ -25,7 +30,7 @@ Easy to use Angular directives for file uploading ([demo](http://ackerapple.gith
 ## Forked
 PLEASE NOTE
 
-This code is made up of several packages that came before this one. Not all code is intended to be used and old code is often only to support others that are converting to this package.
+This code is made up of several packages that came before this one. Not all code is intended to be used and old code often remains only to support others that are converting over to this package.
 
 ## Compare
 Before even getting started, gage this package against others
@@ -50,65 +55,43 @@ Before even getting started, gage this package against others
 
 ## Examples
 
-### Quickest Dirty Example
-Showing off. This is NOT the best approach but sure does get a lot done for a little
-```html
-<input
-  type          = "file"
-  multiple
-  accept        = "image/*"
-  ngf
-  (filesChange) = "uploader.uploadFiles($event)"
-  maxSize       = "1024"
-/>
-
-<ngfUploader
-  [(ref)]   = "uploader"
-  [options] = "{url:'...'}"
-  (save)    = ""
-  (catch)   = ""
-></ngfUploader>
-```
-
 ### Practical Example
 An example intended to have every line needed to run an app with angular-file
+
 ```typescript
-import { ngfModule, ngfUploader, ngf } from "angular-file"
-import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
-import { BrowserModule } from '@angular/platform-browser';
+import { ngfModule, ngf } from "angular-file"
 import { Component, NgModule } from "@angular/core"
-import { Http, Response, Request } from '@angular/http';
-import 'rxjs/add/operator/toPromise';
+import { HttpClient, HttpRequest, HttpResponse, HttpEvent } from '@angular/common/http'
+import { platformBrowserDynamic } from '@angular/platform-browser-dynamic'
+import { BrowserModule } from '@angular/platform-browser'
+import { Subscription } from 'rxjs'
 
 //two ways to upload files
 const template = `
-<ngfUploader
-  [(ref)]   = "uploader"
-  [options] = "{url:'...'}"
-  (save)    = ""
-  (catch)   = ""
-></ngfUploader>
-
 <input
-  type="file"
-  multiple
-  accept="image/*"
   ngf
-  [(file)]="file"
-  [(files)]="files"
-  maxSize="1024"
+  multiple
+  type      = "file"
+  accept    = "image/*"
+  [(files)] = "files"
+  maxSize   = "1024"
 />
-<button *ngIf="file" (click)="sendByModel(file)">send one file</button>
-<button *ngIf="files" (click)="manualFormDataUploadFiles(files)">send multi file</button>
+<button *ngIf="files" (click)="uploadFiles(files)">send files</button>
 
-<input
-  type="file"
-  multiple
-  accept="image/*"
-  ngf
-  (filesChange)="uploadFiles($event)"
-  maxSize="1024"
-/>
+<ngfFormData
+  [files]      = "files"
+  [(FormData)] = "myFormData"
+  postName     = "file"
+></ngfFormData>
+
+<ngfUploadStatus
+  [(percent)] = "uploadPercent"
+  [httpEvent] = "httpEvent"
+></ngfUploadStatus>
+
+<div *ngIf="uploadPercent">
+  Upload Progress: {{ uploadPercent }}%
+</div>
 `
 
 @Component({
@@ -116,67 +99,28 @@ const template = `
   template: template
 })
 export class AppComponent {
-  uploader:ngfUploader//becomes <ngfUploader [(ref)]="uploader">
+  postUrl = '...'
+  myFormData:FormData//populated by ngfFormData directive
+  httpEvent:HttpEvent<Event>
 
-  constructor(public Http:Http){}
+  constructor(public HttpClient:HttpClient){}
 
-  // takes array of HTML5 Files and uploads
-  uploadFiles(files:File[]):Promise<Response>{
-    const uploader:FileUploader = this.uploader
-
-    //uploader.options.forcePostname = 'POST-NameIfNotJust-FILE'
-
-    //to HTML5 FormData for transmission (hint: post name defaults to "file")
-    const formData:FormData = uploader.getFormData(files)
+  uploadFiles(files:File[]) : Subscription {
+    const config = new HttpRequest('POST', this.postUrl, this.myFormData), {
+      reportProgress: true
+    })
     
-    const config = new Request({
-      url:'...',
-      method:'POST',
-      body:formData
+    return this.HttpClient.request( config )
+    .subscribe(event=>{
+      this.httpEvent = event
+      
+      if (event instanceof HttpResponse) {
+        alert('upload complete, old school alert used')
+      }
+    },
+    error=>{
+      alert('!failure beyond compare cause:' + error.toString())
     })
-
-    return this.postRequest(config)
-  }
-
-  postRequest( config:Request ):Promise<Response>{
-    return this.Http.request( config )
-    .toPromise()
-    .then( response=>{
-      alert('upload complete, old school alert used')
-      return response
-    })
-    .catch( e=>alert('!failure beyond compare cause:' + e.toString()) )
-  }
-
-  // takes HTML5 File and uploads
-  sendByModel(file:File):Promise<Response>{
-    //this.uploader.options.forcePostname = 'POST-NameIfNotJust-FILE'
-
-    //to HTML5 FormData for transmission
-    const formData:FormData = this.uploader.getFormData( [file] )
-
-    const config = new Request({
-      url:'...',
-      method:'POST',
-      body:formData
-    })
-
-    return this.postRequest( config )
-  }
-
-  // takes array of HTML5 Files and uploads without using FileUploader class
-  manualFormDataUploadFiles(files:File[]):Promise<Response>{
-    const formData:FormData = new FormData()
-
-    files.each( file=>formData.append('file', file, file.name) )
-    
-    const config = new Request({
-      url:'...',
-      method:'POST',
-      body:formData
-    })
-
-    return this.postRequest(config)
   }
 }
 
@@ -255,35 +199,14 @@ Combo Drop Select
 
 ## API
 
-### ngfUploader Directive
-```javascript
-[(ref)]     : ngfUploader//reference to directive class
-[useNgHttp] : any = false//use Angular Http to transmit (beta)
-[options]   : {
-  forceFilename?       : string//override that all files will have defined name
-  forcePostname?       : string//override all FormData post names
-  accept?              : string;//acts like file input accept
-  allowedMimeType?     : Array<string>
-  allowedFileType?     : Array<string>
-  autoUpload?          : boolean
-  isHTML5?             : boolean
-  filters?             : Array<FilterFunction>
-  headers?             : Array<Headers>
-  method?              : string
-  authToken?           : string
-  maxFileSize?         : number
-  queueLimit?          : number
-  removeAfterUpload?   : boolean
-  url?                 : string
-  disableMultipart?    : boolean
-  itemAlias?           : string
-  authTokenHeader?     : string
-  additionalParameter? : {[key: string]: any}  
-}
-```
+- [ngf Directive](#ngf-directive)
+- [ngfDrop Directive](#ngfdrop-directive)
+- [ngfBackground Directive](#ngfbackground-directive)
+- [ngfSelect Directive](#ngfselect-directive)
+- [ngfUploadStatus Directive](#ngfuploadstatus-directive)
 
 ### ngf Directive
-```javascript
+```typescript
 [(ngf)]             : ngf//reference to directive class
 [multiple]          : string
 [accept]            : string
@@ -324,6 +247,52 @@ This directive **extends** `ngf`
 ### ngfBackground Directive
 ```javascript
 [ngfBackground]:File
+```
+
+### ngfUploadStatus Directive
+Does calculations of an upload event and provideds percent of upload completed
+```typescript
+[(percent)]:number
+[httpEvent]:Event
+```
+
+### ngfFormData Directive
+Converts files to FormData
+```typescript
+[files]:File[]
+[postName]:string = "file"
+[fileName]:string//force file name
+[(FormData)]:FormData
+```
+
+### ngfUploader Directive
+
+> DEPRECATED: DO NOT USE. Will be removed in next version
+
+```typescript
+[(ref)]     : ngfUploader//reference to directive class
+[useNgHttp] : any = false//use Angular Http to transmit (beta)
+[options]   : {
+  forceFilename?       : string//override that all files will have defined name
+  forcePostname?       : string//override all FormData post names
+  accept?              : string;//acts like file input accept
+  allowedMimeType?     : Array<string>
+  allowedFileType?     : Array<string>
+  autoUpload?          : boolean
+  isHTML5?             : boolean
+  filters?             : Array<FilterFunction>
+  headers?             : Array<Headers>
+  method?              : string
+  authToken?           : string
+  maxFileSize?         : number
+  queueLimit?          : number
+  removeAfterUpload?   : boolean
+  url?                 : string
+  disableMultipart?    : boolean
+  itemAlias?           : string
+  authTokenHeader?     : string
+  additionalParameter? : {[key: string]: any}  
+}
 ```
 
 ### FileUploader Class

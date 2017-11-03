@@ -1,5 +1,5 @@
 import { Component } from '@angular/core'
-import { Observable, Subscription } from 'rxjs'
+import { Subscription } from 'rxjs'
 import { string as template } from "./simple-demo.template"
 import { HttpClient, HttpRequest, HttpResponse, HttpEvent } from '@angular/common/http'
 
@@ -12,9 +12,10 @@ export class SimpleDemoComponent {
   progress:number
   url = 'https://evening-anchorage-3159.herokuapp.com/api/'
   hasBaseDropZoneOver:boolean = false
-  
   httpEmitter:Subscription
-  httpEvent:HttpEvent<any>
+  httpEvent:HttpEvent<Event>
+
+  sendableFormData:FormData//populated via ngfFormData directive
 
   constructor(public HttpClient:HttpClient){}
 
@@ -27,22 +28,23 @@ export class SimpleDemoComponent {
   }
 
   uploadFiles(files:File[]):Subscription{
-    const formData:FormData = new FormData();
-    for (let file of files) {
-      formData.append('file', file, file.name)//input-name, file-contents, filename
-    }
+    console.log('x', this.sendableFormData)
 
-    const req = new HttpRequest<FormData>('POST', this.url, formData, {
+    const req = new HttpRequest<FormData>('POST', this.url, this.sendableFormData, {
       reportProgress: true//, responseType: 'text'
     })
     
-    return this.httpEmitter = this.HttpClient.request(req).subscribe(event=>{
-      this.httpEvent = event
-      
-      if (event instanceof HttpResponse) {
-        delete this.httpEmitter
-        console.log('request done', event)
-      }
-    })
+    return this.httpEmitter = this.HttpClient.request(req)
+    .subscribe(
+      event=>{
+        this.httpEvent = event
+        
+        if (event instanceof HttpResponse) {
+          delete this.httpEmitter
+          console.log('request done', event)
+        }
+      },
+      error=>console.log('Error Uploading',error)
+    )
   }
 }

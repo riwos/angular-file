@@ -16,7 +16,17 @@ export const string = "<style>"+"\r"+
 "\n  }"+"\r"+
 "\n</style>"+"\r"+
 "\n"+"\r"+
-"\n<ngfUploadStatus [(percent)]=\"progress\" [httpEvent]=\"httpEvent\"></ngfUploadStatus>"+"\r"+
+"\n<ngfFormData"+"\r"+
+"\n  [files]      = \"files\""+"\r"+
+"\n  postName     = \"file\""+"\r"+
+"\n  [(FormData)] = \"sendableFormData\""+"\r"+
+"\n></ngfFormData>"+"\r"+
+"\n"+"\r"+
+"\n<ngfUploadStatus"+"\r"+
+"\n  [(percent)] = \"progress\""+"\r"+
+"\n  [httpEvent] = \"httpEvent\""+"\r"+
+"\n></ngfUploadStatus>"+"\r"+
+"\n"+"\r"+
 "\n"+"\r"+
 "\n<div class=\"inline-block\">"+"\r"+
 "\n    <h3>Select Files</h3>"+"\r"+
@@ -135,7 +145,7 @@ export const string = "<style>"+"\r"+
 "\n    <button type=\"button\""+"\r"+
 "\n      class=\"btn btn-success btn-s\""+"\r"+
 "\n      (click)=\"uploadFiles(files)\""+"\r"+
-"\n      [disabled]=\"!files\""+"\r"+
+"\n      [disabled]=\"!files.length\""+"\r"+
 "\n    >"+"\r"+
 "\n      <span class=\"glyphicon glyphicon-upload\"></span> Upload all"+"\r"+
 "\n    </button>"+"\r"+
@@ -150,7 +160,7 @@ export const string = "<style>"+"\r"+
 "\n    <button type=\"button\""+"\r"+
 "\n      class=\"btn btn-danger btn-s\""+"\r"+
 "\n      (click)=\"files.length=0\""+"\r"+
-"\n      [disabled]=\"!files\""+"\r"+
+"\n      [disabled]=\"!files.length\""+"\r"+
 "\n    >"+"\r"+
 "\n      <span class=\"glyphicon glyphicon-trash\"></span> Remove all"+"\r"+
 "\n    </button>"+"\r"+

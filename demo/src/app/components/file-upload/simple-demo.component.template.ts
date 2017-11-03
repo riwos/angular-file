@@ -1,5 +1,5 @@
 export const string = "import { Component } from '@angular/core'"+
-"\nimport { Observable, Subscription } from 'rxjs'"+
+"\nimport { Subscription } from 'rxjs'"+
 "\nimport { string as template } from \"./simple-demo.template\""+
 "\nimport { HttpClient, HttpRequest, HttpResponse, HttpEvent } from '@angular/common/http'"+
 "\n"+
@@ -12,9 +12,10 @@ export const string = "import { Component } from '@angular/core'"+
 "\n  progress:number"+
 "\n  url = 'https://evening-anchorage-3159.herokuapp.com/api/'"+
 "\n  hasBaseDropZoneOver:boolean = false"+
-"\n  "+
 "\n  httpEmitter:Subscription"+
-"\n  httpEvent:HttpEvent<any>"+
+"\n  httpEvent:HttpEvent<Event>"+
+"\n"+
+"\n  sendableFormData:FormData//populated via ngfFormData directive"+
 "\n"+
 "\n  constructor(public HttpClient:HttpClient){}"+
 "\n"+
@@ -27,23 +28,24 @@ export const string = "import { Component } from '@angular/core'"+
 "\n  }"+
 "\n"+
 "\n  uploadFiles(files:File[]):Subscription{"+
-"\n    const formData:FormData = new FormData();"+
-"\n    for (let file of files) {"+
-"\n      formData.append('file', file, file.name)//input-name, file-contents, filename"+
-"\n    }"+
+"\n    console.log('x', this.sendableFormData)"+
 "\n"+
-"\n    const req = new HttpRequest<FormData>('POST', this.url, formData, {"+
+"\n    const req = new HttpRequest<FormData>('POST', this.url, this.sendableFormData, {"+
 "\n      reportProgress: true//, responseType: 'text'"+
 "\n    })"+
 "\n    "+
-"\n    return this.httpEmitter = this.HttpClient.request(req).subscribe(event=>{"+
-"\n      this.httpEvent = event"+
-"\n      "+
-"\n      if (event instanceof HttpResponse) {"+
-"\n        delete this.httpEmitter"+
-"\n        console.log('request done', event)"+
-"\n      }"+
-"\n    })"+
+"\n    return this.httpEmitter = this.HttpClient.request(req)"+
+"\n    .subscribe("+
+"\n      event=>{"+
+"\n        this.httpEvent = event"+
+"\n        "+
+"\n        if (event instanceof HttpResponse) {"+
+"\n          delete this.httpEmitter"+
+"\n          console.log('request done', event)"+
+"\n        }"+
+"\n      },"+
+"\n      error=>console.log('Error Uploading',error)"+
+"\n    )"+
 "\n  }"+
 "\n}"+
 "\n"

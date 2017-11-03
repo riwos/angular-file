@@ -16,7 +16,17 @@
   }
 </style>
 
-<ngfUploadStatus [(percent)]="progress" [httpEvent]="httpEvent"></ngfUploadStatus>
+<ngfFormData
+  [files]      = "files"
+  postName     = "file"
+  [(FormData)] = "sendableFormData"
+></ngfFormData>
+
+<ngfUploadStatus
+  [(percent)] = "progress"
+  [httpEvent] = "httpEvent"
+></ngfUploadStatus>
+
 
 <div class="inline-block">
     <h3>Select Files</h3>
@@ -135,7 +145,7 @@
     <button type="button"
       class="btn btn-success btn-s"
       (click)="uploadFiles(files)"
-      [disabled]="!files"
+      [disabled]="!files.length"
     >
       <span class="glyphicon glyphicon-upload"></span> Upload all
     </button>
@@ -150,7 +160,7 @@
     <button type="button"
       class="btn btn-danger btn-s"
       (click)="files.length=0"
-      [disabled]="!files"
+      [disabled]="!files.length"
     >
       <span class="glyphicon glyphicon-trash"></span> Remove all
     </button>

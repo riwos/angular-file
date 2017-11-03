@@ -136,8 +136,11 @@ export class ngf {
     this.uploader.addToQueue(files)
 
     if(!this.files)this.files=[]
-    
     Array.prototype.push.apply(this.files, files)
+
+    //below break memory ref and doesnt act like a que
+    //this.files = files//causes memory change which triggers bindings like <ngfFormData [files]="files"></cgfFormData>
+    
     this.filesChange.emit( this.files )
 
     if(files.length){

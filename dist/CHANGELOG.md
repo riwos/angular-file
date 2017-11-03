@@ -1,6 +1,9 @@
 # angular-file - Change Log
 All notable changes to this project will be documented here.
 
+## [0.3.7] - 2017-11-03
+- added ngfFormData directive
+
 ## [0.3.6] - 2017-10-26
 - case-insensative accept filtering
 
