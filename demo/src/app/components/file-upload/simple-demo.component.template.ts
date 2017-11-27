@@ -28,8 +28,6 @@ export const string = "import { Component } from '@angular/core'"+
 "\n  }"+
 "\n"+
 "\n  uploadFiles(files:File[]):Subscription{"+
-"\n    console.log('x', this.sendableFormData)"+
-"\n"+
 "\n    const req = new HttpRequest<FormData>('POST', this.url, this.sendableFormData, {"+
 "\n      reportProgress: true//, responseType: 'text'"+
 "\n    })"+

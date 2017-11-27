@@ -4,6 +4,11 @@ import { FileType } from './FileType.class'
 
 import { EventEmitter, Output } from '@angular/core'
 
+export interface InvalidFileItem{
+  file:File
+  type:string
+}
+
 function getWindow():any{return window}
 
 function isFile(value:any):boolean {
@@ -112,7 +117,7 @@ export class FileUploader {
     return rtn
   }
 
-  getInvalidFiles(files:File[]):{file:File,type:string}[]{
+  getInvalidFiles(files:File[]):InvalidFileItem[]{
     const rtn = []
     for(let x=files.length-1; x >= 0; --x){
       let failReason = this.getFileFilterFailName(files[x])

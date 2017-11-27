@@ -1,6 +1,9 @@
 # angular-file - Change Log
 All notable changes to this project will be documented here.
 
+## [0.3.8] - 2017-11-27
+- made accept and maxSize update on change
+
 ## [0.3.7] - 2017-11-03
 - added ngfFormData directive
 

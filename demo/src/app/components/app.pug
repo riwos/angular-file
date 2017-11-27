@@ -1,16 +1,27 @@
 main.bd-pageheader
   .container
     h1 angular-file
-    p The Angular File Upload directives
-    a.btn.btn-primary(href="https://github.com/ackerapple/angular-file") View on GitHub
-    .row
-      .col-lg-1
-        iframe(src="https://ghbtns.com/github-btn.html?user=ackerapple&repo=angular-file&type=star&count=true" frameborder="0" scrolling="0" width="170px" height="20px")
-      .col-lg-1
-        iframe(src="https://ghbtns.com/github-btn.html?user=ackerapple&repo=angular-file&type=fork&count=true" frameborder="0" scrolling="0" width="170px" height="20px")
+    p examples and samples
+    div(style="display:inline-block;padding:.2em;vertical-align:middle;")
+      a.btn.btn-primary(href="https://github.com/ackerapple/angular-file") View on GitHub
+    div(style="display:inline-block;padding:.2em;")
+      iframe(
+        src         = "https://ghbtns.com/github-btn.html?user=ackerapple&repo=angular-file&type=star&count=true"
+        frameborder = "0"
+        scrolling   = "0"
+        width       = "100px"
+        height      = "20px"
+      )
+    div(style="display:inline-block;padding:.2em;")
+      iframe(
+        src         = "https://ghbtns.com/github-btn.html?user=ackerapple&repo=angular-file&type=fork&count=true"
+        frameborder = "0"
+        scrolling   = "0"
+        width       = "100px"
+        height      = "20px")
 
 .container
-  section(id="getting-started" "[innerHTML]"="gettingStarted|safeHtml")
+  //-section(id="getting-started" "[innerHTML]"="gettingStarted|safeHtml")
 
   file-upload-section.col-md-12
 

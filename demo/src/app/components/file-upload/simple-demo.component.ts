@@ -28,8 +28,6 @@ export class SimpleDemoComponent {
   }
 
   uploadFiles(files:File[]):Subscription{
-    console.log('x', this.sendableFormData)
-
     const req = new HttpRequest<FormData>('POST', this.url, this.sendableFormData, {
       reportProgress: true//, responseType: 'text'
     })

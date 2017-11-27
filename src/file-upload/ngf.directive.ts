@@ -1,6 +1,6 @@
 import { Directive, EventEmitter, ElementRef, Input, Output, HostListener } from '@angular/core';
 import { createInvisibleFileInputWrap, isFileInput, detectSwipe } from "./doc-event-help.functions"
-import { FileUploader } from './FileUploader.class';
+import { FileUploader, InvalidFileItem } from './FileUploader.class';
 
 @Directive({selector: '[ngf]'})
 export class ngf {
@@ -19,10 +19,10 @@ export class ngf {
   @Input('ngf') ref:ngf
   @Output('ngfChange') refChange:EventEmitter<ngf> = new EventEmitter()
   
-  //deprecated
+  //deprecating (may actually stay but as a validation class?)
   @Input() uploader:FileUploader = new FileUploader({});
 
-  @Input() lastInvalids:{file:File,type:string}[] = []
+  @Input() lastInvalids:InvalidFileItem[] = []
   @Output() lastInvalidsChange:EventEmitter<{file:File,type:string}[]> = new EventEmitter()
 
   @Input() lastBaseUrl:string//base64 last file uploaded url
@@ -49,15 +49,6 @@ export class ngf {
       this.paramFileElm().setAttribute('multiple', this.multiple)
     }
 
-    if( this.accept ){
-      this.uploader.options.accept = this.accept
-      this.paramFileElm().setAttribute('accept', this.accept)
-    }
-
-    if( this.maxSize ){
-      this.uploader.options.maxFileSize = this.maxSize
-    }
-
     if( this.forceFilename ){
       this.uploader.options.forceFilename = this.forceFilename
     }
@@ -71,6 +62,17 @@ export class ngf {
       this.refChange.emit(this)
       this.directiveInit.emit(this)
     }, 0)
+  }
+
+  ngOnChanges( changes ){
+    if( changes.accept ){
+      this.uploader.options.accept = changes.accept.currentValue
+      this.paramFileElm().setAttribute('accept', changes.accept.currentValue || '*')
+    }
+
+    if( changes.maxSize ){
+      this.uploader.options.maxFileSize = changes.maxSize.currentValue
+    }
   }
 
   paramFileElm(){

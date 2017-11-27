@@ -33,31 +33,56 @@
 
     <div class="inline-block">
       Multiple
-      <input type="file" ngfSelect [(files)]="files" multiple  />
+      <input
+        ngfSelect
+        multiple
+        type      = "file"
+        [(files)] = "files"
+        [accept]  = "accept"
+        [maxSize]  = "maxSize"
+        [(lastInvalids)] = "lastInvalids"
+      />
     </div>
 
     <div class="inline-block">
       Single
-      <input type="file" ngfSelect [(files)]="files" />
+      <input
+        ngfSelect
+        type       = "file"
+        [(files)]  = "files"
+        [accept]   = "accept"
+        [maxSize]  = "maxSize"
+        [(lastInvalids)] = "lastInvalids"
+      />
     </div>
 
     <div class="inline-block">
       Element
-      <div ngfSelect multiple="1"
-        [(files)]="files"
-        class="well my-drop-zone"
-        style="border-style:groove;padding:0.5em;text-align:center;"
+      <div
+        ngfSelect
+        multiple  = "1"
+        [accept]  = "accept"
+        [maxSize] = "maxSize"
+        [(files)] = "files"
+        class     = "well my-drop-zone"
+        style     = "border-style:groove;padding:0.5em;text-align:center;width:150px;"
+        [(lastInvalids)] = "lastInvalids"
       >
         Tap to Select
       </div>
     </div>
 
     <div class="inline-block">
-      Images Only
-      <div ngfSelect accept="image/*" multiple="1"
-        [(files)]="files"
-        class="well my-drop-zone"
-        style="border-style:groove;padding:0.5em;text-align:center;"
+      <strong>Images</strong> Only
+      <div
+        ngfSelect
+        accept    = "image/*"
+        multiple  = "1"
+        [maxSize] = "maxSize"
+        [(files)] = "files"
+        class     = "well my-drop-zone"
+        style     = "border-style:groove;padding:0.5em;text-align:center;width:150px;"
+        [(lastInvalids)] = "lastInvalids"
       >
         Tap to Select
       </div>
@@ -66,34 +91,100 @@
 
 <div class="inline-block">
   <h3>Drop Files</h3>
-
   <div class="inline-block">
-    <div ngfDrop
-      [ngClass]="{'nv-file-over': hasBaseDropZoneOver}"
-      (fileOver)="hasBaseDropZoneOver=$event"
-      [(files)]="files"
-      class="well my-drop-zone"
+    <div
+      ngfDrop
+      [ngClass]  = "{'nv-file-over': hasBaseDropZoneOver}"
+      (fileOver) = "hasBaseDropZoneOver=$event"
+      [(files)]  = "files"
+      [accept]   = "accept"
+      [maxSize]  = "maxSize"
+      class      = "well my-drop-zone"
+      [(lastInvalids)] = "lastInvalids"
     >
       Base drop zone
     </div>
   </div>
 
   <div class="inline-block">
-    <div ngfDrop multiple="1" selectable="1" accept="image/*"
-      [ngClass]="{'another-file-over-class': validComboDrag}"
-      [(validDrag)]="validComboDrag"
-      [(files)]="files"
-      class="well my-drop-zone"
+    <div
+      ngfDrop
+      multiple      = "1"
+      selectable    = "1"
+      [ngClass]     = "{'another-file-over-class': validComboDrag}"
+      [(validDrag)] = "validComboDrag"
+      [(files)]     = "files"
+      accept        = "image/*"
+      [maxSize]  = "maxSize"
+      class         = "well my-drop-zone"
+      [(lastInvalids)] = "lastInvalids"
     >
-      Combo drop/select image only zone
+      Combo drop/select <strong>image</strong> only zone
     </div>
   </div>
 </div>
 
+<div class="inline-block">
+  <h3>File Filtration</h3>
+  <div class="inline-block">
+    <strong>accept</strong>
+    <div>
+      <input type="text" [(ngModel)]="accept" placeholder="image/jpeg" />
+    </div>
+  </div>
+  <div class="inline-block">
+    <strong>maxSize kb</strong>
+    <div>
+      <input type="number" [(ngModel)]="maxSize" placeholder="1024 == 1mb" />
+    </div>
+  </div>
+</div>
+
+<div class="bg-warning" *ngIf="lastInvalids?.length" style="margin-bottom: 40px">
+  <h3 style="color:red;">Last {{ lastInvalids.length }} Invalid Selected Files</h3>
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Error</th>
+        <th>Type</th>
+        <th>Size</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of lastInvalids;let i=index">
+        <td>
+          <div *ngIf="['image/gif','image/png','image/jpeg'].indexOf(item.file.type)>=0">
+            <div class="previewIcon" [ngfBackground]="item.File"></div>
+          </div>
+          <strong>{{ item.file.name }}</strong>
+        </td>
+        <td nowrap>
+          {{ item.type }}
+        </td>
+        <td nowrap>
+          {{ item.file.type }}
+        </td>
+        <td nowrap>
+          {{ item.file.size/1024/1024 | number:'.2' }} MB
+        </td>
+        <td nowrap>
+          <button type="button"
+            class="btn btn-danger btn-xs"
+            (click)="lastInvalids.splice(i,1)"
+          >
+            <span class="glyphicon glyphicon-trash"></span>
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
 <div style="margin-bottom: 40px">
-  <h3>Upload Queue</h3>
-  
-  <p>Queue length: {{ files.length }}</p>
+  <h3>{{ files.length }} Qued Files</h3>
   <table class="table">
     <thead>
       <tr>
@@ -106,7 +197,7 @@
     <tbody>
       <tr *ngFor="let item of files;let i=index">
         <td>
-          <div *ngIf="['image/png','image/jpeg'].indexOf(item.type)>=0">
+          <div *ngIf="['image/gif','image/png','image/jpeg'].indexOf(item.type)>=0">
             <div class="previewIcon" [ngfBackground]="item"></div>
           </div>
           <strong>{{ item.name }}</strong>

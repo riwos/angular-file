@@ -1,5 +1,5 @@
 import { EventEmitter, ElementRef } from '@angular/core';
-import { FileUploader } from './FileUploader.class';
+import { FileUploader, InvalidFileItem } from './FileUploader.class';
 export declare class ngf {
     element: ElementRef;
     fileElm: any;
@@ -15,10 +15,7 @@ export declare class ngf {
     ref: ngf;
     refChange: EventEmitter<ngf>;
     uploader: FileUploader;
-    lastInvalids: {
-        file: File;
-        type: string;
-    }[];
+    lastInvalids: InvalidFileItem[];
     lastInvalidsChange: EventEmitter<{
         file: File;
         type: string;
@@ -32,6 +29,7 @@ export declare class ngf {
     constructor(element: ElementRef);
     ngOnDestroy(): void;
     ngOnInit(): void;
+    ngOnChanges(changes: any): void;
     paramFileElm(): any;
     enableSelecting(): void;
     getOptions(): any;
