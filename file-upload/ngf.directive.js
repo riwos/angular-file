@@ -11,7 +11,7 @@ var ngf = /** @class */ (function () {
         this.selectable = false;
         this.directiveInit = new core_1.EventEmitter();
         this.refChange = new core_1.EventEmitter();
-        //deprecated
+        //deprecating (may actually stay but as a validation class?)
         this.uploader = new FileUploader_class_1.FileUploader({});
         this.lastInvalids = [];
         this.lastInvalidsChange = new core_1.EventEmitter();
@@ -31,13 +31,6 @@ var ngf = /** @class */ (function () {
         if (this.multiple) {
             this.paramFileElm().setAttribute('multiple', this.multiple);
         }
-        if (this.accept) {
-            this.uploader.options.accept = this.accept;
-            this.paramFileElm().setAttribute('accept', this.accept);
-        }
-        if (this.maxSize) {
-            this.uploader.options.maxFileSize = this.maxSize;
-        }
         if (this.forceFilename) {
             this.uploader.options.forceFilename = this.forceFilename;
         }
@@ -49,6 +42,15 @@ var ngf = /** @class */ (function () {
             _this.refChange.emit(_this);
             _this.directiveInit.emit(_this);
         }, 0);
+    };
+    ngf.prototype.ngOnChanges = function (changes) {
+        if (changes.accept) {
+            this.uploader.options.accept = changes.accept.currentValue;
+            this.paramFileElm().setAttribute('accept', changes.accept.currentValue || '*');
+        }
+        if (changes.maxSize) {
+            this.uploader.options.maxFileSize = changes.maxSize.currentValue;
+        }
     };
     ngf.prototype.paramFileElm = function () {
         if (this.fileElm)

@@ -1,6 +1,10 @@
 import { FileLikeObject } from './FileLikeObject.class';
 import { FileItem } from './FileItem.class';
 import { EventEmitter } from '@angular/core';
+export interface InvalidFileItem {
+    file: File;
+    type: string;
+}
 export interface Headers {
     name: string;
     value: string;
@@ -52,10 +56,7 @@ export declare class FileUploader {
     isFileValid(file: File): boolean;
     isFilesValid(files: File[]): boolean;
     getValidFiles(files: File[]): File[];
-    getInvalidFiles(files: File[]): {
-        file: File;
-        type: string;
-    }[];
+    getInvalidFiles(files: File[]): InvalidFileItem[];
     addToQueue(files: File[], options?: FileUploaderOptions, filters?: FilterFunction[] | string): void;
     removeFromQueue(value: FileItem): void;
     clearQueue(): void;
