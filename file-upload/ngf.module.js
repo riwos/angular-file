@@ -22,18 +22,6 @@ var declarations = [
 var ngfModule = /** @class */ (function () {
     function ngfModule() {
     }
-    ngfModule.decorators = [
-        { type: core_1.NgModule, args: [{
-                    imports: [
-                        common_1.CommonModule
-                        //,HttpModule
-                    ],
-                    declarations: declarations,
-                    exports: declarations //[HttpModule, ...declarations]
-                },] },
-    ];
-    /** @nocollapse */
-    ngfModule.ctorParameters = function () { return []; };
     return ngfModule;
 }());
 exports.ngfModule = ngfModule;

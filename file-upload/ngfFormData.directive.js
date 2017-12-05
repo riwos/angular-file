@@ -1,10 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@angular/core");
+var FileUploader_class_1 = require("./FileUploader.class");
+var FileItem_class_1 = require("./FileItem.class");
 var ngfFormData = /** @class */ (function () {
     function ngfFormData(IterableDiffers) {
-        this.postName = "file";
-        this.FormDataChange = new core_1.EventEmitter();
         this.differ = IterableDiffers.find([]).create(null);
     }
     ngfFormData.prototype.ngDoCheck = function () {
@@ -25,20 +25,6 @@ var ngfFormData = /** @class */ (function () {
         else {
             delete this.FormData;
         }
-    };
-    ngfFormData.decorators = [
-        { type: core_1.Directive, args: [{ selector: 'ngfFormData' },] },
-    ];
-    /** @nocollapse */
-    ngfFormData.ctorParameters = function () { return [
-        { type: core_1.IterableDiffers, },
-    ]; };
-    ngfFormData.propDecorators = {
-        'files': [{ type: core_1.Input },],
-        'postName': [{ type: core_1.Input },],
-        'fileName': [{ type: core_1.Input },],
-        'FormData': [{ type: core_1.Input },],
-        'FormDataChange': [{ type: core_1.Output },],
     };
     return ngfFormData;
 }());

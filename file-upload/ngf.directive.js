@@ -6,19 +6,6 @@ var FileUploader_class_1 = require("./FileUploader.class");
 var ngf = /** @class */ (function () {
     function ngf(element) {
         this.element = element;
-        this.ngfFixOrientation = true;
-        this.fileDropDisabled = false;
-        this.selectable = false;
-        this.directiveInit = new core_1.EventEmitter();
-        this.refChange = new core_1.EventEmitter();
-        //deprecating (may actually stay but as a validation class?)
-        this.uploader = new FileUploader_class_1.FileUploader({});
-        this.lastInvalids = [];
-        this.lastInvalidsChange = new core_1.EventEmitter();
-        this.lastBaseUrlChange = new core_1.EventEmitter();
-        this.fileChange = new core_1.EventEmitter();
-        this.files = [];
-        this.filesChange = new core_1.EventEmitter();
     }
     ngf.prototype.ngOnDestroy = function () {
         delete this.fileElm; //faster memory release of dom element
@@ -194,36 +181,6 @@ var ngf = /** @class */ (function () {
             return;
         this.stopEvent(event);
         this.handleFiles(files);
-    };
-    ngf.decorators = [
-        { type: core_1.Directive, args: [{ selector: '[ngf]' },] },
-    ];
-    /** @nocollapse */
-    ngf.ctorParameters = function () { return [
-        { type: core_1.ElementRef, },
-    ]; };
-    ngf.propDecorators = {
-        'multiple': [{ type: core_1.Input },],
-        'accept': [{ type: core_1.Input },],
-        'maxSize': [{ type: core_1.Input },],
-        'forceFilename': [{ type: core_1.Input },],
-        'forcePostname': [{ type: core_1.Input },],
-        'ngfFixOrientation': [{ type: core_1.Input },],
-        'fileDropDisabled': [{ type: core_1.Input },],
-        'selectable': [{ type: core_1.Input },],
-        'directiveInit': [{ type: core_1.Output, args: ['init',] },],
-        'ref': [{ type: core_1.Input, args: ['ngf',] },],
-        'refChange': [{ type: core_1.Output, args: ['ngfChange',] },],
-        'uploader': [{ type: core_1.Input },],
-        'lastInvalids': [{ type: core_1.Input },],
-        'lastInvalidsChange': [{ type: core_1.Output },],
-        'lastBaseUrl': [{ type: core_1.Input },],
-        'lastBaseUrlChange': [{ type: core_1.Output },],
-        'file': [{ type: core_1.Input },],
-        'fileChange': [{ type: core_1.Output },],
-        'files': [{ type: core_1.Input },],
-        'filesChange': [{ type: core_1.Output },],
-        'onChange': [{ type: core_1.HostListener, args: ['change', ['$event'],] },],
     };
     return ngf;
 }());

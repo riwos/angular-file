@@ -19,16 +19,7 @@ var ngfUploader = /** @class */ (function (_super) {
     __extends(ngfUploader, _super);
     //@Input() useNgHttp:any = false
     function ngfUploader() {
-        var _this = _super.call(this) || this;
-        _this.refChange = new core_1.EventEmitter();
-        _this.options = {
-            autoUpload: false,
-            isHTML5: true,
-            filters: [],
-            removeAfterUpload: false,
-            disableMultipart: false
-        };
-        return _this;
+        return _super.call(this) || this;
     }
     ngfUploader.prototype.ngOnInit = function () {
         var _this = this;
@@ -61,33 +52,16 @@ var ngfUploader = /** @class */ (function (_super) {
         });
     };
     //old school way to send files. Still pretty handy
-    ngfUploader.prototype.xhrOneByOne = function (files) {
+    //old school way to send files. Still pretty handy
+    ngfUploader.prototype.xhrOneByOne = 
+    //old school way to send files. Still pretty handy
+    function (files) {
         var _this = this;
         var promises = files.map(function (file) {
             var fileItem = new FileItem_class_1.FileItem(_this, file, _this.options);
             return _this._xhrTransport(fileItem);
         });
         return Promise.all(promises);
-    };
-    /*ngHttpFiles( formData:FormData ){
-      const config:any = Object.assign({}, this.options)
-      config.body = formData
-      const request = new Request(config)
-      return this.postRequest(config)
-    }
-  
-    postRequest( config:Request ):Promise<Response>{
-      return this.Http.request( config ).toPromise()
-    }*/
-    ngfUploader.decorators = [
-        { type: core_1.Directive, args: [{ selector: 'ngfUploader' },] },
-    ];
-    /** @nocollapse */
-    ngfUploader.ctorParameters = function () { return []; };
-    ngfUploader.propDecorators = {
-        'ref': [{ type: core_1.Input },],
-        'refChange': [{ type: core_1.Output },],
-        'options': [{ type: core_1.Input },],
     };
     return ngfUploader;
 }(FileUploader_class_1.FileUploader));
