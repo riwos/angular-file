@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@angular/core");
-var ngfFormData = /** @class */ (function () {
+var ngfFormData = (function () {
     function ngfFormData(IterableDiffers) {
         this.postName = "file";
         this.FormDataChange = new core_1.EventEmitter();
@@ -34,11 +34,11 @@ var ngfFormData = /** @class */ (function () {
         { type: core_1.IterableDiffers, },
     ]; };
     ngfFormData.propDecorators = {
-        'files': [{ type: core_1.Input },],
-        'postName': [{ type: core_1.Input },],
-        'fileName': [{ type: core_1.Input },],
-        'FormData': [{ type: core_1.Input },],
-        'FormDataChange': [{ type: core_1.Output },],
+        "files": [{ type: core_1.Input },],
+        "postName": [{ type: core_1.Input },],
+        "fileName": [{ type: core_1.Input },],
+        "FormData": [{ type: core_1.Input },],
+        "FormDataChange": [{ type: core_1.Output },],
     };
     return ngfFormData;
 }());

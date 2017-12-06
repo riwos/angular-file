@@ -8,7 +8,7 @@ function getWindow() { return window; }
 function isFile(value) {
     return (File && value instanceof File);
 }
-var FileUploader = /** @class */ (function () {
+var FileUploader = (function () {
     function FileUploader(options) {
         if (options === void 0) { options = {}; }
         this.done = new core_1.EventEmitter();
@@ -126,7 +126,16 @@ var FileUploader = /** @class */ (function () {
     /*isHtml5Mode(){
       return this.options.isHTML5 || this.options.isHTML5==null
     }*/
-    FileUploader.prototype.uploadItem = function (value) {
+    //most likely deprecated
+    /*isHtml5Mode(){
+        return this.options.isHTML5 || this.options.isHTML5==null
+      }*/
+    FileUploader.prototype.uploadItem = 
+    //most likely deprecated
+    /*isHtml5Mode(){
+        return this.options.isHTML5 || this.options.isHTML5==null
+      }*/
+    function (value) {
         var index = this.getIndexOfItem(value);
         var item = this.queue[index];
         var transport = '_xhrTransport';
@@ -194,10 +203,10 @@ var FileUploader = /** @class */ (function () {
     FileUploader.prototype.destroy = function () {
         return void 0;
         /*forEach(this._directives, (key) => {
-         forEach(this._directives[key], (object) => {
-         object.destroy();
-         });
-         });*/
+             forEach(this._directives[key], (object) => {
+             object.destroy();
+             });
+             });*/
     };
     FileUploader.prototype.onAfterAddingAll = function (fileItems) {
         return { fileItems: fileItems };
@@ -245,9 +254,9 @@ var FileUploader = /** @class */ (function () {
         var regx = null;
         var acceptRegString = null;
         for (var x = defs.length - 1; x >= 0; --x) {
-            //Escapes dots in mimetype 
+            //Escapes dots in mimetype
             acceptRegString = defs[x]; //.replace(/\./g,'\\.')
-            //Escapes stars in mimetype 
+            //Escapes stars in mimetype
             acceptRegString = acceptRegString.replace(/\*/g, '.*');
             //let acceptReg = '^((' + acceptRegString
             //acceptReg = acceptReg.replace(/,/g,')|(') + '))$'
@@ -326,10 +335,10 @@ var FileUploader = /** @class */ (function () {
         this._onBeforeUploadItem(item);
         // todo
         /*item.formData.map(obj => {
-         obj.map((value, key) => {
-         form.append(key, value);
-         });
-         });*/
+             obj.map((value, key) => {
+             form.append(key, value);
+             });
+             });*/
         if (typeof item._file.size !== 'number') {
             throw new TypeError('The file specified is no longer valid');
         }
@@ -429,7 +438,15 @@ var FileUploader = /** @class */ (function () {
       return void 0;
       // todo: ?
     }*/
-    FileUploader.prototype._queueLimitFilter = function () {
+    /*protected _render():any {
+        return void 0;
+        // todo: ?
+      }*/
+    FileUploader.prototype._queueLimitFilter = /*protected _render():any {
+        return void 0;
+        // todo: ?
+      }*/
+    function () {
         return this.options.queueLimit === undefined || this.queue.length < this.options.queueLimit;
     };
     FileUploader.prototype.getFileFilterFailName = function (file) {
@@ -449,16 +466,20 @@ var FileUploader = /** @class */ (function () {
         return (status >= 200 && status < 300) || status === 304;
     };
     /* tslint:disable */
-    FileUploader.prototype._transformResponse = function (response, headers) {
+    /* tslint:disable */
+    FileUploader.prototype._transformResponse = /* tslint:disable */
+    function (response, headers) {
         // todo: ?
         /*var headersGetter = this._headersGetter(headers);
-         forEach($http.defaults.transformResponse, (transformFn) => {
-         response = transformFn(response, headersGetter);
-         });*/
+             forEach($http.defaults.transformResponse, (transformFn) => {
+             response = transformFn(response, headersGetter);
+             });*/
         return response;
     };
     /* tslint:enable */
-    FileUploader.prototype._parseHeaders = function (headers) {
+    /* tslint:enable */
+    FileUploader.prototype._parseHeaders = /* tslint:enable */
+    function (headers) {
         var parsed = {};
         var key;
         var val;
@@ -479,7 +500,13 @@ var FileUploader = /** @class */ (function () {
     /*protected _iframeTransport(item:FileItem) {
      // todo: implement it later
      }*/
-    FileUploader.prototype._onWhenAddingFileFailed = function (item, filter, options) {
+    /*protected _iframeTransport(item:FileItem) {
+       // todo: implement it later
+       }*/
+    FileUploader.prototype._onWhenAddingFileFailed = /*protected _iframeTransport(item:FileItem) {
+       // todo: implement it later
+       }*/
+    function (item, filter, options) {
         this.onWhenAddingFileFailed(item, filter, options);
     };
     FileUploader.prototype._onAfterAddingFile = function (item) {
@@ -505,17 +532,23 @@ var FileUploader = /** @class */ (function () {
         //this._render();
     };
     /* tslint:disable */
-    FileUploader.prototype._onSuccessItem = function (item, response, status, headers) {
+    /* tslint:disable */
+    FileUploader.prototype._onSuccessItem = /* tslint:disable */
+    function (item, response, status, headers) {
         item._onSuccess(response, status, headers);
         this.onSuccessItem(item, response, status, headers);
     };
     /* tslint:enable */
-    FileUploader.prototype._onCancelItem = function (item, response, status, headers) {
+    /* tslint:enable */
+    FileUploader.prototype._onCancelItem = /* tslint:enable */
+    function (item, response, status, headers) {
         item._onCancel(response, status, headers);
         this.onCancelItem(item, response, status, headers);
     };
     /** converts file-input file into base64 dataUri */
-    FileUploader.prototype.dataUrl = function (file, disallowObjectUrl) {
+    /** converts file-input file into base64 dataUri */
+    FileUploader.prototype.dataUrl = /** converts file-input file into base64 dataUri */
+    function (file, disallowObjectUrl) {
         return dataUrl(file, disallowObjectUrl);
     };
     FileUploader.prototype.applyExifRotation = function (file) {
@@ -531,9 +564,9 @@ var FileUploader = /** @class */ (function () {
         });
     };
     FileUploader.propDecorators = {
-        'done': [{ type: core_1.Output },],
-        'success': [{ type: core_1.Output },],
-        'catcher': [{ type: core_1.Output, args: ['catch',] },],
+        "done": [{ type: core_1.Output },],
+        "success": [{ type: core_1.Output },],
+        "catcher": [{ type: core_1.Output, args: ['catch',] },],
     };
     return FileUploader;
 }());

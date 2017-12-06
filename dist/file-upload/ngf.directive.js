@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@angular/core");
 var doc_event_help_functions_1 = require("./doc-event-help.functions");
 var FileUploader_class_1 = require("./FileUploader.class");
-var ngf = /** @class */ (function () {
+var ngf = (function () {
     function ngf(element) {
         this.element = element;
         this.ngfFixOrientation = true;
@@ -203,27 +203,27 @@ var ngf = /** @class */ (function () {
         { type: core_1.ElementRef, },
     ]; };
     ngf.propDecorators = {
-        'multiple': [{ type: core_1.Input },],
-        'accept': [{ type: core_1.Input },],
-        'maxSize': [{ type: core_1.Input },],
-        'forceFilename': [{ type: core_1.Input },],
-        'forcePostname': [{ type: core_1.Input },],
-        'ngfFixOrientation': [{ type: core_1.Input },],
-        'fileDropDisabled': [{ type: core_1.Input },],
-        'selectable': [{ type: core_1.Input },],
-        'directiveInit': [{ type: core_1.Output, args: ['init',] },],
-        'ref': [{ type: core_1.Input, args: ['ngf',] },],
-        'refChange': [{ type: core_1.Output, args: ['ngfChange',] },],
-        'uploader': [{ type: core_1.Input },],
-        'lastInvalids': [{ type: core_1.Input },],
-        'lastInvalidsChange': [{ type: core_1.Output },],
-        'lastBaseUrl': [{ type: core_1.Input },],
-        'lastBaseUrlChange': [{ type: core_1.Output },],
-        'file': [{ type: core_1.Input },],
-        'fileChange': [{ type: core_1.Output },],
-        'files': [{ type: core_1.Input },],
-        'filesChange': [{ type: core_1.Output },],
-        'onChange': [{ type: core_1.HostListener, args: ['change', ['$event'],] },],
+        "multiple": [{ type: core_1.Input },],
+        "accept": [{ type: core_1.Input },],
+        "maxSize": [{ type: core_1.Input },],
+        "forceFilename": [{ type: core_1.Input },],
+        "forcePostname": [{ type: core_1.Input },],
+        "ngfFixOrientation": [{ type: core_1.Input },],
+        "fileDropDisabled": [{ type: core_1.Input },],
+        "selectable": [{ type: core_1.Input },],
+        "directiveInit": [{ type: core_1.Output, args: ['init',] },],
+        "ref": [{ type: core_1.Input, args: ['ngf',] },],
+        "refChange": [{ type: core_1.Output, args: ['ngfChange',] },],
+        "uploader": [{ type: core_1.Input },],
+        "lastInvalids": [{ type: core_1.Input },],
+        "lastInvalidsChange": [{ type: core_1.Output },],
+        "lastBaseUrl": [{ type: core_1.Input },],
+        "lastBaseUrlChange": [{ type: core_1.Output },],
+        "file": [{ type: core_1.Input },],
+        "fileChange": [{ type: core_1.Output },],
+        "files": [{ type: core_1.Input },],
+        "filesChange": [{ type: core_1.Output },],
+        "onChange": [{ type: core_1.HostListener, args: ['change', ['$event'],] },],
     };
     return ngf;
 }());

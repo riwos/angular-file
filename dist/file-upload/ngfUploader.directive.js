@@ -15,7 +15,7 @@ var core_1 = require("@angular/core");
 //import 'rxjs/add/operator/toPromise';
 var FileUploader_class_1 = require("./FileUploader.class");
 var FileItem_class_1 = require("./FileItem.class");
-var ngfUploader = /** @class */ (function (_super) {
+var ngfUploader = (function (_super) {
     __extends(ngfUploader, _super);
     //@Input() useNgHttp:any = false
     function ngfUploader() {
@@ -61,7 +61,10 @@ var ngfUploader = /** @class */ (function (_super) {
         });
     };
     //old school way to send files. Still pretty handy
-    ngfUploader.prototype.xhrOneByOne = function (files) {
+    //old school way to send files. Still pretty handy
+    ngfUploader.prototype.xhrOneByOne = 
+    //old school way to send files. Still pretty handy
+    function (files) {
         var _this = this;
         var promises = files.map(function (file) {
             var fileItem = new FileItem_class_1.FileItem(_this, file, _this.options);
@@ -70,24 +73,24 @@ var ngfUploader = /** @class */ (function (_super) {
         return Promise.all(promises);
     };
     /*ngHttpFiles( formData:FormData ){
-      const config:any = Object.assign({}, this.options)
-      config.body = formData
-      const request = new Request(config)
-      return this.postRequest(config)
-    }
-  
-    postRequest( config:Request ):Promise<Response>{
-      return this.Http.request( config ).toPromise()
-    }*/
+        const config:any = Object.assign({}, this.options)
+        config.body = formData
+        const request = new Request(config)
+        return this.postRequest(config)
+      }
+    
+      postRequest( config:Request ):Promise<Response>{
+        return this.Http.request( config ).toPromise()
+      }*/
     ngfUploader.decorators = [
         { type: core_1.Directive, args: [{ selector: 'ngfUploader' },] },
     ];
     /** @nocollapse */
     ngfUploader.ctorParameters = function () { return []; };
     ngfUploader.propDecorators = {
-        'ref': [{ type: core_1.Input },],
-        'refChange': [{ type: core_1.Output },],
-        'options': [{ type: core_1.Input },],
+        "ref": [{ type: core_1.Input },],
+        "refChange": [{ type: core_1.Output },],
+        "options": [{ type: core_1.Input },],
     };
     return ngfUploader;
 }(FileUploader_class_1.FileUploader));

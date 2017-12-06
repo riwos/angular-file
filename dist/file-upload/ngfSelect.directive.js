@@ -12,7 +12,7 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@angular/core");
 var ngf_directive_1 = require("./ngf.directive");
-var ngfSelect = /** @class */ (function (_super) {
+var ngfSelect = (function (_super) {
     __extends(ngfSelect, _super);
     function ngfSelect() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -26,9 +26,9 @@ var ngfSelect = /** @class */ (function (_super) {
     /** @nocollapse */
     ngfSelect.ctorParameters = function () { return []; };
     ngfSelect.propDecorators = {
-        'selectable': [{ type: core_1.Input },],
-        'ref': [{ type: core_1.Input, args: ['ngfSelect',] },],
-        'refChange': [{ type: core_1.Output, args: ['ngfSelectChange',] },],
+        "selectable": [{ type: core_1.Input },],
+        "ref": [{ type: core_1.Input, args: ['ngfSelect',] },],
+        "refChange": [{ type: core_1.Output, args: ['ngfSelectChange',] },],
     };
     return ngfSelect;
 }(ngf_directive_1.ngf));

@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@angular/core");
 var FileUploader_class_1 = require("./FileUploader.class");
-var ngfBackground = /** @class */ (function () {
+var ngfBackground = (function () {
     function ngfBackground(ElementRef) {
         this.ElementRef = ElementRef;
     }
@@ -19,7 +19,7 @@ var ngfBackground = /** @class */ (function () {
         { type: core_1.ElementRef, },
     ]; };
     ngfBackground.propDecorators = {
-        'file': [{ type: core_1.Input, args: ['ngfBackground',] },],
+        "file": [{ type: core_1.Input, args: ['ngfBackground',] },],
     };
     return ngfBackground;
 }());

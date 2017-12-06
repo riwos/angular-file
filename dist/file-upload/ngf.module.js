@@ -19,7 +19,7 @@ var declarations = [
     ngfFormData_directive_1.ngfFormData,
     ngf_directive_1.ngf
 ];
-var ngfModule = /** @class */ (function () {
+var ngfModule = (function () {
     function ngfModule() {
     }
     ngfModule.decorators = [

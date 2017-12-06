@@ -1,6 +1,12 @@
 # angular-file - Change Log
 All notable changes to this project will be documented here.
 
+## [0.4.0] - (2017-12-05)
+- BREAKING CHANGES
+  - Angular 4 updated to 5.0.5
+    - Expected this package will require Angular5+
+  - Updated every dependency
+
 ## [0.3.8] - 2017-11-27
 - made accept and maxSize update on change
 

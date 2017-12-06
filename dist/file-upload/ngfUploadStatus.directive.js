@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@angular/core");
-var ngfUploadStatus = /** @class */ (function () {
+var ngfUploadStatus = (function () {
     function ngfUploadStatus() {
         this.percentChange = new core_1.EventEmitter();
     }
@@ -23,9 +23,9 @@ var ngfUploadStatus = /** @class */ (function () {
     /** @nocollapse */
     ngfUploadStatus.ctorParameters = function () { return []; };
     ngfUploadStatus.propDecorators = {
-        'percent': [{ type: core_1.Input },],
-        'percentChange': [{ type: core_1.Output },],
-        'httpEvent': [{ type: core_1.Input },],
+        "percent": [{ type: core_1.Input },],
+        "percentChange": [{ type: core_1.Output },],
+        "httpEvent": [{ type: core_1.Input },],
     };
     return ngfUploadStatus;
 }());

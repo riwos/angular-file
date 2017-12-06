@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var FileType = /** @class */ (function () {
+var FileType = (function () {
     function FileType() {
     }
     FileType.getMimeClass = function (file) {
