@@ -11,13 +11,18 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@angular/core");
-var doc_event_help_functions_1 = require("./doc-event-help.functions");
-var FileUploader_class_1 = require("./FileUploader.class");
 var ngf_directive_1 = require("./ngf.directive");
-var ngfDrop = /** @class */ (function (_super) {
+var ngfDrop = (function (_super) {
     __extends(ngfDrop, _super);
     function ngfDrop() {
-        return _super !== null && _super.apply(this, arguments) || this;
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.refChange = new core_1.EventEmitter();
+        _this.fileOver = new core_1.EventEmitter();
+        _this.validDrag = false;
+        _this.validDragChange = new core_1.EventEmitter();
+        _this.invalidDrag = false;
+        _this.invalidDragChange = new core_1.EventEmitter();
+        return _this;
     }
     ngfDrop.prototype.onDrop = function (event) {
         this.closeDrags();
@@ -60,6 +65,23 @@ var ngfDrop = /** @class */ (function (_super) {
         }
         this.stopEvent(event);
         this.fileOver.emit(false);
+    };
+    ngfDrop.decorators = [
+        { type: core_1.Directive, args: [{ selector: '[ngfDrop]' },] },
+    ];
+    /** @nocollapse */
+    ngfDrop.ctorParameters = function () { return []; };
+    ngfDrop.propDecorators = {
+        "ref": [{ type: core_1.Input, args: ['ngfDrop',] },],
+        "refChange": [{ type: core_1.Output, args: ['ngfDropChange',] },],
+        "fileOver": [{ type: core_1.Output },],
+        "validDrag": [{ type: core_1.Input },],
+        "validDragChange": [{ type: core_1.Output },],
+        "invalidDrag": [{ type: core_1.Input },],
+        "invalidDragChange": [{ type: core_1.Output },],
+        "onDrop": [{ type: core_1.HostListener, args: ['drop', ['$event'],] },],
+        "onDragOver": [{ type: core_1.HostListener, args: ['dragover', ['$event'],] },],
+        "onDragLeave": [{ type: core_1.HostListener, args: ['dragleave', ['$event'],] },],
     };
     return ngfDrop;
 }(ngf_directive_1.ngf));

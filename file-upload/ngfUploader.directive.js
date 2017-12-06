@@ -15,11 +15,20 @@ var core_1 = require("@angular/core");
 //import 'rxjs/add/operator/toPromise';
 var FileUploader_class_1 = require("./FileUploader.class");
 var FileItem_class_1 = require("./FileItem.class");
-var ngfUploader = /** @class */ (function (_super) {
+var ngfUploader = (function (_super) {
     __extends(ngfUploader, _super);
     //@Input() useNgHttp:any = false
     function ngfUploader() {
-        return _super.call(this) || this;
+        var _this = _super.call(this) || this;
+        _this.refChange = new core_1.EventEmitter();
+        _this.options = {
+            autoUpload: false,
+            isHTML5: true,
+            filters: [],
+            removeAfterUpload: false,
+            disableMultipart: false
+        };
+        return _this;
     }
     ngfUploader.prototype.ngOnInit = function () {
         var _this = this;
@@ -62,6 +71,26 @@ var ngfUploader = /** @class */ (function (_super) {
             return _this._xhrTransport(fileItem);
         });
         return Promise.all(promises);
+    };
+    /*ngHttpFiles( formData:FormData ){
+        const config:any = Object.assign({}, this.options)
+        config.body = formData
+        const request = new Request(config)
+        return this.postRequest(config)
+      }
+    
+      postRequest( config:Request ):Promise<Response>{
+        return this.Http.request( config ).toPromise()
+      }*/
+    ngfUploader.decorators = [
+        { type: core_1.Directive, args: [{ selector: 'ngfUploader' },] },
+    ];
+    /** @nocollapse */
+    ngfUploader.ctorParameters = function () { return []; };
+    ngfUploader.propDecorators = {
+        "ref": [{ type: core_1.Input },],
+        "refChange": [{ type: core_1.Output },],
+        "options": [{ type: core_1.Input },],
     };
     return ngfUploader;
 }(FileUploader_class_1.FileUploader));

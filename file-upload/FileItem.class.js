@@ -1,9 +1,20 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var FileLikeObject_class_1 = require("./FileLikeObject.class");
-var FileUploader_class_1 = require("./FileUploader.class");
-var FileItem = /** @class */ (function () {
+var FileItem = (function () {
     function FileItem(uploader, some, options) {
+        this.url = '/';
+        this.headers = [];
+        this.withCredentials = true;
+        this.formData = [];
+        this.isReady = false;
+        this.isUploading = false;
+        this.isUploaded = false;
+        this.isSuccess = false;
+        this.isCancel = false;
+        this.isError = false;
+        this.progress = 0;
+        this.index = void 0;
         this.uploader = uploader;
         this.some = some;
         this.options = options;

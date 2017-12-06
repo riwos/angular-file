@@ -8,9 +8,23 @@ function getWindow() { return window; }
 function isFile(value) {
     return (File && value instanceof File);
 }
-var FileUploader = /** @class */ (function () {
+var FileUploader = (function () {
     function FileUploader(options) {
         if (options === void 0) { options = {}; }
+        this.done = new core_1.EventEmitter();
+        this.success = new core_1.EventEmitter();
+        this.catcher = new core_1.EventEmitter();
+        this.isUploading = false;
+        this.queue = [];
+        this.progress = 0;
+        this._nextIndex = 0;
+        this.options = {
+            autoUpload: false,
+            isHTML5: true,
+            filters: [],
+            removeAfterUpload: false,
+            disableMultipart: false
+        };
         this.setOptions(options);
     }
     FileUploader.prototype.setOptions = function (options) {
@@ -548,6 +562,11 @@ var FileUploader = /** @class */ (function () {
             }
             return fixFileOrientationByMeta(file, result);
         });
+    };
+    FileUploader.propDecorators = {
+        "done": [{ type: core_1.Output },],
+        "success": [{ type: core_1.Output },],
+        "catcher": [{ type: core_1.Output, args: ['catch',] },],
     };
     return FileUploader;
 }());

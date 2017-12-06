@@ -1,10 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@angular/core");
-var FileUploader_class_1 = require("./FileUploader.class");
-var FileItem_class_1 = require("./FileItem.class");
-var ngfUploadStatus = /** @class */ (function () {
+var ngfUploadStatus = (function () {
     function ngfUploadStatus() {
+        this.percentChange = new core_1.EventEmitter();
     }
     ngfUploadStatus.prototype.ngOnChanges = function (changes) {
         var _this = this;
@@ -17,6 +16,16 @@ var ngfUploadStatus = /** @class */ (function () {
                 }, 0);
             }
         }
+    };
+    ngfUploadStatus.decorators = [
+        { type: core_1.Directive, args: [{ selector: 'ngfUploadStatus' },] },
+    ];
+    /** @nocollapse */
+    ngfUploadStatus.ctorParameters = function () { return []; };
+    ngfUploadStatus.propDecorators = {
+        "percent": [{ type: core_1.Input },],
+        "percentChange": [{ type: core_1.Output },],
+        "httpEvent": [{ type: core_1.Input },],
     };
     return ngfUploadStatus;
 }());

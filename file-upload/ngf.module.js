@@ -19,9 +19,21 @@ var declarations = [
     ngfFormData_directive_1.ngfFormData,
     ngf_directive_1.ngf
 ];
-var ngfModule = /** @class */ (function () {
+var ngfModule = (function () {
     function ngfModule() {
     }
+    ngfModule.decorators = [
+        { type: core_1.NgModule, args: [{
+                    imports: [
+                        common_1.CommonModule
+                        //,HttpModule
+                    ],
+                    declarations: declarations,
+                    exports: declarations //[HttpModule, ...declarations]
+                },] },
+    ];
+    /** @nocollapse */
+    ngfModule.ctorParameters = function () { return []; };
     return ngfModule;
 }());
 exports.ngfModule = ngfModule;

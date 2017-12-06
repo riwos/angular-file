@@ -12,11 +12,24 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@angular/core");
 var ngf_directive_1 = require("./ngf.directive");
-var ngfSelect = /** @class */ (function (_super) {
+var ngfSelect = (function (_super) {
     __extends(ngfSelect, _super);
     function ngfSelect() {
-        return _super !== null && _super.apply(this, arguments) || this;
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.selectable = true;
+        _this.refChange = new core_1.EventEmitter();
+        return _this;
     }
+    ngfSelect.decorators = [
+        { type: core_1.Directive, args: [{ selector: '[ngfSelect]' },] },
+    ];
+    /** @nocollapse */
+    ngfSelect.ctorParameters = function () { return []; };
+    ngfSelect.propDecorators = {
+        "selectable": [{ type: core_1.Input },],
+        "ref": [{ type: core_1.Input, args: ['ngfSelect',] },],
+        "refChange": [{ type: core_1.Output, args: ['ngfSelectChange',] },],
+    };
     return ngfSelect;
 }(ngf_directive_1.ngf));
 exports.ngfSelect = ngfSelect;
