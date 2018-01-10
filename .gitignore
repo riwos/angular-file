@@ -36,7 +36,3 @@ Thumbs.db
 
 /demo/e2e/*.js
 /demo/e2e/*.map
-src/**/*.js
-src/**/*.map
-scripts/**/*.js
-scripts/**/*.map
