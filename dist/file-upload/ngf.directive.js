@@ -134,7 +134,10 @@ var ngf = (function () {
             }
         }
     };
-    ngf.prototype.changeFn = function (event) {
+    /** called when input has files */
+    /** called when input has files */
+    ngf.prototype.changeFn = /** called when input has files */
+    function (event) {
         var fileList = event.__files_ || (event.target && event.target.files), files = [];
         if (!fileList)
             return;
@@ -218,7 +221,7 @@ var ngf = (function () {
     ngf.prototype.isFileValid = function (file) {
         var noFilters = !this.accept && (!this.filters || !this.filters.length);
         if (noFilters) {
-            return true;
+            return true; //we have no filters so all files are valid
         }
         return this.getFileFilterFailName(file) ? false : true;
     };

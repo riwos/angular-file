@@ -165,6 +165,7 @@ export class ngf {
     }
   }
 
+  /** called when input has files */
   changeFn(event:any) {
     var fileList = event.__files_ || (event.target && event.target.files), files = [];
 
@@ -262,7 +263,7 @@ export class ngf {
   isFileValid(file:File):boolean{
     const noFilters = !this.accept && (!this.filters || !this.filters.length)
     if( noFilters ){
-      return true
+      return true//we have no filters so all files are valid
     }
     
     return this.getFileFilterFailName(file) ? false : true

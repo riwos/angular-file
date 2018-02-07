@@ -11,7 +11,9 @@ function acceptType(accept, type, name) {
     var acceptRegString = null;
     for (var x = defs.length - 1; x >= 0; --x) {
         //Escapes dots in mimetype
-        acceptRegString = defs[x]; //.replace(/\./g,'\\.')
+        acceptRegString = defs[x];
+        //trim
+        acceptRegString = acceptRegString.replace(/(^\s+|\s+$)/g, '');
         //Escapes stars in mimetype
         acceptRegString = acceptRegString.replace(/\*/g, '.*');
         //let acceptReg = '^((' + acceptRegString

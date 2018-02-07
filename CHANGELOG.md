@@ -2,7 +2,12 @@
 All notable changes to this project will be documented here.
 
 ## 0.5.0 - (2018-02-07)
+- Removed much unused code from original package that this is a fork from
+- Fixed and ensured accept attribute working correctly
+- Improved demo page in terms of the accept attribute and file drag metadata
 - BREAKING CHANGES
+  - Removed directive ngfUploader
+  - ngfUploader.directive.ts has been removed from this package
   - FileUploader.class.ts has been removed from this package
   - FileUploader.class has been removed from this package
   - FileItem.class has been removed from this package
