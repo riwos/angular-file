@@ -1,8 +1,5 @@
 import { Directive, EventEmitter, Output, Input } from '@angular/core';
 
-import { FileUploaderOptions, FileUploader } from "./FileUploader.class"
-import { FileItem } from './FileItem.class';
-
 @Directive({selector: 'ngfUploadStatus'})
 export class ngfUploadStatus {
   @Input() percent:number

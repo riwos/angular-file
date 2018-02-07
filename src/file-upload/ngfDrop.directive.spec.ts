@@ -34,13 +34,4 @@ describe('ngfDrop', () => {
     expect(fixture).not.toBeNull();
     expect(component).not.toBeNull();
   })
-
-  it('uploader', ()=>{
-    expect(component.ngf.uploader).not.toBeNull();
-  })
-
-  it('#getFormData', ()=>{
-    expect(component.ngf.uploader.getFormData.constructor).toEqual( Function );
-    expect(component.ngf.uploader.getFormData().constructor).toEqual( FormData );
-  })
 });

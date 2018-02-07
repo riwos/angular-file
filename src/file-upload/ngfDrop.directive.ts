@@ -1,6 +1,5 @@
 import { Directive, EventEmitter, ElementRef, HostListener, Input, Output } from '@angular/core';
 import { createInvisibleFileInputWrap, isFileInput, detectSwipe } from "./doc-event-help.functions"
-import { FileUploader } from './FileUploader.class';
 import { ngf } from "./ngf.directive"
 
 @Directive({selector: '[ngfDrop]'})
@@ -9,11 +8,14 @@ export class ngfDrop extends ngf {
   @Output('ngfDropChange') refChange:EventEmitter<ngfDrop> = new EventEmitter()  
   @Output() fileOver:EventEmitter<any> = new EventEmitter();
 
-  @Input() validDrag = false
+  @Input() validDrag:boolean = false
   @Output() validDragChange:EventEmitter<boolean> = new EventEmitter()
 
   @Input() invalidDrag = false
   @Output() invalidDragChange:EventEmitter<boolean> = new EventEmitter()
+
+  @Input() dragFiles:File[]
+  @Output() dragFilesChange:EventEmitter<File[]> = new EventEmitter()
 
   @HostListener('drop', ['$event'])
   onDrop(event:Event):void {
@@ -38,25 +40,44 @@ export class ngfDrop extends ngf {
 
     let files = this.eventToFiles(event)
 
-    //IE11 does NOT tell you about dragged files. Always 0 files
-    //if(!files.length)return
+    let jsonFiles = this.filesToWriteableObject(files)
+    this.dragFilesChange.emit(this.dragFiles=jsonFiles)
 
-    this.validDrag = this.uploader.isFilesValid(files)
+    if( files.length ){
+      this.validDrag = this.isFilesValid(files)
+    }else{
+      //Safari, IE11 & some browsers do NOT tell you about dragged files until dropped. Always consider a valid drag
+      this.validDrag = true
+    }
+
     this.validDragChange.emit(this.validDrag)
 
     this.invalidDrag = !this.validDrag
     this.invalidDragChange.emit(this.invalidDrag)
 
-    this.eventToTransfer(event).dropEffect = 'copy';
-    this.stopEvent(event);
-    this.fileOver.emit(true);
+    transfer.dropEffect = 'copy'//change cursor and such
+    this.stopEvent(event)
+    this.fileOver.emit(true)
+  }
+
+  /** browsers try hard to conceal data about file drags, this tends to undo that */
+  filesToWriteableObject( files:File[] ){
+    const jsonFiles = []
+    for(let x=0; x < files.length; ++x){
+      jsonFiles.push({
+        type:files[x].type,
+        kind:files[x]["kind"]
+      })
+    }
+    return jsonFiles
   }
 
   closeDrags(){
-    this.validDrag = false
+    this.validDrag = null
     this.validDragChange.emit(this.validDrag)
     this.invalidDrag = false
     this.invalidDragChange.emit(this.invalidDrag)
+    this.dragFilesChange.emit(this.dragFiles=null)
   }
 
   @HostListener('dragleave', ['$event'])

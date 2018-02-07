@@ -32,17 +32,8 @@ describe('ngfSelect', () => {
   }));
 
   it('inits', ()=>{
-    expect(fixture).not.toBeNull();
-    expect(component).not.toBeNull();
+    expect(fixture).not.toBeNull()
+    expect(component).not.toBeNull()
+    expect(component.ngf.selectable).toBe( true )
   })
-
-  it('uploader', ()=>{
-    expect(component.ngf.uploader).not.toBeNull();
-    expect(component.ngf.selectable).toBe( true );
-  })
-
-  it('#getFormData', ()=>{
-    expect(component.ngf.uploader.getFormData.constructor).toEqual( Function );
-    expect(component.ngf.uploader.getFormData().constructor).toEqual( FormData );
-  })
-});
+})

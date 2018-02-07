@@ -8,6 +8,7 @@ import { HttpClient, HttpRequest, HttpResponse, HttpEvent } from '@angular/commo
   template:template
 })
 export class SimpleDemoComponent {
+  accept = '*'
   files:File[] = []
   progress:number
   url = 'https://evening-anchorage-3159.herokuapp.com/api/'

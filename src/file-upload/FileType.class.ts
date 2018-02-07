@@ -53,7 +53,7 @@ export class FileType {
     'application/octet-stream'
   ];
 
-  public static getMimeClass(file:any):string {
+  public static getMimeClass( file:File ):string {
     let mimeClass = 'application';
     if (this.mime_psd.indexOf(file.type) !== -1) {
       mimeClass = 'image';

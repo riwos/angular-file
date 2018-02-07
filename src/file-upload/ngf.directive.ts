@@ -1,16 +1,18 @@
 import { Directive, EventEmitter, ElementRef, Input, Output, HostListener } from '@angular/core';
 import { createInvisibleFileInputWrap, isFileInput, detectSwipe } from "./doc-event-help.functions"
-import { FileUploader, InvalidFileItem } from './FileUploader.class';
+import { FileType } from './FileType.class'
+import { acceptType, InvalidFileItem, applyExifRotation, dataUrl } from "./fileTools"
 
 @Directive({selector: '[ngf]'})
 export class ngf {
   fileElm:any
+  filters:{name:string, fn:(file:File)=>boolean}[] = []
 
   @Input() multiple:string
   @Input() accept:string
   @Input() maxSize:number
-  @Input() forceFilename:string
-  @Input() forcePostname:string
+  //@Input() forceFilename:string
+  //@Input() forcePostname:string
   @Input() ngfFixOrientation:boolean = true
 
   @Input() fileDropDisabled=false
@@ -19,9 +21,6 @@ export class ngf {
   @Input('ngf') ref:ngf
   @Output('ngfChange') refChange:EventEmitter<ngf> = new EventEmitter()
   
-  //deprecating (may actually stay but as a validation class?)
-  @Input() uploader:FileUploader = new FileUploader({});
-
   @Input() lastInvalids:InvalidFileItem[] = []
   @Output() lastInvalidsChange:EventEmitter<{file:File,type:string}[]> = new EventEmitter()
 
@@ -34,7 +33,17 @@ export class ngf {
   @Input() files:File[] = []
   @Output() filesChange:EventEmitter<File[]> = new EventEmitter<File[]>();
 
-  constructor(public element:ElementRef){}
+  constructor(public element:ElementRef){
+    this.initFilters()
+  }
+
+  initFilters(){
+    //this.filters.unshift({name: 'queueLimit', fn: this._queueLimitFilter})
+    this.filters.unshift({name: 'fileSize', fn: this._fileSizeFilter})
+    //this.filters.unshift({name: 'fileType', fn: this._fileTypeFilter})
+    //this.filters.unshift({name: 'mimeType', fn: this._mimeTypeFilter})
+    this.filters.unshift({name: 'accept', fn: this._acceptFilter})
+  }
 
   ngOnDestroy(){
     delete this.fileElm//faster memory release of dom element
@@ -49,14 +58,6 @@ export class ngf {
       this.paramFileElm().setAttribute('multiple', this.multiple)
     }
 
-    if( this.forceFilename ){
-      this.uploader.options.forceFilename = this.forceFilename
-    }
-
-    if( this.forcePostname ){
-      this.uploader.options.forcePostname = this.forcePostname
-    }
-
     //create reference to this class with one cycle delay to avoid ExpressionChangedAfterItHasBeenCheckedError
     setTimeout(()=>{
       this.refChange.emit(this)
@@ -66,12 +67,7 @@ export class ngf {
 
   ngOnChanges( changes ){
     if( changes.accept ){
-      this.uploader.options.accept = changes.accept.currentValue
       this.paramFileElm().setAttribute('accept', changes.accept.currentValue || '*')
-    }
-
-    if( changes.maxSize ){
-      this.uploader.options.maxFileSize = changes.maxSize.currentValue
     }
   }
 
@@ -101,19 +97,35 @@ export class ngf {
     elm.addEventListener('touchend', bindedHandler)
   }
 
-  getOptions():any {
-    return this.uploader.options;
+  getValidFiles( files:File[] ):File[]{
+    const rtn = []
+    for(let x=files.length-1; x >= 0; --x){
+      if( this.isFileValid(files[x]) ){
+        rtn.push(files[x])
+      }
+    }
+    return rtn
   }
 
-  getFilters():any {
-    return {};
+  getInvalidFiles(files:File[]):InvalidFileItem[]{
+    const rtn = []
+    for(let x=files.length-1; x >= 0; --x){
+      let failReason = this.getFileFilterFailName(files[x])
+      if( failReason ){
+        rtn.push({
+          file : files[x],
+          type : failReason
+        })
+      }
+    }
+    return rtn
   }
 
   handleFiles(files:File[]){
-    const valids = this.uploader.getValidFiles(files)
+    const valids = this.getValidFiles(files)
     
     if(files.length!=valids.length){
-      this.lastInvalids = this.uploader.getInvalidFiles(files)
+      this.lastInvalids = this.getInvalidFiles(files)
     }else{
       this.lastInvalids = null
     }
@@ -135,13 +147,11 @@ export class ngf {
   }
 
   que(files:File[]){
-    this.uploader.addToQueue(files)
-
-    if(!this.files)this.files=[]
+    this.files = this.files || []
     Array.prototype.push.apply(this.files, files)
 
     //below break memory ref and doesnt act like a que
-    //this.files = files//causes memory change which triggers bindings like <ngfFormData [files]="files"></cgfFormData>
+    //this.files = files//causes memory change which triggers bindings like <ngfFormData [files]="files"></ngfFormData>
     
     this.filesChange.emit( this.files )
 
@@ -149,7 +159,7 @@ export class ngf {
       this.fileChange.emit( this.file=files[0] )
 
       if(this.lastBaseUrlChange.observers.length){
-        this.uploader.dataUrl( files[0] )
+        dataUrl( files[0] )
         .then( url=>this.lastBaseUrlChange.emit(url) )
       }
     }
@@ -219,7 +229,7 @@ export class ngf {
 
   applyExifRotations(files:File[]):Promise<File[]>{
     const mapper = (file:File,index:number):Promise<any>=>{
-      return this.uploader.applyExifRotation(file)
+      return applyExifRotation(file)
       .then( fixedFile=>files.splice(index, 1, fixedFile) )
     }
 
@@ -239,4 +249,52 @@ export class ngf {
     this.stopEvent(event);
     this.handleFiles(files)
   }
+
+  getFileFilterFailName(file:File):string{
+    for(let x=this.filters.length-1; x >= 0; --x){
+      if( !this.filters[x].fn.call(this, file) ){
+        return this.filters[x].name
+      }
+    }
+    return
+  }
+
+  isFileValid(file:File):boolean{
+    const noFilters = !this.accept && (!this.filters || !this.filters.length)
+    if( noFilters ){
+      return true
+    }
+    
+    return this.getFileFilterFailName(file) ? false : true
+  }
+
+  isFilesValid(files:File[]){
+    for(let x=files.length-1; x >= 0; --x){
+      if( !this.isFileValid(files[x]) ){
+        return false
+      }
+    }
+    return true
+  }
+  
+  protected _acceptFilter(item:File):boolean {
+    return acceptType(this.accept, item.type, item.name)
+  }
+
+  /*protected _queueLimitFilter():boolean {
+    return this.queueLimit === undefined || this.files.length < this.queueLimit
+  }*/
+
+  protected _fileSizeFilter(item:File):boolean {
+    return !(this.maxSize && item.size > this.maxSize);
+  }
+
+  /*protected _fileTypeFilter(item:File):boolean {
+    return !(this.allowedFileType &&
+    this.allowedFileType.indexOf(FileType.getMimeClass(item)) === -1)
+  }*/
+
+  /*protected _mimeTypeFilter(item:File):boolean {
+    return !(this.allowedMimeType && this.allowedMimeType.indexOf(item.type) === -1);
+  }*/
 }

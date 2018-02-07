@@ -8,6 +8,7 @@ export const string = "import { Component } from '@angular/core'"+
 "\n  template:template"+
 "\n})"+
 "\nexport class SimpleDemoComponent {"+
+"\n  accept = '*'"+
 "\n  files:File[] = []"+
 "\n  progress:number"+
 "\n  url = 'https://evening-anchorage-3159.herokuapp.com/api/'"+

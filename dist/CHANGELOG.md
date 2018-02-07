@@ -1,6 +1,16 @@
 # angular-file - Change Log
 All notable changes to this project will be documented here.
 
+## 0.5.0 - (2018-02-07)
+- BREAKING CHANGES
+  - FileUploader.class.ts has been removed from this package
+  - FileUploader.class has been removed from this package
+  - FileItem.class has been removed from this package
+  - FileLikeObject.class has been removed from this package
+  - Files are always considered valid when dragged inside browsers that dont allow ANY drag file metadata
+  - Input forceFilename has been removed from all ngf directives
+  - Input forcePostname has been removed from all ngf directives
+
 ## [0.4.0] - (2017-12-05)
 - BREAKING CHANGES
   - Angular 4 updated to 5.0.5

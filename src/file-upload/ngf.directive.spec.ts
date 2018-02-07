@@ -36,14 +36,4 @@ describe('ngf', () => {
     expect(component.ngf).not.toBeNull();
     expect(component.ngf2).not.toBeNull();
   })
-
-  it('uploader', ()=>{    
-    expect(component.ngf.uploader).not.toBeNull();
-    expect(component.ngf2.uploader).not.toBeNull();
-  })
-
-  it('#getFormData', ()=>{
-    expect(component.ngf.uploader.getFormData.constructor).toEqual( Function );
-    expect(component.ngf.uploader.getFormData().constructor).toEqual( FormData );
-  })
 });

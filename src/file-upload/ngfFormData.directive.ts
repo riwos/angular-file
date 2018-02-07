@@ -5,9 +5,6 @@ import {
   Output, Input
 } from '@angular/core';
 
-import { FileUploaderOptions, FileUploader } from "./FileUploader.class"
-import { FileItem } from './FileItem.class';
-
 @Directive({selector: 'ngfFormData'})
 export class ngfFormData {
   @Input() files:File[]

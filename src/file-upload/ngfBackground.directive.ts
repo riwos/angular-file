@@ -1,5 +1,5 @@
 import { Directive, ElementRef, Input } from '@angular/core';
-import { FileUploader } from './FileUploader.class';
+import { dataUrl } from './fileTools';
 
 @Directive({selector: '[ngfBackground]'})
 export class ngfBackground {
@@ -8,7 +8,10 @@ export class ngfBackground {
   constructor(public ElementRef:ElementRef){}
 
   ngOnChanges(changes:any){
-    new FileUploader().dataUrl(this.file)
-    .then( (src:any)=>this.ElementRef.nativeElement.style.backgroundImage = 'url(\'' + (src || '') + '\')' )
+    dataUrl(this.file)
+    .then((src:any)=>{
+      const urlString = 'url(\'' + (src || '') + '\')'
+      this.ElementRef.nativeElement.style.backgroundImage = urlString
+    })
   }
 }

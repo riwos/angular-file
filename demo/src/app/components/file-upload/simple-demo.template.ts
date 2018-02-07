@@ -1,8 +1,8 @@
 export const string = "<style>"+"\r"+
 "\n  .my-drop-zone { border: dotted 3px lightgray; }"+"\r"+
 "\n  /* Default class applied to drop zones on over */"+"\r"+
-"\n  .nv-file-over { border: dotted 3px red; }"+"\r"+
-"\n  .another-file-over-class { border: dotted 3px green; }"+"\r"+
+"\n  .invalid-drag { border: dotted 3px red; }"+"\r"+
+"\n  .valid-drag { border: dotted 3px green; }"+"\r"+
 "\n  html, body { height: 100%; }"+"\r"+
 "\n  .previewIcon{"+"\r"+
 "\n    width:100px;height:100px;"+"\r"+
@@ -89,55 +89,68 @@ export const string = "<style>"+"\r"+
 "\n    </div>"+"\r"+
 "\n</div>"+"\r"+
 "\n"+"\r"+
-"\n<div class=\"inline-block\">"+"\r"+
+"\n<div>"+"\r"+
 "\n  <h3>Drop Files</h3>"+"\r"+
 "\n  <div class=\"inline-block\">"+"\r"+
 "\n    <div"+"\r"+
 "\n      ngfDrop"+"\r"+
-"\n      [ngClass]  = \"{'nv-file-over': hasBaseDropZoneOver}\""+"\r"+
-"\n      (fileOver) = \"hasBaseDropZoneOver=$event\""+"\r"+
-"\n      [(files)]  = \"files\""+"\r"+
-"\n      [accept]   = \"accept\""+"\r"+
-"\n      [maxSize]  = \"maxSize\""+"\r"+
-"\n      class      = \"well my-drop-zone\""+"\r"+
+"\n      [(validDrag)]    = \"baseDropValid\""+"\r"+
+"\n      (fileOver)       = \"hasBaseDropZoneOver=$event\""+"\r"+
+"\n      [(files)]        = \"files\""+"\r"+
+"\n      [accept]         = \"accept\""+"\r"+
+"\n      [maxSize]        = \"maxSize\""+"\r"+
+"\n      [(dragFiles)]    = \"dragFiles\""+"\r"+
 "\n      [(lastInvalids)] = \"lastInvalids\""+"\r"+
+"\n      class            = \"well my-drop-zone\""+"\r"+
+"\n      [class.invalid-drag] = \"baseDropValid===false\""+"\r"+
+"\n      [class.valid-drag]   = \"baseDropValid\""+"\r"+
 "\n    >"+"\r"+
 "\n      Base drop zone"+"\r"+
+"\n    </div>"+"\r"+
+"\n    <strong>accept:</strong>"+"\r"+
+"\n    <div>"+"\r"+
+"\n      <input type=\"text\" [(ngModel)]=\"accept\" />"+"\r"+
 "\n    </div>"+"\r"+
 "\n  </div>"+"\r"+
 "\n"+"\r"+
 "\n  <div class=\"inline-block\">"+"\r"+
 "\n    <div"+"\r"+
 "\n      ngfDrop"+"\r"+
-"\n      multiple      = \"1\""+"\r"+
-"\n      selectable    = \"1\""+"\r"+
-"\n      [ngClass]     = \"{'another-file-over-class': validComboDrag}\""+"\r"+
-"\n      [(validDrag)] = \"validComboDrag\""+"\r"+
-"\n      [(files)]     = \"files\""+"\r"+
-"\n      accept        = \"image/*\""+"\r"+
-"\n      [maxSize]  = \"maxSize\""+"\r"+
-"\n      class         = \"well my-drop-zone\""+"\r"+
+"\n      multiple         = \"1\""+"\r"+
+"\n      selectable       = \"1\""+"\r"+
+"\n      [(validDrag)]    = \"validComboDrag\""+"\r"+
+"\n      [(files)]        = \"files\""+"\r"+
+"\n      accept           = \"image/*\""+"\r"+
+"\n      [maxSize]        = \"maxSize\""+"\r"+
 "\n      [(lastInvalids)] = \"lastInvalids\""+"\r"+
+"\n      [(dragFiles)]    = \"dragFiles\""+"\r"+
+"\n      class            = \"well my-drop-zone\""+"\r"+
+"\n      [class.invalid-drag] = \"validComboDrag===false\""+"\r"+
+"\n      [class.valid-drag]   = \"validComboDrag\""+"\r"+
 "\n    >"+"\r"+
 "\n      Combo drop/select <strong>image</strong> only zone"+"\r"+
 "\n    </div>"+"\r"+
-"\n  </div>"+"\r"+
-"\n</div>"+"\r"+
-"\n"+"\r"+
-"\n<div class=\"inline-block\">"+"\r"+
-"\n  <h3>File Filtration</h3>"+"\r"+
-"\n  <div class=\"inline-block\">"+"\r"+
-"\n    <strong>accept</strong>"+"\r"+
+"\n    <strong>accept:</strong>"+"\r"+
 "\n    <div>"+"\r"+
-"\n      <input type=\"text\" [(ngModel)]=\"accept\" placeholder=\"image/jpeg\" />"+"\r"+
+"\n      <input type=\"text\" value=\"image/*\" disabled readonly=\"\" style=\"width:100%\" />"+"\r"+
 "\n    </div>"+"\r"+
 "\n  </div>"+"\r"+
+"\n  "+"\r"+
 "\n  <div class=\"inline-block\">"+"\r"+
 "\n    <strong>maxSize kb</strong>"+"\r"+
 "\n    <div>"+"\r"+
 "\n      <input type=\"number\" [(ngModel)]=\"maxSize\" placeholder=\"1024 == 1mb\" />"+"\r"+
 "\n    </div>"+"\r"+
 "\n  </div>"+"\r"+
+"\n</div>"+"\r"+
+"\n"+"\r"+
+"\n"+"\r"+
+"\n<div *ngIf=\"dragFiles\">"+"\r"+
+"\n  <h3 style=\"margin:0\">Drag Files</h3>"+"\r"+
+"\n  <p *ngIf=\"!dragFiles.length\" style=\"color:red;\">"+"\r"+
+"\n    This browser does NOT release metadata for files being dragged. All files will be considered valid drags until dropped."+"\r"+
+"\n  </p>"+"\r"+
+"\n  <pre>{{ dragFiles | json }}</pre>"+"\r"+
 "\n</div>"+"\r"+
 "\n"+"\r"+
 "\n<div class=\"bg-warning\" *ngIf=\"lastInvalids?.length\" style=\"margin-bottom: 40px\">"+"\r"+

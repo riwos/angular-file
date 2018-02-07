@@ -1,8 +1,8 @@
 <style>
   .my-drop-zone { border: dotted 3px lightgray; }
   /* Default class applied to drop zones on over */
-  .nv-file-over { border: dotted 3px red; }
-  .another-file-over-class { border: dotted 3px green; }
+  .invalid-drag { border: dotted 3px red; }
+  .valid-drag { border: dotted 3px green; }
   html, body { height: 100%; }
   .previewIcon{
     width:100px;height:100px;
@@ -89,55 +89,68 @@
     </div>
 </div>
 
-<div class="inline-block">
+<div>
   <h3>Drop Files</h3>
   <div class="inline-block">
     <div
       ngfDrop
-      [ngClass]  = "{'nv-file-over': hasBaseDropZoneOver}"
-      (fileOver) = "hasBaseDropZoneOver=$event"
-      [(files)]  = "files"
-      [accept]   = "accept"
-      [maxSize]  = "maxSize"
-      class      = "well my-drop-zone"
+      [(validDrag)]    = "baseDropValid"
+      (fileOver)       = "hasBaseDropZoneOver=$event"
+      [(files)]        = "files"
+      [accept]         = "accept"
+      [maxSize]        = "maxSize"
+      [(dragFiles)]    = "dragFiles"
       [(lastInvalids)] = "lastInvalids"
+      class            = "well my-drop-zone"
+      [class.invalid-drag] = "baseDropValid===false"
+      [class.valid-drag]   = "baseDropValid"
     >
       Base drop zone
+    </div>
+    <strong>accept:</strong>
+    <div>
+      <input type="text" [(ngModel)]="accept" />
     </div>
   </div>
 
   <div class="inline-block">
     <div
       ngfDrop
-      multiple      = "1"
-      selectable    = "1"
-      [ngClass]     = "{'another-file-over-class': validComboDrag}"
-      [(validDrag)] = "validComboDrag"
-      [(files)]     = "files"
-      accept        = "image/*"
-      [maxSize]  = "maxSize"
-      class         = "well my-drop-zone"
+      multiple         = "1"
+      selectable       = "1"
+      [(validDrag)]    = "validComboDrag"
+      [(files)]        = "files"
+      accept           = "image/*"
+      [maxSize]        = "maxSize"
       [(lastInvalids)] = "lastInvalids"
+      [(dragFiles)]    = "dragFiles"
+      class            = "well my-drop-zone"
+      [class.invalid-drag] = "validComboDrag===false"
+      [class.valid-drag]   = "validComboDrag"
     >
       Combo drop/select <strong>image</strong> only zone
     </div>
-  </div>
-</div>
-
-<div class="inline-block">
-  <h3>File Filtration</h3>
-  <div class="inline-block">
-    <strong>accept</strong>
+    <strong>accept:</strong>
     <div>
-      <input type="text" [(ngModel)]="accept" placeholder="image/jpeg" />
+      <input type="text" value="image/*" disabled readonly="" style="width:100%" />
     </div>
   </div>
+  
   <div class="inline-block">
     <strong>maxSize kb</strong>
     <div>
       <input type="number" [(ngModel)]="maxSize" placeholder="1024 == 1mb" />
     </div>
   </div>
+</div>
+
+
+<div *ngIf="dragFiles">
+  <h3 style="margin:0">Drag Files</h3>
+  <p *ngIf="!dragFiles.length" style="color:red;">
+    This browser does NOT release metadata for files being dragged. All files will be considered valid drags until dropped.
+  </p>
+  <pre>{{ dragFiles | json }}</pre>
 </div>
 
 <div class="bg-warning" *ngIf="lastInvalids?.length" style="margin-bottom: 40px">
