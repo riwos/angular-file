@@ -1,6 +1,9 @@
 # angular-file - Change Log
 All notable changes to this project will be documented here.
 
+## 0.5.1 - (2018-02-07)
+- accept filter fixed
+
 ## 0.5.0 - (2018-02-07)
 - BREAKING CHANGES
   - FileUploader.class.ts has been removed from this package
