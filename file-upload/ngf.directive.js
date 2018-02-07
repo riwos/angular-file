@@ -2,24 +2,33 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@angular/core");
 var doc_event_help_functions_1 = require("./doc-event-help.functions");
-var FileUploader_class_1 = require("./FileUploader.class");
+var fileTools_1 = require("./fileTools");
 var ngf = (function () {
     function ngf(element) {
         this.element = element;
+        this.filters = [];
+        //@Input() forceFilename:string
+        //@Input() forcePostname:string
         this.ngfFixOrientation = true;
         this.fileDropDisabled = false;
         this.selectable = false;
         this.directiveInit = new core_1.EventEmitter();
         this.refChange = new core_1.EventEmitter();
-        //deprecating (may actually stay but as a validation class?)
-        this.uploader = new FileUploader_class_1.FileUploader({});
         this.lastInvalids = [];
         this.lastInvalidsChange = new core_1.EventEmitter();
         this.lastBaseUrlChange = new core_1.EventEmitter();
         this.fileChange = new core_1.EventEmitter();
         this.files = [];
         this.filesChange = new core_1.EventEmitter();
+        this.initFilters();
     }
+    ngf.prototype.initFilters = function () {
+        //this.filters.unshift({name: 'queueLimit', fn: this._queueLimitFilter})
+        this.filters.unshift({ name: 'fileSize', fn: this._fileSizeFilter });
+        //this.filters.unshift({name: 'fileType', fn: this._fileTypeFilter})
+        //this.filters.unshift({name: 'mimeType', fn: this._mimeTypeFilter})
+        this.filters.unshift({ name: 'accept', fn: this._acceptFilter });
+    };
     ngf.prototype.ngOnDestroy = function () {
         delete this.fileElm; //faster memory release of dom element
     };
@@ -31,12 +40,6 @@ var ngf = (function () {
         if (this.multiple) {
             this.paramFileElm().setAttribute('multiple', this.multiple);
         }
-        if (this.forceFilename) {
-            this.uploader.options.forceFilename = this.forceFilename;
-        }
-        if (this.forcePostname) {
-            this.uploader.options.forcePostname = this.forcePostname;
-        }
         //create reference to this class with one cycle delay to avoid ExpressionChangedAfterItHasBeenCheckedError
         setTimeout(function () {
             _this.refChange.emit(_this);
@@ -45,11 +48,7 @@ var ngf = (function () {
     };
     ngf.prototype.ngOnChanges = function (changes) {
         if (changes.accept) {
-            this.uploader.options.accept = changes.accept.currentValue;
             this.paramFileElm().setAttribute('accept', changes.accept.currentValue || '*');
-        }
-        if (changes.maxSize) {
-            this.uploader.options.maxFileSize = changes.maxSize.currentValue;
         }
     };
     ngf.prototype.paramFileElm = function () {
@@ -75,17 +74,33 @@ var ngf = (function () {
         elm.addEventListener('touchstart', bindedHandler);
         elm.addEventListener('touchend', bindedHandler);
     };
-    ngf.prototype.getOptions = function () {
-        return this.uploader.options;
+    ngf.prototype.getValidFiles = function (files) {
+        var rtn = [];
+        for (var x = files.length - 1; x >= 0; --x) {
+            if (this.isFileValid(files[x])) {
+                rtn.push(files[x]);
+            }
+        }
+        return rtn;
     };
-    ngf.prototype.getFilters = function () {
-        return {};
+    ngf.prototype.getInvalidFiles = function (files) {
+        var rtn = [];
+        for (var x = files.length - 1; x >= 0; --x) {
+            var failReason = this.getFileFilterFailName(files[x]);
+            if (failReason) {
+                rtn.push({
+                    file: files[x],
+                    type: failReason
+                });
+            }
+        }
+        return rtn;
     };
     ngf.prototype.handleFiles = function (files) {
         var _this = this;
-        var valids = this.uploader.getValidFiles(files);
+        var valids = this.getValidFiles(files);
         if (files.length != valids.length) {
-            this.lastInvalids = this.uploader.getInvalidFiles(files);
+            this.lastInvalids = this.getInvalidFiles(files);
         }
         else {
             this.lastInvalids = null;
@@ -106,17 +121,15 @@ var ngf = (function () {
     };
     ngf.prototype.que = function (files) {
         var _this = this;
-        this.uploader.addToQueue(files);
-        if (!this.files)
-            this.files = [];
+        this.files = this.files || [];
         Array.prototype.push.apply(this.files, files);
         //below break memory ref and doesnt act like a que
-        //this.files = files//causes memory change which triggers bindings like <ngfFormData [files]="files"></cgfFormData>
+        //this.files = files//causes memory change which triggers bindings like <ngfFormData [files]="files"></ngfFormData>
         this.filesChange.emit(this.files);
         if (files.length) {
             this.fileChange.emit(this.file = files[0]);
             if (this.lastBaseUrlChange.observers.length) {
-                this.uploader.dataUrl(files[0])
+                fileTools_1.dataUrl(files[0])
                     .then(function (url) { return _this.lastBaseUrlChange.emit(url); });
             }
         }
@@ -177,9 +190,8 @@ var ngf = (function () {
         return [];
     };
     ngf.prototype.applyExifRotations = function (files) {
-        var _this = this;
         var mapper = function (file, index) {
-            return _this.uploader.applyExifRotation(file)
+            return fileTools_1.applyExifRotation(file)
                 .then(function (fixedFile) { return files.splice(index, 1, fixedFile); });
         };
         var proms = [];
@@ -195,6 +207,51 @@ var ngf = (function () {
         this.stopEvent(event);
         this.handleFiles(files);
     };
+    ngf.prototype.getFileFilterFailName = function (file) {
+        for (var x = this.filters.length - 1; x >= 0; --x) {
+            if (!this.filters[x].fn.call(this, file)) {
+                return this.filters[x].name;
+            }
+        }
+        return;
+    };
+    ngf.prototype.isFileValid = function (file) {
+        var noFilters = !this.accept && (!this.filters || !this.filters.length);
+        if (noFilters) {
+            return true;
+        }
+        return this.getFileFilterFailName(file) ? false : true;
+    };
+    ngf.prototype.isFilesValid = function (files) {
+        for (var x = files.length - 1; x >= 0; --x) {
+            if (!this.isFileValid(files[x])) {
+                return false;
+            }
+        }
+        return true;
+    };
+    ngf.prototype._acceptFilter = function (item) {
+        return fileTools_1.acceptType(this.accept, item.type, item.name);
+    };
+    /*protected _queueLimitFilter():boolean {
+      return this.queueLimit === undefined || this.files.length < this.queueLimit
+    }*/
+    /*protected _queueLimitFilter():boolean {
+        return this.queueLimit === undefined || this.files.length < this.queueLimit
+      }*/
+    ngf.prototype._fileSizeFilter = /*protected _queueLimitFilter():boolean {
+        return this.queueLimit === undefined || this.files.length < this.queueLimit
+      }*/
+    function (item) {
+        return !(this.maxSize && item.size > this.maxSize);
+    };
+    /*protected _fileTypeFilter(item:File):boolean {
+        return !(this.allowedFileType &&
+        this.allowedFileType.indexOf(FileType.getMimeClass(item)) === -1)
+      }*/
+    /*protected _mimeTypeFilter(item:File):boolean {
+        return !(this.allowedMimeType && this.allowedMimeType.indexOf(item.type) === -1);
+      }*/
     ngf.decorators = [
         { type: core_1.Directive, args: [{ selector: '[ngf]' },] },
     ];
@@ -206,15 +263,12 @@ var ngf = (function () {
         "multiple": [{ type: core_1.Input },],
         "accept": [{ type: core_1.Input },],
         "maxSize": [{ type: core_1.Input },],
-        "forceFilename": [{ type: core_1.Input },],
-        "forcePostname": [{ type: core_1.Input },],
         "ngfFixOrientation": [{ type: core_1.Input },],
         "fileDropDisabled": [{ type: core_1.Input },],
         "selectable": [{ type: core_1.Input },],
         "directiveInit": [{ type: core_1.Output, args: ['init',] },],
         "ref": [{ type: core_1.Input, args: ['ngf',] },],
         "refChange": [{ type: core_1.Output, args: ['ngfChange',] },],
-        "uploader": [{ type: core_1.Input },],
         "lastInvalids": [{ type: core_1.Input },],
         "lastInvalidsChange": [{ type: core_1.Output },],
         "lastBaseUrl": [{ type: core_1.Input },],

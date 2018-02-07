@@ -1,20 +1,21 @@
 import { EventEmitter, ElementRef } from '@angular/core';
-import { FileUploader, InvalidFileItem } from './FileUploader.class';
+import { InvalidFileItem } from "./fileTools";
 export declare class ngf {
     element: ElementRef;
     fileElm: any;
+    filters: {
+        name: string;
+        fn: (file: File) => boolean;
+    }[];
     multiple: string;
     accept: string;
     maxSize: number;
-    forceFilename: string;
-    forcePostname: string;
     ngfFixOrientation: boolean;
     fileDropDisabled: boolean;
     selectable: boolean;
     directiveInit: EventEmitter<ngf>;
     ref: ngf;
     refChange: EventEmitter<ngf>;
-    uploader: FileUploader;
     lastInvalids: InvalidFileItem[];
     lastInvalidsChange: EventEmitter<{
         file: File;
@@ -27,13 +28,14 @@ export declare class ngf {
     files: File[];
     filesChange: EventEmitter<File[]>;
     constructor(element: ElementRef);
+    initFilters(): void;
     ngOnDestroy(): void;
     ngOnInit(): void;
     ngOnChanges(changes: any): void;
     paramFileElm(): any;
     enableSelecting(): void;
-    getOptions(): any;
-    getFilters(): any;
+    getValidFiles(files: File[]): File[];
+    getInvalidFiles(files: File[]): InvalidFileItem[];
     handleFiles(files: File[]): void;
     que(files: File[]): void;
     changeFn(event: any): void;
@@ -45,4 +47,9 @@ export declare class ngf {
     eventToFiles(event: Event): any;
     applyExifRotations(files: File[]): Promise<File[]>;
     onChange(event: Event): void;
+    getFileFilterFailName(file: File): string;
+    isFileValid(file: File): boolean;
+    isFilesValid(files: File[]): boolean;
+    protected _acceptFilter(item: File): boolean;
+    protected _fileSizeFilter(item: File): boolean;
 }

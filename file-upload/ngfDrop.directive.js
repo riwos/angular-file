@@ -22,6 +22,7 @@ var ngfDrop = (function (_super) {
         _this.validDragChange = new core_1.EventEmitter();
         _this.invalidDrag = false;
         _this.invalidDragChange = new core_1.EventEmitter();
+        _this.dragFilesChange = new core_1.EventEmitter();
         return _this;
     }
     ngfDrop.prototype.onDrop = function (event) {
@@ -40,21 +41,41 @@ var ngfDrop = (function (_super) {
         var transfer = this.eventToTransfer(event);
         var hasFiles = this.transferHasFiles(transfer);
         var files = this.eventToFiles(event);
-        //IE11 does NOT tell you about dragged files. Always 0 files
-        //if(!files.length)return
-        this.validDrag = this.uploader.isFilesValid(files);
+        var jsonFiles = this.filesToWriteableObject(files);
+        this.dragFilesChange.emit(this.dragFiles = jsonFiles);
+        if (files.length) {
+            this.validDrag = this.isFilesValid(files);
+        }
+        else {
+            //Safari, IE11 & some browsers do NOT tell you about dragged files until dropped. Always consider a valid drag
+            this.validDrag = true;
+        }
         this.validDragChange.emit(this.validDrag);
         this.invalidDrag = !this.validDrag;
         this.invalidDragChange.emit(this.invalidDrag);
-        this.eventToTransfer(event).dropEffect = 'copy';
+        transfer.dropEffect = 'copy'; //change cursor and such
         this.stopEvent(event);
         this.fileOver.emit(true);
     };
+    /** browsers try hard to conceal data about file drags, this tends to undo that */
+    /** browsers try hard to conceal data about file drags, this tends to undo that */
+    ngfDrop.prototype.filesToWriteableObject = /** browsers try hard to conceal data about file drags, this tends to undo that */
+    function (files) {
+        var jsonFiles = [];
+        for (var x = 0; x < files.length; ++x) {
+            jsonFiles.push({
+                type: files[x].type,
+                kind: files[x]["kind"]
+            });
+        }
+        return jsonFiles;
+    };
     ngfDrop.prototype.closeDrags = function () {
-        this.validDrag = false;
+        this.validDrag = null;
         this.validDragChange.emit(this.validDrag);
         this.invalidDrag = false;
         this.invalidDragChange.emit(this.invalidDrag);
+        this.dragFilesChange.emit(this.dragFiles = null);
     };
     ngfDrop.prototype.onDragLeave = function (event) {
         this.closeDrags();
@@ -79,6 +100,8 @@ var ngfDrop = (function (_super) {
         "validDragChange": [{ type: core_1.Output },],
         "invalidDrag": [{ type: core_1.Input },],
         "invalidDragChange": [{ type: core_1.Output },],
+        "dragFiles": [{ type: core_1.Input },],
+        "dragFilesChange": [{ type: core_1.Output },],
         "onDrop": [{ type: core_1.HostListener, args: ['drop', ['$event'],] },],
         "onDragOver": [{ type: core_1.HostListener, args: ['dragover', ['$event'],] },],
         "onDragLeave": [{ type: core_1.HostListener, args: ['dragleave', ['$event'],] },],
