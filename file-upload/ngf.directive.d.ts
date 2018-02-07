@@ -38,6 +38,7 @@ export declare class ngf {
     getInvalidFiles(files: File[]): InvalidFileItem[];
     handleFiles(files: File[]): void;
     que(files: File[]): void;
+    /** called when input has files */
     changeFn(event: any): void;
     clickHandler(evt: any): boolean;
     isEmptyAfterSelection(): boolean;
