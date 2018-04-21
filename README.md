@@ -1,6 +1,7 @@
 # angular-file
 Easy to use Angular directives for file uploading ([DEMO PAGE](http://ackerapple.github.io/angular-file/))
 
+[![hire me](https://ackerapple.github.io/resume/assets/images/hire-me-badge.svg)](https://ackerapple.github.io/resume/)
 [![npm version](https://badge.fury.io/js/angular-file.svg)](http://badge.fury.io/js/angular-file)
 [![npm downloads](https://img.shields.io/npm/dm/angular-file.svg)](https://npmjs.org/angular-file)
 [![Build status](https://ci.appveyor.com/api/projects/status/sq815bogrtky29b8/branch/development?svg=true)](https://ci.appveyor.com/project/AckerApple/angular-file/branch/development)

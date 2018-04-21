@@ -1,6 +1,9 @@
 # angular-file - Change Log
 All notable changes to this project will be documented here.
 
+## 0.5.2 - (2018-04-21)
+- Fix single file reselect after item removed from files
+
 ## 0.5.0 - (2018-02-07)
 - Removed much unused code from original package that this is a fork from
 - Fixed and ensured accept attribute working correctly

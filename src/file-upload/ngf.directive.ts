@@ -89,9 +89,14 @@ export class ngf {
   enableSelecting(){
     let elm = this.element.nativeElement
 
-    if( isFileInput(elm) )return
+    if( isFileInput(elm) ){
+      const bindedHandler = ev=>this.beforeSelect()
+      elm.addEventListener('click', bindedHandler)
+      elm.addEventListener('touchstart', bindedHandler)
+      return
+    }
 
-    const bindedHandler = this.clickHandler.bind(this)
+    const bindedHandler = ev=>this.clickHandler(ev)
     elm.addEventListener('click', bindedHandler)
     elm.addEventListener('touchstart', bindedHandler)
     elm.addEventListener('touchend', bindedHandler)
@@ -123,7 +128,7 @@ export class ngf {
 
   handleFiles(files:File[]){
     const valids = this.getValidFiles(files)
-    
+
     if(files.length!=valids.length){
       this.lastInvalids = this.getInvalidFiles(files)
     }else{
@@ -188,9 +193,15 @@ export class ngf {
     const fileElm = this.paramFileElm()
     fileElm.click()
     //fileElm.dispatchEvent( new Event('click') );
-
+    this.beforeSelect()
 
     return false;
+  }
+
+  beforeSelect(){
+    if( this.files.length )return
+    //if no files in array, be sure browser doesnt prevent reselect of same file (see github issue 27)
+    this.fileElm.value = null
   }
 
   isEmptyAfterSelection():boolean {
