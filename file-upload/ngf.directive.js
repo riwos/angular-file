@@ -7,6 +7,7 @@ var ngf = (function () {
     function ngf(element) {
         this.element = element;
         this.filters = [];
+        this.lastFileCount = 0;
         //@Input() forceFilename:string
         //@Input() forcePostname:string
         this.ngfFixOrientation = true;
@@ -138,6 +139,8 @@ var ngf = (function () {
                     .then(function (url) { return _this.lastBaseUrlChange.emit(url); });
             }
         }
+        //will be checked for input value clearing
+        this.lastFileCount = this.files.length;
     };
     /** called when input has files */
     /** called when input has files */
@@ -165,7 +168,7 @@ var ngf = (function () {
         return false;
     };
     ngf.prototype.beforeSelect = function () {
-        if (this.files.length)
+        if (this.lastFileCount === this.files.length)
             return;
         //if no files in array, be sure browser doesnt prevent reselect of same file (see github issue 27)
         this.fileElm.value = null;

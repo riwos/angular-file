@@ -7,6 +7,7 @@ export declare class ngf {
         name: string;
         fn: (file: File) => boolean;
     }[];
+    lastFileCount: number;
     multiple: string;
     accept: string;
     maxSize: number;
