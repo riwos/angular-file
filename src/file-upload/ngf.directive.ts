@@ -7,6 +7,7 @@ import { acceptType, InvalidFileItem, applyExifRotation, dataUrl } from "./fileT
 export class ngf {
   fileElm:any
   filters:{name:string, fn:(file:File)=>boolean}[] = []
+  lastFileCount:number=0
 
   @Input() multiple:string
   @Input() accept:string
@@ -168,6 +169,9 @@ export class ngf {
         .then( url=>this.lastBaseUrlChange.emit(url) )
       }
     }
+
+    //will be checked for input value clearing
+    this.lastFileCount = this.files.length
   }
 
   /** called when input has files */
@@ -199,7 +203,7 @@ export class ngf {
   }
 
   beforeSelect(){
-    if( this.files.length )return
+    if( this.lastFileCount===this.files.length )return
     //if no files in array, be sure browser doesnt prevent reselect of same file (see github issue 27)
     this.fileElm.value = null
   }
