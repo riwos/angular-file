@@ -41,6 +41,7 @@ export declare class ngf {
     /** called when input has files */
     changeFn(event: any): void;
     clickHandler(evt: any): boolean;
+    beforeSelect(): void;
     isEmptyAfterSelection(): boolean;
     eventToTransfer(event: any): any;
     stopEvent(event: any): any;

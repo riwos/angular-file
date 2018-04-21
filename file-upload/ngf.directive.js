@@ -66,10 +66,15 @@ var ngf = (function () {
         return this.fileElm;
     };
     ngf.prototype.enableSelecting = function () {
+        var _this = this;
         var elm = this.element.nativeElement;
-        if (doc_event_help_functions_1.isFileInput(elm))
+        if (doc_event_help_functions_1.isFileInput(elm)) {
+            var bindedHandler_1 = function (ev) { return _this.beforeSelect(); };
+            elm.addEventListener('click', bindedHandler_1);
+            elm.addEventListener('touchstart', bindedHandler_1);
             return;
-        var bindedHandler = this.clickHandler.bind(this);
+        }
+        var bindedHandler = function (ev) { return _this.clickHandler(ev); };
         elm.addEventListener('click', bindedHandler);
         elm.addEventListener('touchstart', bindedHandler);
         elm.addEventListener('touchend', bindedHandler);
@@ -156,7 +161,14 @@ var ngf = (function () {
         var fileElm = this.paramFileElm();
         fileElm.click();
         //fileElm.dispatchEvent( new Event('click') );
+        this.beforeSelect();
         return false;
+    };
+    ngf.prototype.beforeSelect = function () {
+        if (this.files.length)
+            return;
+        //if no files in array, be sure browser doesnt prevent reselect of same file (see github issue 27)
+        this.fileElm.value = null;
     };
     ngf.prototype.isEmptyAfterSelection = function () {
         return !!this.element.nativeElement.attributes.multiple;
