@@ -1,6 +1,9 @@
 # angular-file - Change Log
 All notable changes to this project will be documented here.
 
+## 0.5.4 - (2018-04-21)
+- Fix file check when no files defined
+
 ## 0.5.2 - (2018-04-21)
 - Fix single file reselect after item removed from files
 

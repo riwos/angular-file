@@ -168,7 +168,7 @@ var ngf = (function () {
         return false;
     };
     ngf.prototype.beforeSelect = function () {
-        if (this.lastFileCount === this.files.length)
+        if (this.files && this.lastFileCount === this.files.length)
             return;
         //if no files in array, be sure browser doesnt prevent reselect of same file (see github issue 27)
         this.fileElm.value = null;
