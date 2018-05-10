@@ -41,6 +41,7 @@
         [accept]  = "accept"
         [maxSize]  = "maxSize"
         [(lastInvalids)] = "lastInvalids"
+        (filesChange) = "lastFileAt=getDate()"
       />
     </div>
 
@@ -53,6 +54,7 @@
         [accept]   = "accept"
         [maxSize]  = "maxSize"
         [(lastInvalids)] = "lastInvalids"
+        (filesChange) = "lastFileAt=getDate()"
       />
     </div>
 
@@ -67,6 +69,7 @@
         class     = "well my-drop-zone"
         style     = "border-style:groove;padding:0.5em;text-align:center;width:150px;"
         [(lastInvalids)] = "lastInvalids"
+        (filesChange) = "lastFileAt=getDate()"
       >
         Tap to Select
       </div>
@@ -83,6 +86,7 @@
         class     = "well my-drop-zone"
         style     = "border-style:groove;padding:0.5em;text-align:center;width:150px;"
         [(lastInvalids)] = "lastInvalids"
+        (filesChange) = "lastFileAt=getDate()"
       >
         Tap to Select
       </div>
@@ -104,6 +108,7 @@
       class            = "well my-drop-zone"
       [class.invalid-drag] = "baseDropValid===false"
       [class.valid-drag]   = "baseDropValid"
+      (filesChange) = "lastFileAt=getDate()"
     >
       Base drop zone
     </div>
@@ -127,6 +132,7 @@
       class            = "well my-drop-zone"
       [class.invalid-drag] = "validComboDrag===false"
       [class.valid-drag]   = "validComboDrag"
+      (filesChange) = "lastFileAt=getDate()"
     >
       Combo drop/select <strong>image</strong> only zone
     </div>
@@ -243,6 +249,12 @@
         ></div>
       </div>
     </div>
+
+    <ng-container *ngIf="lastFileAt">
+      <p>
+        <strong>Last file(s) selected At:</strong> {{ lastFileAt | date : 'longTime' }}
+      </p>
+    </ng-container>
 
     <i *ngIf="progress==100" class="glyphicon glyphicon-ok"></i>
 

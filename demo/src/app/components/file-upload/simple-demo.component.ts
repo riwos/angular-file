@@ -15,6 +15,7 @@ export class SimpleDemoComponent {
   hasBaseDropZoneOver:boolean = false
   httpEmitter:Subscription
   httpEvent:HttpEvent<Event>
+  lastFileAt:Date
 
   sendableFormData:FormData//populated via ngfFormData directive
 
@@ -45,5 +46,9 @@ export class SimpleDemoComponent {
       },
       error=>console.log('Error Uploading',error)
     )
+  }
+
+  getDate(){
+    return new Date()
   }
 }

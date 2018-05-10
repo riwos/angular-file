@@ -15,6 +15,7 @@ export const string = "import { Component } from '@angular/core'"+
 "\n  hasBaseDropZoneOver:boolean = false"+
 "\n  httpEmitter:Subscription"+
 "\n  httpEvent:HttpEvent<Event>"+
+"\n  lastFileAt:Date"+
 "\n"+
 "\n  sendableFormData:FormData//populated via ngfFormData directive"+
 "\n"+
@@ -45,6 +46,10 @@ export const string = "import { Component } from '@angular/core'"+
 "\n      },"+
 "\n      error=>console.log('Error Uploading',error)"+
 "\n    )"+
+"\n  }"+
+"\n"+
+"\n  getDate(){"+
+"\n    return new Date()"+
 "\n  }"+
 "\n}"+
 "\n"

@@ -41,6 +41,7 @@ export const string = "<style>"+"\r"+
 "\n        [accept]  = \"accept\""+"\r"+
 "\n        [maxSize]  = \"maxSize\""+"\r"+
 "\n        [(lastInvalids)] = \"lastInvalids\""+"\r"+
+"\n        (filesChange) = \"lastFileAt=getDate()\""+"\r"+
 "\n      />"+"\r"+
 "\n    </div>"+"\r"+
 "\n"+"\r"+
@@ -53,6 +54,7 @@ export const string = "<style>"+"\r"+
 "\n        [accept]   = \"accept\""+"\r"+
 "\n        [maxSize]  = \"maxSize\""+"\r"+
 "\n        [(lastInvalids)] = \"lastInvalids\""+"\r"+
+"\n        (filesChange) = \"lastFileAt=getDate()\""+"\r"+
 "\n      />"+"\r"+
 "\n    </div>"+"\r"+
 "\n"+"\r"+
@@ -67,6 +69,7 @@ export const string = "<style>"+"\r"+
 "\n        class     = \"well my-drop-zone\""+"\r"+
 "\n        style     = \"border-style:groove;padding:0.5em;text-align:center;width:150px;\""+"\r"+
 "\n        [(lastInvalids)] = \"lastInvalids\""+"\r"+
+"\n        (filesChange) = \"lastFileAt=getDate()\""+"\r"+
 "\n      >"+"\r"+
 "\n        Tap to Select"+"\r"+
 "\n      </div>"+"\r"+
@@ -83,6 +86,7 @@ export const string = "<style>"+"\r"+
 "\n        class     = \"well my-drop-zone\""+"\r"+
 "\n        style     = \"border-style:groove;padding:0.5em;text-align:center;width:150px;\""+"\r"+
 "\n        [(lastInvalids)] = \"lastInvalids\""+"\r"+
+"\n        (filesChange) = \"lastFileAt=getDate()\""+"\r"+
 "\n      >"+"\r"+
 "\n        Tap to Select"+"\r"+
 "\n      </div>"+"\r"+
@@ -104,6 +108,7 @@ export const string = "<style>"+"\r"+
 "\n      class            = \"well my-drop-zone\""+"\r"+
 "\n      [class.invalid-drag] = \"baseDropValid===false\""+"\r"+
 "\n      [class.valid-drag]   = \"baseDropValid\""+"\r"+
+"\n      (filesChange) = \"lastFileAt=getDate()\""+"\r"+
 "\n    >"+"\r"+
 "\n      Base drop zone"+"\r"+
 "\n    </div>"+"\r"+
@@ -127,6 +132,7 @@ export const string = "<style>"+"\r"+
 "\n      class            = \"well my-drop-zone\""+"\r"+
 "\n      [class.invalid-drag] = \"validComboDrag===false\""+"\r"+
 "\n      [class.valid-drag]   = \"validComboDrag\""+"\r"+
+"\n      (filesChange) = \"lastFileAt=getDate()\""+"\r"+
 "\n    >"+"\r"+
 "\n      Combo drop/select <strong>image</strong> only zone"+"\r"+
 "\n    </div>"+"\r"+
@@ -243,6 +249,12 @@ export const string = "<style>"+"\r"+
 "\n        ></div>"+"\r"+
 "\n      </div>"+"\r"+
 "\n    </div>"+"\r"+
+"\n"+"\r"+
+"\n    <ng-container *ngIf=\"lastFileAt\">"+"\r"+
+"\n      <p>"+"\r"+
+"\n        <strong>Last file(s) selected At:</strong> {{ lastFileAt | date : 'longTime' }}"+"\r"+
+"\n      </p>"+"\r"+
+"\n    </ng-container>"+"\r"+
 "\n"+"\r"+
 "\n    <i *ngIf=\"progress==100\" class=\"glyphicon glyphicon-ok\"></i>"+"\r"+
 "\n"+"\r"+

@@ -203,7 +203,8 @@ export class ngf {
   }
 
   beforeSelect(){
-    if( this.lastFileCount===this.files.length )return
+    if( this.files && this.lastFileCount===this.files.length )return
+
     //if no files in array, be sure browser doesnt prevent reselect of same file (see github issue 27)
     this.fileElm.value = null
   }
