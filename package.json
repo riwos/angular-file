@@ -2,7 +2,7 @@
   "name": "angular-file",
   "version": "0.5.4",
   "private": true,
-  "description": "Angular file upload directives",
+  "description": "Easy to use Angular directives for user file selections",
   "scripts": {
     "build": "npm-run-all compile:templates build:dist build:demo:prod",
     "build:dist": "npm-run-all update:dist build:dist:js",

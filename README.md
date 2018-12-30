@@ -1,5 +1,5 @@
 # angular-file
-Easy to use Angular directives for file uploading ([DEMO PAGE](http://ackerapple.github.io/angular-file/))
+Easy to use Angular directives for user file selections ([DEMO PAGE](http://ackerapple.github.io/angular-file/))
 
 [![hire me](https://ackerapple.github.io/resume/assets/images/hire-me-badge.svg)](https://ackerapple.github.io/resume/)
 [![npm version](https://badge.fury.io/js/angular-file.svg)](http://badge.fury.io/js/angular-file)
