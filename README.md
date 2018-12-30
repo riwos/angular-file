@@ -8,7 +8,7 @@ Easy to use Angular directives for user file selections ([DEMO PAGE](http://acke
 [![Build Status](https://travis-ci.org/AckerApple/angular-file.svg?branch=development)](https://travis-ci.org/AckerApple/angular-file)
 [![Dependency Status](https://david-dm.org/ackerapple/angular-file.svg)](https://david-dm.org/ackerapple/angular-file)
 
-> This package is to handle select/drag/drop of files. It is NOT a package to transmit files to a server (example page has transmit example).
+> This package is to handle select/drag/drop of files. Once files are selected, for uploading, you then use native `@angular/core` for uploading selected files ([see here for more on uploading](#uploading)).
 
 <details>
   <summary>Table of Contents</summary>
