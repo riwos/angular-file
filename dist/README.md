@@ -256,14 +256,18 @@ Angular, natively, makes uploading files so very easy!
 
 *Did you know?*
 - You do NOT and should NOT use a seperate package to upload files other than `@angular/core`
-- You do NOT and should NOT use packages like ng2-file-upload which have outdated non-core-community driven file uploading scripts
-- Just can just use @angular/core to send files! Why add more unneccessary weight of dependency of another package?
-- Multi file uploading is so easy with @angular/core
+- You do not need a package like ng2-file-upload which have outdated non-core-community driven file uploading scripts
+- Just can just use `@angular/core` to send files! Why add more unneccessary weight of dependency of another package?
+- Multi file uploading is so easy with `@angular/core`
+- You will have the most control seperating your file selecting from file uploading
+- You should use this package, angular-file, to select files and then give to Angular to upload
 
-*Uploading files is as easy as*
-
+*Uploading files is as easy as:*
 ```
-import { HttpClient, HttpRequest, HttpResponse, HttpEvent } from '@angular/common/http'
+import { Subscription } from "rxjs"//only included for data typing
+import {
+  HttpClient, HttpRequest, HttpResponse
+} from "@angular/common/http"
 
 export const uploadFiles(files:File[]) : Subscription {
   const postUrl = "..."
