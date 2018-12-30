@@ -15,12 +15,16 @@ Easy to use Angular directives for user file selections ([DEMO PAGE](http://acke
 
 - [Quick Start](#quick-start)
 - [Examples](#examples)
+  - [Practical Example](#practical-example)
+  - [Select Files Examples](#select-files-examples)
+  - [Drop Files Examples](#drop-files-examples)
 - [API](#api)
   - [ngf Directive](#ngf-directive)
   - [ngfDrop Directive](#ngfdrop-directive)
   - [ngfBackground Directive](#ngfbackground-directive)
   - [ngfSelect Directive](#ngfselect-directive)
   - [ngfUploadStatus Directive](#ngfuploadstatus-directive)
+- [Uploading](#uploading)
 - [Troubleshooting](#troubleshooting)
 - [Credits](#credits)
 - [License](#license)
@@ -246,6 +250,43 @@ Converts files to FormData
 [fileName]:string//optional force file name
 [(FormData)]:FormData
 ```
+
+## Uploading
+Angular, natively, makes uploading files so very easy!
+
+*Did you know?*
+- You do NOT and should NOT use a seperate package to upload files other than `@angular/core`
+- You do NOT and should NOT use packages like ng2-file-upload which have outdated non-core-community driven file uploading scripts
+- Just can just use @angular/core to send files! Why add more unneccessary weight of dependency of another package?
+- Multi file uploading is so easy with @angular/core
+
+*Uploading files is as easy as*
+
+```
+import { HttpClient, HttpRequest, HttpResponse, HttpEvent } from '@angular/common/http'
+
+export const uploadFiles(files:File[]) : Subscription {
+  const postUrl = "..."
+  const myFormData:FormData = new FormData()
+  
+  files.forEach(file=>myFormData.append("file", file, "file-name.xyz"))
+
+  const config = new HttpRequest("POST", postUrl, myFormData), {
+    reportProgress: true
+  })
+  
+  return this.HttpClient.request( config )
+  .subscribe(event=>{    
+    if (event instanceof HttpResponse) {
+      alert('upload complete, old school alert used')
+    }
+  },
+  error=>{
+    alert('!failure cause:' + error.toString())
+  })
+}
+```
+
 
 ## Troubleshooting
 Please follow this guidelines when reporting bugs and feature requests:

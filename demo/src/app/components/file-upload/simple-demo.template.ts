@@ -203,7 +203,7 @@ export const string = "<style>"+"\r"+
 "\n</div>"+"\r"+
 "\n"+"\r"+
 "\n<div style=\"margin-bottom: 40px\">"+"\r"+
-"\n  <h3>{{ files.length }} Qued Files</h3>"+"\r"+
+"\n  <h3>{{ files.length }} Queued Files</h3>"+"\r"+
 "\n  <table class=\"table\">"+"\r"+
 "\n    <thead>"+"\r"+
 "\n      <tr>"+"\r"+
@@ -281,4 +281,5 @@ export const string = "<style>"+"\r"+
 "\n      <span class=\"glyphicon glyphicon-trash\"></span> Remove all"+"\r"+
 "\n    </button>"+"\r"+
 "\n  </div>"+"\r"+
-"\n</div>"
+"\n</div>"+"\r"+
+"\n"
