@@ -198,8 +198,6 @@ Combo Drop Select
 [multiple]          : string
 [accept]            : string
 [maxSize]           : number//bytes . 1024 = 1k . 1048576 = 1mb
-[forceFilename]     : string
-[forcePostname]     : string//when FormData object created, sets name of POST input
 [ngfFixOrientation] : boolean = true
 [fileDropDisabled]  : any = false
 [selectable]        : any = false
@@ -245,7 +243,7 @@ Converts files to FormData
 ```typescript
 [files]:File[]
 [postName]:string = "file"
-[fileName]:string//force file name
+[fileName]:string//optional force file name
 [(FormData)]:FormData
 ```
 
