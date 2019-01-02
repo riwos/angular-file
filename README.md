@@ -8,7 +8,7 @@ Easy to use Angular directives for user file selections ([DEMO PAGE](http://acke
 [![Build Status](https://travis-ci.org/AckerApple/angular-file.svg?branch=development)](https://travis-ci.org/AckerApple/angular-file)
 [![Dependency Status](https://david-dm.org/ackerapple/angular-file.svg)](https://david-dm.org/ackerapple/angular-file)
 
-> This package is to handle select/drag/drop of files. Once files are selected, for uploading, you then use native `@angular/core` for uploading selected files ([see here for more on uploading](#uploading)).
+> This package is to handle select/drag/drop of files. Once files are selected, for uploading, you then use native `@angular/common` for uploading selected files ([see here for more on uploading](#uploading)).
 
 <details>
   <summary>Table of Contents</summary>
@@ -52,8 +52,8 @@ An example intended to have every line needed to run an app with angular-file
 ```typescript
 import { ngfModule, ngf } from "angular-file"
 import { Component, NgModule } from "@angular/core"
-import { HttpClient, HttpRequest, HttpResponse, HttpEvent } from '@angular/common/http'
-import { platformBrowserDynamic } from '@angular/platform-browser-dynamic'
+import { HttpClient, HttpRequest, HttpResponse, HttpEvent } from "@angular/common/http"
+import { platformBrowserDynamic } from "@angular/platform-browser-dynamic"
 import { BrowserModule } from '@angular/platform-browser'
 import { Subscription } from 'rxjs'
 
@@ -255,10 +255,10 @@ Converts files to FormData
 Angular, natively, makes uploading files so very easy!
 
 *Did you know?*
-- You do NOT and should NOT use a seperate package to upload files other than `@angular/core`
+- You do NOT and should NOT use a seperate package to upload files other than `@angular/common`
 - You do not need a package like ng2-file-upload which have outdated non-core-community driven file uploading scripts
-- Just can just use `@angular/core` to send files! Why add more unneccessary weight of dependency of another package?
-- Multi file uploading is so easy with `@angular/core`
+- Just can just use `@angular/common` to send files! Why add more unneccessary weight of dependency of another package?
+- Multi file uploading is so easy with `@angular/common`
 - You will have the most control seperating your file selecting from file uploading
 - You should use this package, angular-file, to select files and then give to Angular to upload
 
