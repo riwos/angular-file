@@ -1,7 +1,10 @@
 export const string = "import { Component } from '@angular/core'"+
 "\nimport { Subscription } from 'rxjs'"+
 "\nimport { string as template } from \"./simple-demo.template\""+
-"\nimport { HttpClient, HttpRequest, HttpResponse, HttpEvent } from '@angular/common/http'"+
+"\nimport {"+
+"\n  HttpClient, HttpRequest,"+
+"\n  HttpResponse, HttpEvent"+
+"\n} from '@angular/common/http'"+
 "\n"+
 "\n@Component({"+
 "\n  selector: 'simple-demo',"+
@@ -14,7 +17,7 @@ export const string = "import { Component } from '@angular/core'"+
 "\n  url = 'https://evening-anchorage-3159.herokuapp.com/api/'"+
 "\n  hasBaseDropZoneOver:boolean = false"+
 "\n  httpEmitter:Subscription"+
-"\n  httpEvent:HttpEvent<Event>"+
+"\n  httpEvent:HttpEvent<{}>"+
 "\n  lastFileAt:Date"+
 "\n"+
 "\n  sendableFormData:FormData//populated via ngfFormData directive"+

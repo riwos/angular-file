@@ -1,7 +1,10 @@
 import { Component } from '@angular/core'
 import { Subscription } from 'rxjs'
 import { string as template } from "./simple-demo.template"
-import { HttpClient, HttpRequest, HttpResponse, HttpEvent } from '@angular/common/http'
+import {
+  HttpClient, HttpRequest,
+  HttpResponse, HttpEvent
+} from '@angular/common/http'
 
 @Component({
   selector: 'simple-demo',
@@ -14,7 +17,7 @@ export class SimpleDemoComponent {
   url = 'https://evening-anchorage-3159.herokuapp.com/api/'
   hasBaseDropZoneOver:boolean = false
   httpEmitter:Subscription
-  httpEvent:HttpEvent<Event>
+  httpEvent:HttpEvent<{}>
   lastFileAt:Date
 
   sendableFormData:FormData//populated via ngfFormData directive
