@@ -52,7 +52,9 @@ An example intended to have every line needed to run an app with angular-file
 ```typescript
 import { ngfModule, ngf } from "angular-file"
 import { Component, NgModule } from "@angular/core"
-import { HttpClient, HttpRequest, HttpResponse, HttpEvent } from "@angular/common/http"
+import {
+  HttpClient, HttpRequest, HttpResponse, HttpEvent
+} from "@angular/common/http"
 import { platformBrowserDynamic } from "@angular/platform-browser-dynamic"
 import { BrowserModule } from '@angular/platform-browser'
 import { Subscription } from 'rxjs'
@@ -92,7 +94,7 @@ const template = `
 export class AppComponent {
   postUrl = '...'
   myFormData:FormData//populated by ngfFormData directive
-  httpEvent:HttpEvent<Event>
+  httpEvent:HttpEvent<{}>
 
   constructor(public HttpClient:HttpClient){}
 
