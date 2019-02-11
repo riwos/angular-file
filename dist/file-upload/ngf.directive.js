@@ -14,7 +14,6 @@ var ngf = (function () {
         this.fileDropDisabled = false;
         this.selectable = false;
         this.directiveInit = new core_1.EventEmitter();
-        this.refChange = new core_1.EventEmitter();
         this.lastInvalids = [];
         this.lastInvalidsChange = new core_1.EventEmitter();
         this.lastBaseUrlChange = new core_1.EventEmitter();
@@ -44,7 +43,6 @@ var ngf = (function () {
         }
         //create reference to this class with one cycle delay to avoid ExpressionChangedAfterItHasBeenCheckedError
         setTimeout(function () {
-            _this.refChange.emit(_this);
             _this.directiveInit.emit(_this);
         }, 0);
     };
@@ -110,7 +108,7 @@ var ngf = (function () {
             this.lastInvalids = this.getInvalidFiles(files);
         }
         else {
-            this.lastInvalids = null;
+            delete this.lastInvalids;
         }
         this.lastInvalidsChange.emit(this.lastInvalids);
         if (valids.length) {
@@ -147,7 +145,7 @@ var ngf = (function () {
     /** called when input has files */
     ngf.prototype.changeFn = /** called when input has files */
     function (event) {
-        var fileList = event.__files_ || (event.target && event.target.files), files = [];
+        var fileList = event.__files_ || (event.target && event.target.files);
         if (!fileList)
             return;
         this.stopEvent(event);
@@ -272,7 +270,10 @@ var ngf = (function () {
         return !(this.allowedMimeType && this.allowedMimeType.indexOf(item.type) === -1);
       }*/
     ngf.decorators = [
-        { type: core_1.Directive, args: [{ selector: '[ngf]' },] },
+        { type: core_1.Directive, args: [{
+                    selector: "[ngf]",
+                    exportAs: "ngf"
+                },] },
     ];
     /** @nocollapse */
     ngf.ctorParameters = function () { return [
@@ -286,8 +287,6 @@ var ngf = (function () {
         "fileDropDisabled": [{ type: core_1.Input },],
         "selectable": [{ type: core_1.Input },],
         "directiveInit": [{ type: core_1.Output, args: ['init',] },],
-        "ref": [{ type: core_1.Input, args: ['ngf',] },],
-        "refChange": [{ type: core_1.Output, args: ['ngfChange',] },],
         "lastInvalids": [{ type: core_1.Input },],
         "lastInvalidsChange": [{ type: core_1.Output },],
         "lastBaseUrl": [{ type: core_1.Input },],

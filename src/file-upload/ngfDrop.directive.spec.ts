@@ -4,7 +4,7 @@ import { ngfModule } from './ngf.module';
 
 @Component({
   selector: 'container',
-  template: '<input type="file" [(ngfDrop)]="ngf" />'
+  template: '<input type="file" #ngf="ngfDrop" ngfDrop />'
 })
 export class ContainerComponent {}
 

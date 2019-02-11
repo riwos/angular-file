@@ -5,7 +5,7 @@ export const isFileInput = function(elm:any){
 
 let initialTouchStartY = 0;
 let initialTouchStartX = 0;
-export const detectSwipe = function(evt:any) {
+export const detectSwipe = function(evt:any):boolean {
   var touches = evt.changedTouches || (evt.originalEvent && evt.originalEvent.changedTouches);
   if (touches) {
     if (evt.type === 'touchstart') {
@@ -27,6 +27,7 @@ export const detectSwipe = function(evt:any) {
       return true;
     }
   }
+  return false
 }
 
 export const createInvisibleFileInputWrap = function() {

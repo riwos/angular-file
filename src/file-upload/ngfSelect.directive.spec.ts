@@ -1,13 +1,20 @@
-import { Component, NgModule } from '@angular/core';
-import { inject, ComponentFixture, TestBed, async } from '@angular/core/testing';
-//import { By } from '@angular/platform-browser';
-import { ngfModule } from './ngf.module';
+import {
+  ViewChild, Component, NgModule
+} from "@angular/core"
+import {
+  inject, ComponentFixture, TestBed, async
+} from '@angular/core/testing'
+//import { By } from '@angular/platform-browser'
+import { ngfModule } from './ngf.module'
+import { ngfSelect } from './ngfSelect.directive'
 
 @Component({
   selector: 'container',
-  template: '<input type="file" [(ngfSelect)]="ngf" />'
+  template: '<input type="file" #ngf="ngfSelect" ngfSelect />'
 })
-export class ContainerComponent {}
+export class ContainerComponent {
+  @ViewChild("ngf") ngf:ngfSelect
+}
 
 @NgModule({
   imports: [ ngfModule ],

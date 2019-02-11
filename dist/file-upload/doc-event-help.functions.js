@@ -29,6 +29,7 @@ exports.detectSwipe = function (evt) {
             return true;
         }
     }
+    return false;
 };
 exports.createInvisibleFileInputWrap = function () {
     var fileElem = exports.createFileInput();

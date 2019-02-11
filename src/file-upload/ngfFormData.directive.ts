@@ -11,17 +11,17 @@ export class ngfFormData {
   @Input() postName:string = "file"
   @Input() fileName:string//force file name
 
-  @Input() FormData:FormData
+  @Input() FormData:FormData = new FormData()
   @Output() FormDataChange:EventEmitter<FormData> = new EventEmitter()
 
   differ:IterableDiffer<{}>
 
   constructor(IterableDiffers:IterableDiffers){
-    this.differ = IterableDiffers.find([]).create(null)
+    this.differ = IterableDiffers.find([]).create()
   }
 
   ngDoCheck(){
-    var changes = this.differ.diff(this.files);
+    var changes = this.differ.diff( this.files );
 
     if (changes) {
       setTimeout(()=>this.buildFormData(), 0)
@@ -33,7 +33,10 @@ export class ngfFormData {
 
     if( isArray ){
       this.FormData = new FormData()
-      this.files.forEach(file=>this.FormData.append(this.postName, file, this.fileName||file.name))
+      const files = this.files || []
+      files.forEach(file=>
+        this.FormData.append(this.postName, file, this.fileName||file.name)
+      )
       this.FormDataChange.emit( this.FormData )
     }else{
       delete this.FormData

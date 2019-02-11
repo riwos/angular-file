@@ -16,7 +16,6 @@ var ngfDrop = (function (_super) {
     __extends(ngfDrop, _super);
     function ngfDrop() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.refChange = new core_1.EventEmitter();
         _this.fileOver = new core_1.EventEmitter();
         _this.validDrag = false;
         _this.validDragChange = new core_1.EventEmitter();
@@ -39,7 +38,6 @@ var ngfDrop = (function (_super) {
     };
     ngfDrop.prototype.onDragOver = function (event) {
         var transfer = this.eventToTransfer(event);
-        var hasFiles = this.transferHasFiles(transfer);
         var files = this.eventToFiles(event);
         var jsonFiles = this.filesToWriteableObject(files);
         this.dragFilesChange.emit(this.dragFiles = jsonFiles);
@@ -71,11 +69,12 @@ var ngfDrop = (function (_super) {
         return jsonFiles;
     };
     ngfDrop.prototype.closeDrags = function () {
-        this.validDrag = null;
+        delete this.validDrag;
         this.validDragChange.emit(this.validDrag);
         this.invalidDrag = false;
         this.invalidDragChange.emit(this.invalidDrag);
-        this.dragFilesChange.emit(this.dragFiles = null);
+        delete this.dragFiles;
+        this.dragFilesChange.emit(this.dragFiles);
     };
     ngfDrop.prototype.onDragLeave = function (event) {
         this.closeDrags();
@@ -88,13 +87,14 @@ var ngfDrop = (function (_super) {
         this.fileOver.emit(false);
     };
     ngfDrop.decorators = [
-        { type: core_1.Directive, args: [{ selector: '[ngfDrop]' },] },
+        { type: core_1.Directive, args: [{
+                    selector: "[ngfDrop]",
+                    exportAs: "ngfDrop"
+                },] },
     ];
     /** @nocollapse */
     ngfDrop.ctorParameters = function () { return []; };
     ngfDrop.propDecorators = {
-        "ref": [{ type: core_1.Input, args: ['ngfDrop',] },],
-        "refChange": [{ type: core_1.Output, args: ['ngfDropChange',] },],
         "fileOver": [{ type: core_1.Output },],
         "validDrag": [{ type: core_1.Input },],
         "validDragChange": [{ type: core_1.Output },],

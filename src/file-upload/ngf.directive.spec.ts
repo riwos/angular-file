@@ -1,11 +1,11 @@
-import { Component, NgModule } from '@angular/core';
-import { inject, ComponentFixture, TestBed, async } from '@angular/core/testing';
+import { Component, NgModule } from '@angular/core'
+import { inject, ComponentFixture, TestBed, async } from '@angular/core/testing'
 //import { By } from '@angular/platform-browser';
 import { ngfModule } from './ngf.module';
 
 @Component({
   selector: 'container',
-  template: '<input type="file" [(ngf)]="ngf" (init)="ngf2=$event" />'
+  template: '<input type="file" #ngf="ngf" ngf (init)="ngf2=$event" />'
 }) export class ContainerComponent {}
 
 @NgModule({

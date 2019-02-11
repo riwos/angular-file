@@ -7,8 +7,8 @@ function acceptType(accept, type, name) {
         return true;
     }
     var defs = accept.split(',');
-    var regx = null;
-    var acceptRegString = null;
+    var regx;
+    var acceptRegString;
     for (var x = defs.length - 1; x >= 0; --x) {
         //Escapes dots in mimetype
         acceptRegString = defs[x];
@@ -46,7 +46,10 @@ function arrayBufferToBase64(buffer) {
 }
 exports.arrayBufferToBase64 = arrayBufferToBase64;
 function dataUrltoBlob(dataurl, name, origSize) {
-    var arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1], bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
+    var arr = dataurl.split(',');
+    var mimeMatch = arr[0].match(/:(.*?);/);
+    var mime = mimeMatch ? mimeMatch[1] : 'text/plain';
+    var bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
     while (n--) {
         u8arr[n] = bstr.charCodeAt(n);
     }
@@ -95,7 +98,7 @@ function fixFileOrientationByMeta(file, result) {
                     res(blob);
                 }
                 catch (e) {
-                    return rej(e);
+                    rej(e);
                 }
             };
             img.onerror = rej;
@@ -114,7 +117,8 @@ function applyExifRotation(file) {
             return file;
         }
         return fixFileOrientationByMeta(file, result);
-    });
+    })
+        .then(function () { return file; });
 }
 exports.applyExifRotation = applyExifRotation;
 function readOrientation(file) {
@@ -171,7 +175,7 @@ function dataUrl(file, disallowObjectUrl) {
     if (p)
         return p;
     var win = getWindow();
-    var deferred = Promise.resolve();
+    var deferred;
     if (win.FileReader && file &&
         (!win.FileAPI || navigator.userAgent.indexOf('MSIE 8') === -1 || file.size < 20000) &&
         (!win.FileAPI || navigator.userAgent.indexOf('MSIE 9') === -1 || file.size < 4000000)) {
@@ -201,7 +205,7 @@ function dataUrl(file, disallowObjectUrl) {
             catch (e) {
                 return Promise.reject(e);
             }
-            deferred = deferred.then(function () { return url; });
+            deferred = Promise.resolve(url);
             file.$ngfBlobUrl = url;
         }
     }
@@ -291,7 +295,9 @@ function restoreExif(orig, resized) {
                 head += 2;
             }
             else {
-                var length = rawImageArray[head + 2] * 256 + rawImageArray[head + 3], endPoint = head + length + 2, seg = rawImageArray.slice(head, endPoint);
+                var length = rawImageArray[head + 2] * 256 + rawImageArray[head + 3];
+                var endPoint = head + length + 2;
+                var seg = rawImageArray.slice(head, endPoint);
                 segments.push(seg);
                 head = endPoint;
             }

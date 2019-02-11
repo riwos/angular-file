@@ -200,7 +200,7 @@ Combo Drop Select
 
 ### ngf Directive
 ```typescript
-[(ngf)]             : ngf//reference to directive class
+ngf             : ngf//reference to directive class
 [multiple]          : string
 [accept]            : string
 [maxSize]           : number//bytes . 1024 = 1k . 1048576 = 1mb

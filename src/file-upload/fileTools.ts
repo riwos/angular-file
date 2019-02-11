@@ -6,8 +6,8 @@ export function acceptType(accept:string, type:string, name?:string):boolean {
   }
 
   const defs = accept.split(',')
-  let regx:RegExp = null
-  let acceptRegString:string = null
+  let regx:RegExp
+  let acceptRegString:string
 
   for(let x=defs.length-1; x >= 0; --x){
     //Escapes dots in mimetype 
@@ -52,9 +52,15 @@ export function arrayBufferToBase64(buffer:any) {
   return window.btoa(binary);
 }
 
-export function dataUrltoBlob(dataurl:string, name:string, origSize?:any):Blob{
-  var arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1],
-    bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
+export function dataUrltoBlob(
+  dataurl:string,
+  name:string,
+  origSize?:any
+):Blob{
+  var arr = dataurl.split(',');
+  var mimeMatch = arr[0].match(/:(.*?);/)
+  var mime:string = mimeMatch ? mimeMatch[1] : 'text/plain'
+  var bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
   while (n--) {
     u8arr[n] = bstr.charCodeAt(n);
   }
@@ -69,7 +75,12 @@ export interface orientationMeta{
   fixedArrayBuffer?:any[]
 }
 
-export function applyTransform(ctx:CanvasRenderingContext2D, orientation:number, width:number, height:number) {
+export function applyTransform(
+  ctx:CanvasRenderingContext2D,
+  orientation:number,
+  width:number,
+  height:number
+) {
   switch (orientation) {
     case 2:
       return ctx.transform(-1, 0, 0, 1, width, 0);
@@ -88,27 +99,29 @@ export function applyTransform(ctx:CanvasRenderingContext2D, orientation:number,
   }
 }
 
-export function fixFileOrientationByMeta(file:File, result:orientationMeta){
+export function fixFileOrientationByMeta(
+  file:File, result:orientationMeta
+):Promise<Blob>{
   return dataUrl(file, true)
   .then(url=>{
     var canvas = document.createElement('canvas');
     var img = document.createElement('img');
 
-    return new Promise(function(res,rej){
+    return <Promise<Blob>>new Promise(function(res,rej){
       img.onload = function () {
         try {
-          canvas.width = result.orientation > 4 ? img.height : img.width;
-          canvas.height = result.orientation > 4 ? img.width : img.height;
-          var ctx = canvas.getContext('2d');
-          applyTransform(ctx, result.orientation, img.width, img.height);
+          canvas.width = result.orientation > 4 ? img.height : img.width
+          canvas.height = result.orientation > 4 ? img.width : img.height
+          var ctx = <CanvasRenderingContext2D>canvas.getContext('2d')
+          applyTransform(ctx, result.orientation, img.width, img.height)
           ctx.drawImage(img, 0, 0);
-          var dataUrl = canvas.toDataURL(file.type || 'image/WebP', 0.934);
+          var dataUrl = canvas.toDataURL(file.type || 'image/WebP', 0.934)
           const base = arrayBufferToBase64(result.fixedArrayBuffer)
-          dataUrl = restoreExif(base, dataUrl);
-          var blob = dataUrltoBlob(dataUrl, file.name);
-          res(blob);
+          dataUrl = restoreExif(base, dataUrl)
+          var blob = dataUrltoBlob(dataUrl, file.name)
+          res(blob)
         } catch (e) {
-          return rej(e);
+          rej(e)
         }
       };
       img.onerror = rej;
@@ -117,7 +130,9 @@ export function fixFileOrientationByMeta(file:File, result:orientationMeta){
   })
 }
 
-export function applyExifRotation(file:File):Promise<any>{
+export function applyExifRotation(
+  file:File
+):Promise<File>{
   if (file.type.indexOf('image/jpeg') !== 0) {
     return Promise.resolve(file);
   }
@@ -130,6 +145,7 @@ export function applyExifRotation(file:File):Promise<any>{
     
     return fixFileOrientationByMeta(file,result)
   })
+  .then(()=>file)
 }
 
 export function readOrientation(file:File):Promise<orientationMeta>{
@@ -174,7 +190,10 @@ export function readOrientation(file:File):Promise<orientationMeta>{
 }
 
 /** converts file-input file into base64 dataUri */
-export function dataUrl(file:any, disallowObjectUrl?:any):Promise<string>{
+export function dataUrl(
+  file:any,
+  disallowObjectUrl?:any
+):Promise<string>{
   if (!file) return Promise.resolve(file)
   
   if ((disallowObjectUrl && file.$ngfDataUrl != null) || (!disallowObjectUrl && file.$ngfBlobUrl != null)) {
@@ -185,7 +204,7 @@ export function dataUrl(file:any, disallowObjectUrl?:any):Promise<string>{
   if (p) return p;
 
   const win = getWindow()
-  let deferred:Promise<any> = Promise.resolve()
+  let deferred:Promise<string>
   if (win.FileReader && file &&
     (!win.FileAPI || navigator.userAgent.indexOf('MSIE 8') === -1 || file.size < 20000) &&
     (!win.FileAPI || navigator.userAgent.indexOf('MSIE 9') === -1 || file.size < 4000000)) {
@@ -214,7 +233,7 @@ export function dataUrl(file:any, disallowObjectUrl?:any):Promise<string>{
         return Promise.reject(e);
       }
       
-      deferred = deferred.then( ()=>url );
+      deferred = Promise.resolve( url )
       file.$ngfBlobUrl = url;
     }
   } else {
@@ -280,7 +299,7 @@ export function restoreExif(orig:any, resized:any) {
       origFileBase64 = origFileBase64.replace('data:image/jpeg;base64,', '');
     }
 
-    var rawImage = this.decode64(origFileBase64);
+    var rawImage:number[] = this.decode64(origFileBase64);
     var segments = this.slice2Segments(rawImage);
 
     var image = this.exifManipulation(resizedFileBase64, segments);
@@ -322,9 +341,11 @@ export function restoreExif(orig:any, resized:any) {
   };
 
 
-  ExifRestorer.slice2Segments = function (rawImageArray:any) {
-    var head = 0,
-      segments = [];
+  ExifRestorer.slice2Segments = function(
+    rawImageArray:number[]
+  ) {
+    var head:number = 0,
+      segments:number[][] = [];
 
     while (1) {
       if (rawImageArray[head] === 255 && rawImageArray[head + 1] === 218) {
@@ -334,9 +355,9 @@ export function restoreExif(orig:any, resized:any) {
         head += 2;
       }
       else {
-        var length = rawImageArray[head + 2] * 256 + rawImageArray[head + 3],
-          endPoint = head + length + 2,
-          seg = rawImageArray.slice(head, endPoint);
+        var length = rawImageArray[head + 2] * 256 + rawImageArray[head + 3]
+        var endPoint = head + length + 2
+        var seg:number[] = rawImageArray.slice(head, endPoint)
         segments.push(seg);
         head = endPoint;
       }
@@ -349,11 +370,13 @@ export function restoreExif(orig:any, resized:any) {
   };
 
 
-  ExifRestorer.decode64 = function (input:any) {
+  ExifRestorer.decode64 = function (
+    input:any
+  ):number[]{
     var chr1, chr2, chr3:any = '',
       enc1, enc2, enc3, enc4:any = '',
       i = 0,
-      buf = [];
+      buf:number[] = [];
 
     // remove all characters that are not A-Z, a-z, 0-9, +, /, or =
     var base64test = /[^A-Za-z0-9\+\/\=]/g;

@@ -4,8 +4,9 @@ var core_1 = require("@angular/core");
 var ngfFormData = (function () {
     function ngfFormData(IterableDiffers) {
         this.postName = "file";
+        this.FormData = new FormData();
         this.FormDataChange = new core_1.EventEmitter();
-        this.differ = IterableDiffers.find([]).create(null);
+        this.differ = IterableDiffers.find([]).create();
     }
     ngfFormData.prototype.ngDoCheck = function () {
         var _this = this;
@@ -19,7 +20,10 @@ var ngfFormData = (function () {
         var isArray = typeof (this.files) === 'object' && this.files.constructor === Array;
         if (isArray) {
             this.FormData = new FormData();
-            this.files.forEach(function (file) { return _this.FormData.append(_this.postName, file, _this.fileName || file.name); });
+            var files = this.files || [];
+            files.forEach(function (file) {
+                return _this.FormData.append(_this.postName, file, _this.fileName || file.name);
+            });
             this.FormDataChange.emit(this.FormData);
         }
         else {

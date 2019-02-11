@@ -11,8 +11,8 @@ export interface orientationMeta {
     fixedArrayBuffer?: any[];
 }
 export declare function applyTransform(ctx: CanvasRenderingContext2D, orientation: number, width: number, height: number): void;
-export declare function fixFileOrientationByMeta(file: File, result: orientationMeta): Promise<{}>;
-export declare function applyExifRotation(file: File): Promise<any>;
+export declare function fixFileOrientationByMeta(file: File, result: orientationMeta): Promise<Blob>;
+export declare function applyExifRotation(file: File): Promise<File>;
 export declare function readOrientation(file: File): Promise<orientationMeta>;
 /** converts file-input file into base64 dataUri */
 export declare function dataUrl(file: any, disallowObjectUrl?: any): Promise<string>;

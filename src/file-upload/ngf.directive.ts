@@ -1,9 +1,14 @@
 import { Directive, EventEmitter, ElementRef, Input, Output, HostListener } from '@angular/core';
 import { createInvisibleFileInputWrap, isFileInput, detectSwipe } from "./doc-event-help.functions"
-import { FileType } from './FileType.class'
-import { acceptType, InvalidFileItem, applyExifRotation, dataUrl } from "./fileTools"
+import {
+  acceptType, InvalidFileItem,
+  applyExifRotation, dataUrl
+} from "./fileTools"
 
-@Directive({selector: '[ngf]'})
+@Directive({
+  selector: "[ngf]",
+  exportAs:"ngf"
+})
 export class ngf {
   fileElm:any
   filters:{name:string, fn:(file:File)=>boolean}[] = []
@@ -19,8 +24,6 @@ export class ngf {
   @Input() fileDropDisabled=false
   @Input() selectable = false
   @Output('init') directiveInit:EventEmitter<ngf> = new EventEmitter()
-  @Input('ngf') ref:ngf
-  @Output('ngfChange') refChange:EventEmitter<ngf> = new EventEmitter()
   
   @Input() lastInvalids:InvalidFileItem[] = []
   @Output() lastInvalidsChange:EventEmitter<{file:File,type:string}[]> = new EventEmitter()
@@ -63,7 +66,6 @@ export class ngf {
 
     //create reference to this class with one cycle delay to avoid ExpressionChangedAfterItHasBeenCheckedError
     setTimeout(()=>{
-      this.refChange.emit(this)
       this.directiveInit.emit(this)
     }, 0)
   }
@@ -106,17 +108,17 @@ export class ngf {
   }
 
   getValidFiles( files:File[] ):File[]{
-    const rtn = []
+    const rtn:File[] = []
     for(let x=files.length-1; x >= 0; --x){
       if( this.isFileValid(files[x]) ){
-        rtn.push(files[x])
+        rtn.push( files[x] )
       }
     }
     return rtn
   }
 
   getInvalidFiles(files:File[]):InvalidFileItem[]{
-    const rtn = []
+    const rtn:InvalidFileItem[] = []
     for(let x=files.length-1; x >= 0; --x){
       let failReason = this.getFileFilterFailName(files[x])
       if( failReason ){
@@ -135,7 +137,7 @@ export class ngf {
     if(files.length!=valids.length){
       this.lastInvalids = this.getInvalidFiles(files)
     }else{
-      this.lastInvalids = null
+      delete this.lastInvalids
     }
     
     this.lastInvalidsChange.emit(this.lastInvalids)
@@ -154,7 +156,7 @@ export class ngf {
     }
   }
 
-  que(files:File[]){
+  que( files:File[] ){
     this.files = this.files || []
     Array.prototype.push.apply(this.files, files)
 
@@ -178,7 +180,7 @@ export class ngf {
 
   /** called when input has files */
   changeFn(event:any) {
-    var fileList = event.__files_ || (event.target && event.target.files), files = [];
+    var fileList = event.__files_ || (event.target && event.target.files)
 
     if (!fileList) return;
 
@@ -246,13 +248,17 @@ export class ngf {
     return []
   }
 
-  applyExifRotations(files:File[]):Promise<File[]>{
-    const mapper = (file:File,index:number):Promise<any>=>{
+  applyExifRotations(
+    files:File[]
+  ):Promise<File[]>{
+    const mapper = (
+      file:File,index:number
+    ):Promise<any>=>{
       return applyExifRotation(file)
       .then( fixedFile=>files.splice(index, 1, fixedFile) )
     }
 
-    const proms = []
+    const proms:Promise<any>[] = []
     for(let x=files.length-1; x >= 0; --x){
       proms[x] = mapper( files[x], x )
     }
@@ -269,7 +275,7 @@ export class ngf {
     this.handleFiles(files)
   }
 
-  getFileFilterFailName(file:File):string{
+  getFileFilterFailName(file:File):string | undefined{
     for(let i = 0; i < this.filters.length; i++){
       if( !this.filters[i].fn.call(this, file) ){
         return this.filters[i].name

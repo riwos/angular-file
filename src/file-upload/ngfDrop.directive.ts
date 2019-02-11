@@ -1,11 +1,19 @@
-import { Directive, EventEmitter, ElementRef, HostListener, Input, Output } from '@angular/core';
-import { createInvisibleFileInputWrap, isFileInput, detectSwipe } from "./doc-event-help.functions"
+import {
+  Directive, EventEmitter,
+  HostListener, Input, Output
+} from '@angular/core';
 import { ngf } from "./ngf.directive"
 
-@Directive({selector: '[ngfDrop]'})
+export interface dragMeta{
+  type:string
+  kind:string
+}
+
+@Directive({
+  selector: "[ngfDrop]",
+  exportAs: "ngfDrop"
+})
 export class ngfDrop extends ngf {
-  @Input('ngfDrop') ref:ngfDrop
-  @Output('ngfDropChange') refChange:EventEmitter<ngfDrop> = new EventEmitter()  
   @Output() fileOver:EventEmitter<any> = new EventEmitter();
 
   @Input() validDrag:boolean = false
@@ -14,8 +22,8 @@ export class ngfDrop extends ngf {
   @Input() invalidDrag = false
   @Output() invalidDragChange:EventEmitter<boolean> = new EventEmitter()
 
-  @Input() dragFiles:File[]
-  @Output() dragFilesChange:EventEmitter<File[]> = new EventEmitter()
+  @Input() dragFiles:dragMeta[]
+  @Output() dragFilesChange:EventEmitter<dragMeta[]> = new EventEmitter()
 
   @HostListener('drop', ['$event'])
   onDrop(event:Event):void {
@@ -36,12 +44,11 @@ export class ngfDrop extends ngf {
   @HostListener('dragover', ['$event'])
   onDragOver(event:Event):void {
     const transfer = this.eventToTransfer(event)
-    const hasFiles = this.transferHasFiles(transfer)
 
     let files = this.eventToFiles(event)
 
     let jsonFiles = this.filesToWriteableObject(files)
-    this.dragFilesChange.emit(this.dragFiles=jsonFiles)
+    this.dragFilesChange.emit( this.dragFiles=jsonFiles )
 
     if( files.length ){
       this.validDrag = this.isFilesValid(files)
@@ -61,8 +68,8 @@ export class ngfDrop extends ngf {
   }
 
   /** browsers try hard to conceal data about file drags, this tends to undo that */
-  filesToWriteableObject( files:File[] ){
-    const jsonFiles = []
+  filesToWriteableObject( files:File[] ):dragMeta[]{
+    const jsonFiles:dragMeta[] = []
     for(let x=0; x < files.length; ++x){
       jsonFiles.push({
         type:files[x].type,
@@ -73,11 +80,12 @@ export class ngfDrop extends ngf {
   }
 
   closeDrags(){
-    this.validDrag = null
+    delete this.validDrag
     this.validDragChange.emit(this.validDrag)
     this.invalidDrag = false
     this.invalidDragChange.emit(this.invalidDrag)
-    this.dragFilesChange.emit(this.dragFiles=null)
+    delete this.dragFiles
+    this.dragFilesChange.emit( this.dragFiles )
   }
 
   @HostListener('dragleave', ['$event'])
