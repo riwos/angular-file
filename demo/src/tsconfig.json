@@ -2,7 +2,6 @@
   "compilerOptions": {
     "target": "es5",
     "strict": false,
-    "strictPropertyInitialization": false,
     "noUnusedLocals": true,
     "noImplicitAny": false,
     "module": "commonjs",

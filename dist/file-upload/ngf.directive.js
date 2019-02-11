@@ -24,11 +24,12 @@ var ngf = (function () {
         this.initFilters();
     }
     ngf.prototype.initFilters = function () {
-        //this.filters.unshift({name: 'queueLimit', fn: this._queueLimitFilter})
-        this.filters.unshift({ name: 'fileSize', fn: this._fileSizeFilter });
-        //this.filters.unshift({name: 'fileType', fn: this._fileTypeFilter})
-        //this.filters.unshift({name: 'mimeType', fn: this._mimeTypeFilter})
-        this.filters.unshift({ name: 'accept', fn: this._acceptFilter });
+        // the order is important
+        this.filters.push({ name: 'accept', fn: this._acceptFilter });
+        this.filters.push({ name: 'fileSize', fn: this._fileSizeFilter });
+        //this.filters.push({name: 'fileType', fn: this._fileTypeFilter})
+        //this.filters.push({name: 'queueLimit', fn: this._queueLimitFilter})
+        //this.filters.push({name: 'mimeType', fn: this._mimeTypeFilter})
     };
     ngf.prototype.ngOnDestroy = function () {
         delete this.fileElm; //faster memory release of dom element
@@ -226,9 +227,9 @@ var ngf = (function () {
         this.handleFiles(files);
     };
     ngf.prototype.getFileFilterFailName = function (file) {
-        for (var x = this.filters.length - 1; x >= 0; --x) {
-            if (!this.filters[x].fn.call(this, file)) {
-                return this.filters[x].name;
+        for (var i = 0; i < this.filters.length; i++) {
+            if (!this.filters[i].fn.call(this, file)) {
+                return this.filters[i].name;
             }
         }
         return;
