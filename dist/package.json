@@ -1,6 +1,6 @@
 {
   "main": "index.js",
-  "version": "0.5.9",
+  "version": "0.5.10",
   "description": "Angular file upload directives",
   "module": "index.js",
   "typings": "index.d.ts",
