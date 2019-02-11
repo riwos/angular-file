@@ -39,11 +39,13 @@ export class ngf {
   }
 
   initFilters(){
-    //this.filters.unshift({name: 'queueLimit', fn: this._queueLimitFilter})
-    this.filters.unshift({name: 'fileSize', fn: this._fileSizeFilter})
-    //this.filters.unshift({name: 'fileType', fn: this._fileTypeFilter})
-    //this.filters.unshift({name: 'mimeType', fn: this._mimeTypeFilter})
-    this.filters.unshift({name: 'accept', fn: this._acceptFilter})
+    // the order is important
+    this.filters.push({name: 'accept', fn: this._acceptFilter})
+    this.filters.push({name: 'fileSize', fn: this._fileSizeFilter})
+
+    //this.filters.push({name: 'fileType', fn: this._fileTypeFilter})
+    //this.filters.push({name: 'queueLimit', fn: this._queueLimitFilter})
+    //this.filters.push({name: 'mimeType', fn: this._mimeTypeFilter})
   }
 
   ngOnDestroy(){
@@ -268,9 +270,9 @@ export class ngf {
   }
 
   getFileFilterFailName(file:File):string{
-    for(let x=this.filters.length-1; x >= 0; --x){
-      if( !this.filters[x].fn.call(this, file) ){
-        return this.filters[x].name
+    for(let i = 0; i < this.filters.length; i++){
+      if( !this.filters[i].fn.call(this, file) ){
+        return this.filters[i].name
       }
     }
     return
