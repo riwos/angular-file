@@ -3,10 +3,11 @@ All notable changes to this project will be documented here.
 
 ## 1.0.0 - (2019-02-11)
 - strict mode on
-- check file type before size
+- check file type before file size
 - [(ref)] bindings have been removed from all components/directives
   - no more [(ngf)]
   - no more [(ngfSelect))]
+  - use template references if needed: `<input #ngfSelect="ngfSelect" ngSelect />`
 
 ## 0.5.9 - (2018-12-04)
 - documentation
