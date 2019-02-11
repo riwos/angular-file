@@ -14,7 +14,6 @@ var ngf = (function () {
         this.fileDropDisabled = false;
         this.selectable = false;
         this.directiveInit = new core_1.EventEmitter();
-        this.refChange = new core_1.EventEmitter();
         this.lastInvalids = [];
         this.lastInvalidsChange = new core_1.EventEmitter();
         this.lastBaseUrlChange = new core_1.EventEmitter();
@@ -24,11 +23,12 @@ var ngf = (function () {
         this.initFilters();
     }
     ngf.prototype.initFilters = function () {
-        //this.filters.unshift({name: 'queueLimit', fn: this._queueLimitFilter})
-        this.filters.unshift({ name: 'fileSize', fn: this._fileSizeFilter });
-        //this.filters.unshift({name: 'fileType', fn: this._fileTypeFilter})
-        //this.filters.unshift({name: 'mimeType', fn: this._mimeTypeFilter})
-        this.filters.unshift({ name: 'accept', fn: this._acceptFilter });
+        // the order is important
+        this.filters.push({ name: 'accept', fn: this._acceptFilter });
+        this.filters.push({ name: 'fileSize', fn: this._fileSizeFilter });
+        //this.filters.push({name: 'fileType', fn: this._fileTypeFilter})
+        //this.filters.push({name: 'queueLimit', fn: this._queueLimitFilter})
+        //this.filters.push({name: 'mimeType', fn: this._mimeTypeFilter})
     };
     ngf.prototype.ngOnDestroy = function () {
         delete this.fileElm; //faster memory release of dom element
@@ -43,7 +43,6 @@ var ngf = (function () {
         }
         //create reference to this class with one cycle delay to avoid ExpressionChangedAfterItHasBeenCheckedError
         setTimeout(function () {
-            _this.refChange.emit(_this);
             _this.directiveInit.emit(_this);
         }, 0);
     };
@@ -109,7 +108,7 @@ var ngf = (function () {
             this.lastInvalids = this.getInvalidFiles(files);
         }
         else {
-            this.lastInvalids = null;
+            delete this.lastInvalids;
         }
         this.lastInvalidsChange.emit(this.lastInvalids);
         if (valids.length) {
@@ -146,7 +145,7 @@ var ngf = (function () {
     /** called when input has files */
     ngf.prototype.changeFn = /** called when input has files */
     function (event) {
-        var fileList = event.__files_ || (event.target && event.target.files), files = [];
+        var fileList = event.__files_ || (event.target && event.target.files);
         if (!fileList)
             return;
         this.stopEvent(event);
@@ -226,9 +225,9 @@ var ngf = (function () {
         this.handleFiles(files);
     };
     ngf.prototype.getFileFilterFailName = function (file) {
-        for (var x = this.filters.length - 1; x >= 0; --x) {
-            if (!this.filters[x].fn.call(this, file)) {
-                return this.filters[x].name;
+        for (var i = 0; i < this.filters.length; i++) {
+            if (!this.filters[i].fn.call(this, file)) {
+                return this.filters[i].name;
             }
         }
         return;
@@ -271,7 +270,10 @@ var ngf = (function () {
         return !(this.allowedMimeType && this.allowedMimeType.indexOf(item.type) === -1);
       }*/
     ngf.decorators = [
-        { type: core_1.Directive, args: [{ selector: '[ngf]' },] },
+        { type: core_1.Directive, args: [{
+                    selector: "[ngf]",
+                    exportAs: "ngf"
+                },] },
     ];
     /** @nocollapse */
     ngf.ctorParameters = function () { return [
@@ -285,8 +287,6 @@ var ngf = (function () {
         "fileDropDisabled": [{ type: core_1.Input },],
         "selectable": [{ type: core_1.Input },],
         "directiveInit": [{ type: core_1.Output, args: ['init',] },],
-        "ref": [{ type: core_1.Input, args: ['ngf',] },],
-        "refChange": [{ type: core_1.Output, args: ['ngfChange',] },],
         "lastInvalids": [{ type: core_1.Input },],
         "lastInvalidsChange": [{ type: core_1.Output },],
         "lastBaseUrl": [{ type: core_1.Input },],

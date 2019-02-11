@@ -15,8 +15,6 @@ export declare class ngf {
     fileDropDisabled: boolean;
     selectable: boolean;
     directiveInit: EventEmitter<ngf>;
-    ref: ngf;
-    refChange: EventEmitter<ngf>;
     lastInvalids: InvalidFileItem[];
     lastInvalidsChange: EventEmitter<{
         file: File;
@@ -50,7 +48,7 @@ export declare class ngf {
     eventToFiles(event: Event): any;
     applyExifRotations(files: File[]): Promise<File[]>;
     onChange(event: Event): void;
-    getFileFilterFailName(file: File): string;
+    getFileFilterFailName(file: File): string | undefined;
     isFileValid(file: File): boolean;
     isFilesValid(files: File[]): boolean;
     protected _acceptFilter(item: File): boolean;
