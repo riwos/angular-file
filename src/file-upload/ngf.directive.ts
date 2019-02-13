@@ -21,8 +21,8 @@ export class ngf {
   //@Input() forcePostname:string
   @Input() ngfFixOrientation:boolean = true
 
-  @Input() fileDropDisabled=false
-  @Input() selectable = false
+  @Input() fileDropDisabled:boolean = false
+  @Input() selectable:boolean = false
   @Output('init') directiveInit:EventEmitter<ngf> = new EventEmitter()
   
   @Input() lastInvalids:InvalidFileItem[] = []
@@ -196,7 +196,7 @@ export class ngf {
     
     var r = detectSwipe(evt);
     // prevent the click if it is a swipe
-    if (r != null) return r;
+    if ( r!==false ) return r;
 
     const fileElm = this.paramFileElm()
     fileElm.click()

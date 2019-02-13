@@ -1,7 +1,7 @@
 main.bd-pageheader
   .container
     h1 angular-file
-    p examples and samples
+    p version {{ version }}
     div(style="display:inline-block;padding:.2em;vertical-align:middle;")
       a.btn.btn-primary(href="https://github.com/ackerapple/angular-file") View on GitHub
     div(style="display:inline-block;padding:.2em;")
@@ -19,6 +19,8 @@ main.bd-pageheader
         scrolling   = "0"
         width       = "100px"
         height      = "20px")
+    
+    p examples and samples
 
 .container
   //-section(id="getting-started" "[innerHTML]"="gettingStarted|safeHtml")
