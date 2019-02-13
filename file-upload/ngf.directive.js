@@ -158,7 +158,7 @@ var ngf = (function () {
         }
         var r = doc_event_help_functions_1.detectSwipe(evt);
         // prevent the click if it is a swipe
-        if (r != null)
+        if (r !== false)
             return r;
         var fileElm = this.paramFileElm();
         fileElm.click();
