@@ -47,13 +47,13 @@ Easy to use Angular directives for user file selections ([DEMO PAGE](http://acke
 ## Examples
 
 ### Practical Example
-An example intended to have every line needed to run an app with angular-file
+An example intended to have every line needed to run an app with angular-file.  To use this example, replace the contents of main.ts with this code, and add `<app></app>` to the body of index.html
 
 ```typescript
 import { ngfModule, ngf } from "angular-file"
 import { Component, NgModule } from "@angular/core"
 import {
-  HttpClient, HttpRequest, HttpResponse, HttpEvent
+  HttpClientModule, HttpRequest, HttpResponse, HttpEvent
 } from "@angular/common/http"
 import { platformBrowserDynamic } from "@angular/platform-browser-dynamic"
 import { BrowserModule } from '@angular/platform-browser'
@@ -99,7 +99,7 @@ export class AppComponent {
   constructor(public HttpClient:HttpClient){}
 
   uploadFiles(files:File[]) : Subscription {
-    const config = new HttpRequest('POST', this.postUrl, this.myFormData), {
+    const config = new HttpRequest('POST', this.postUrl, this.myFormData, {
       reportProgress: true
     })
     
@@ -120,6 +120,7 @@ export class AppComponent {
 @NgModule({
   imports: [
     BrowserModule,
+    HttpClientModule,
     ngfModule
   ],
   declarations: [
