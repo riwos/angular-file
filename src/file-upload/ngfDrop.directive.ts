@@ -27,6 +27,11 @@ export class ngfDrop extends ngf {
 
   @HostListener('drop', ['$event'])
   onDrop(event:Event):void {
+    if(this.fileDropDisabled){
+      this.stopEvent(event);
+      return
+    }
+
     this.closeDrags()
     let files = this.eventToFiles(event)
 
@@ -43,6 +48,11 @@ export class ngfDrop extends ngf {
 
   @HostListener('dragover', ['$event'])
   onDragOver(event:Event):void {
+    if(this.fileDropDisabled){
+      this.stopEvent(event);
+      return
+    }
+
     const transfer = this.eventToTransfer(event)
 
     let files = this.eventToFiles(event)
@@ -90,6 +100,11 @@ export class ngfDrop extends ngf {
 
   @HostListener('dragleave', ['$event'])
   onDragLeave(event:Event):any {
+    if(this.fileDropDisabled){
+      this.stopEvent(event);
+      return
+    }
+    
     this.closeDrags()
 
     if ((this as any).element) {
