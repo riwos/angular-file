@@ -25,6 +25,10 @@ var ngfDrop = (function (_super) {
         return _this;
     }
     ngfDrop.prototype.onDrop = function (event) {
+        if (this.fileDropDisabled) {
+            this.stopEvent(event);
+            return;
+        }
         this.closeDrags();
         var files = this.eventToFiles(event);
         if (!files.length)
@@ -37,6 +41,10 @@ var ngfDrop = (function (_super) {
         _super.prototype.handleFiles.call(this, files);
     };
     ngfDrop.prototype.onDragOver = function (event) {
+        if (this.fileDropDisabled) {
+            this.stopEvent(event);
+            return;
+        }
         var transfer = this.eventToTransfer(event);
         var files = this.eventToFiles(event);
         var jsonFiles = this.filesToWriteableObject(files);
@@ -55,19 +63,6 @@ var ngfDrop = (function (_super) {
         this.stopEvent(event);
         this.fileOver.emit(true);
     };
-    /** browsers try hard to conceal data about file drags, this tends to undo that */
-    /** browsers try hard to conceal data about file drags, this tends to undo that */
-    ngfDrop.prototype.filesToWriteableObject = /** browsers try hard to conceal data about file drags, this tends to undo that */
-    function (files) {
-        var jsonFiles = [];
-        for (var x = 0; x < files.length; ++x) {
-            jsonFiles.push({
-                type: files[x].type,
-                kind: files[x]["kind"]
-            });
-        }
-        return jsonFiles;
-    };
     ngfDrop.prototype.closeDrags = function () {
         delete this.validDrag;
         this.validDragChange.emit(this.validDrag);
@@ -77,6 +72,10 @@ var ngfDrop = (function (_super) {
         this.dragFilesChange.emit(this.dragFiles);
     };
     ngfDrop.prototype.onDragLeave = function (event) {
+        if (this.fileDropDisabled) {
+            this.stopEvent(event);
+            return;
+        }
         this.closeDrags();
         if (this.element) {
             if (event.currentTarget === this.element[0]) {
