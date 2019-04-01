@@ -3,6 +3,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@angular/core");
 var doc_event_help_functions_1 = require("./doc-event-help.functions");
 var fileTools_1 = require("./fileTools");
+/** A master base set of logic intended to support file select/drag/drop operations
+ NOTE: Use ngfDrop for full drag/drop. Use ngfSelect for selecting
+*/
 var ngf = (function () {
     function ngf(element) {
         this.element = element;
@@ -250,25 +253,22 @@ var ngf = (function () {
     ngf.prototype._acceptFilter = function (item) {
         return fileTools_1.acceptType(this.accept, item.type, item.name);
     };
-    /*protected _queueLimitFilter():boolean {
-      return this.queueLimit === undefined || this.files.length < this.queueLimit
-    }*/
-    /*protected _queueLimitFilter():boolean {
-        return this.queueLimit === undefined || this.files.length < this.queueLimit
-      }*/
-    ngf.prototype._fileSizeFilter = /*protected _queueLimitFilter():boolean {
-        return this.queueLimit === undefined || this.files.length < this.queueLimit
-      }*/
-    function (item) {
+    ngf.prototype._fileSizeFilter = function (item) {
         return !(this.maxSize && item.size > this.maxSize);
     };
-    /*protected _fileTypeFilter(item:File):boolean {
-        return !(this.allowedFileType &&
-        this.allowedFileType.indexOf(FileType.getMimeClass(item)) === -1)
-      }*/
-    /*protected _mimeTypeFilter(item:File):boolean {
-        return !(this.allowedMimeType && this.allowedMimeType.indexOf(item.type) === -1);
-      }*/
+    /** browsers try hard to conceal data about file drags, this tends to undo that */
+    /** browsers try hard to conceal data about file drags, this tends to undo that */
+    ngf.prototype.filesToWriteableObject = /** browsers try hard to conceal data about file drags, this tends to undo that */
+    function (files) {
+        var jsonFiles = [];
+        for (var x = 0; x < files.length; ++x) {
+            jsonFiles.push({
+                type: files[x].type,
+                kind: files[x]["kind"]
+            });
+        }
+        return jsonFiles;
+    };
     ngf.decorators = [
         { type: core_1.Directive, args: [{
                     selector: "[ngf]",

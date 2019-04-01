@@ -2,12 +2,7 @@ import {
   Directive, EventEmitter,
   HostListener, Input, Output
 } from '@angular/core';
-import { ngf } from "./ngf.directive"
-
-export interface dragMeta{
-  type:string
-  kind:string
-}
+import { ngf, dragMeta } from "./ngf.directive"
 
 @Directive({
   selector: "[ngfDrop]",
@@ -75,18 +70,6 @@ export class ngfDrop extends ngf {
     transfer.dropEffect = 'copy'//change cursor and such
     this.stopEvent(event)
     this.fileOver.emit(true)
-  }
-
-  /** browsers try hard to conceal data about file drags, this tends to undo that */
-  filesToWriteableObject( files:File[] ):dragMeta[]{
-    const jsonFiles:dragMeta[] = []
-    for(let x=0; x < files.length; ++x){
-      jsonFiles.push({
-        type:files[x].type,
-        kind:files[x]["kind"]
-      })
-    }
-    return jsonFiles
   }
 
   closeDrags(){

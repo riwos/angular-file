@@ -47,13 +47,13 @@ Easy to use Angular directives for user file selections ([DEMO PAGE](http://acke
 ## Examples
 
 ### Practical Example
-An example intended to have every line needed to run an app with angular-file
+An example intended to have every line needed to run an app with angular-file.  To use this example, replace the contents of main.ts with this code, and add `<app></app>` to the body of index.html
 
 ```typescript
 import { ngfModule, ngf } from "angular-file"
 import { Component, NgModule } from "@angular/core"
 import {
-  HttpClient, HttpRequest, HttpResponse, HttpEvent
+  HttpClient, HttpClientModule, HttpRequest, HttpResponse, HttpEvent
 } from "@angular/common/http"
 import { platformBrowserDynamic } from "@angular/platform-browser-dynamic"
 import { BrowserModule } from '@angular/platform-browser'
@@ -99,7 +99,7 @@ export class AppComponent {
   constructor(public HttpClient:HttpClient){}
 
   uploadFiles(files:File[]) : Subscription {
-    const config = new HttpRequest('POST', this.postUrl, this.myFormData), {
+    const config = new HttpRequest('POST', this.postUrl, this.myFormData, {
       reportProgress: true
     })
     
@@ -120,6 +120,7 @@ export class AppComponent {
 @NgModule({
   imports: [
     BrowserModule,
+    HttpClientModule,
     ngfModule
   ],
   declarations: [
@@ -194,11 +195,12 @@ Combo Drop Select
 
 - [ngf Directive](#ngf-directive)
 - [ngfDrop Directive](#ngfdrop-directive)
-- [ngfBackground Directive](#ngfbackground-directive)
 - [ngfSelect Directive](#ngfselect-directive)
+- [ngfBackground Directive](#ngfbackground-directive)
 - [ngfUploadStatus Directive](#ngfuploadstatus-directive)
 
 ### ngf Directive
+A base directive that provides abilities of ngfDrop and ngfSelect. Does **not** auto default nor auto host element events like hover/drag/drop (see [ngfDrop](#ngfdrop-directive) and/or [ngfSelect](#ngfselect-directive))
 ```typescript
 ngf             : ngf//reference to directive class
 [multiple]          : string
@@ -215,8 +217,9 @@ ngf             : ngf//reference to directive class
 ```
 
 ### ngfDrop Directive
-This directive **extends** `ngf`
+Extends [ngf](#ngf-directive) and then auto hosts element event watching of hover/drag/drop
 ```javascript
+[fileDropDisabled]  : any = false
 (fileOver)      :EventEmitter<any> = new EventEmitter()
 [(validDrag)]   :any = false
 [(invalidDrag)] :any = false
@@ -227,7 +230,7 @@ This directive **extends** `ngf`
 >> [(validDrag)] & [(invalidDrag)] should NOT be used as IE11 does not indicate the number of files NOR the types of files being dragged like other modern web browsers
 
 ### ngfSelect Directive
-This directive **extends** `ngf`
+Extends [ngf](#ngf-directive) and auto engages click base file selecting
 ```javascript
 [selectable]:any = true
 ```

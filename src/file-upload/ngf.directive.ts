@@ -5,6 +5,14 @@ import {
   applyExifRotation, dataUrl
 } from "./fileTools"
 
+export interface dragMeta{
+  type:string
+  kind:string
+}
+
+/** A master base set of logic intended to support file select/drag/drop operations
+ NOTE: Use ngfDrop for full drag/drop. Use ngfSelect for selecting
+*/
 @Directive({
   selector: "[ngf]",
   exportAs:"ngf"
@@ -306,20 +314,19 @@ export class ngf {
     return acceptType(this.accept, item.type, item.name)
   }
 
-  /*protected _queueLimitFilter():boolean {
-    return this.queueLimit === undefined || this.files.length < this.queueLimit
-  }*/
-
   protected _fileSizeFilter(item:File):boolean {
     return !(this.maxSize && item.size > this.maxSize);
   }
 
-  /*protected _fileTypeFilter(item:File):boolean {
-    return !(this.allowedFileType &&
-    this.allowedFileType.indexOf(FileType.getMimeClass(item)) === -1)
-  }*/
-
-  /*protected _mimeTypeFilter(item:File):boolean {
-    return !(this.allowedMimeType && this.allowedMimeType.indexOf(item.type) === -1);
-  }*/
+  /** browsers try hard to conceal data about file drags, this tends to undo that */
+  filesToWriteableObject( files:File[] ):dragMeta[]{
+    const jsonFiles:dragMeta[] = []
+    for(let x=0; x < files.length; ++x){
+      jsonFiles.push({
+        type:files[x].type,
+        kind:files[x]["kind"]
+      })
+    }
+    return jsonFiles
+  }
 }

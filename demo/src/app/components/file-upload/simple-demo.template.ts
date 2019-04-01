@@ -109,6 +109,7 @@ export const string = "<style>"+"\r"+
 "\n      [class.invalid-drag] = \"baseDropValid===false\""+"\r"+
 "\n      [class.valid-drag]   = \"baseDropValid\""+"\r"+
 "\n      (filesChange) = \"lastFileAt=getDate()\""+"\r"+
+"\n      [fileDropDisabled] = \"fileDropDisabled\""+"\r"+
 "\n    >"+"\r"+
 "\n      Base drop zone"+"\r"+
 "\n    </div>"+"\r"+
@@ -133,6 +134,7 @@ export const string = "<style>"+"\r"+
 "\n      [class.invalid-drag] = \"validComboDrag===false\""+"\r"+
 "\n      [class.valid-drag]   = \"validComboDrag\""+"\r"+
 "\n      (filesChange) = \"lastFileAt=getDate()\""+"\r"+
+"\n      [fileDropDisabled] = \"fileDropDisabled\""+"\r"+
 "\n    >"+"\r"+
 "\n      Combo drop/select <strong>image</strong> only zone"+"\r"+
 "\n    </div>"+"\r"+
@@ -146,6 +148,13 @@ export const string = "<style>"+"\r"+
 "\n    <strong>maxSize kb</strong>"+"\r"+
 "\n    <div>"+"\r"+
 "\n      <input type=\"number\" [(ngModel)]=\"maxSize\" placeholder=\"1024 == 1mb\" />"+"\r"+
+"\n    </div>"+"\r"+
+"\n  </div>"+"\r"+
+"\n  "+"\r"+
+"\n  <div class=\"inline-block\">"+"\r"+
+"\n    <strong>fileDropDisabled</strong>"+"\r"+
+"\n    <div>"+"\r"+
+"\n      <input type=\"checkbox\" [(ngModel)]=\"fileDropDisabled\" name=\"fileDropDisabled\" id=\"fileDropDisabled\" />"+"\r"+
 "\n    </div>"+"\r"+
 "\n  </div>"+"\r"+
 "\n</div>"+"\r"+

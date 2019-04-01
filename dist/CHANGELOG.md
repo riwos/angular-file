@@ -1,6 +1,10 @@
 # angular-file - Change Log
 All notable changes to this project will be documented here.
 
+## 1.1.0 - (2019-02-13)
+- Fixed fileDropDisabled binding
+- Docs to clarify ngf versus ngfDrop versus ngfSelect
+
 ## 1.0.2 - (2019-02-13)
 - Fix click action as swipe check
   - [github issue](https://github.com/AckerApple/angular-file/issues/44)

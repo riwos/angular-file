@@ -109,6 +109,7 @@
       [class.invalid-drag] = "baseDropValid===false"
       [class.valid-drag]   = "baseDropValid"
       (filesChange) = "lastFileAt=getDate()"
+      [fileDropDisabled] = "fileDropDisabled"
     >
       Base drop zone
     </div>
@@ -133,6 +134,7 @@
       [class.invalid-drag] = "validComboDrag===false"
       [class.valid-drag]   = "validComboDrag"
       (filesChange) = "lastFileAt=getDate()"
+      [fileDropDisabled] = "fileDropDisabled"
     >
       Combo drop/select <strong>image</strong> only zone
     </div>
@@ -146,6 +148,13 @@
     <strong>maxSize kb</strong>
     <div>
       <input type="number" [(ngModel)]="maxSize" placeholder="1024 == 1mb" />
+    </div>
+  </div>
+  
+  <div class="inline-block">
+    <strong>fileDropDisabled</strong>
+    <div>
+      <input type="checkbox" [(ngModel)]="fileDropDisabled" name="fileDropDisabled" id="fileDropDisabled" />
     </div>
   </div>
 </div>
